@@ -11,7 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FashionBrowser.Utilities", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FashionBrowser.Test", "FashionBrowser.Test\FashionBrowser.Test.csproj", "{C35B8402-5273-4039-B37F-6BDD291E545F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fashion.Browser", "Fashion.Browser\Fashion.Browser.csproj", "{1276D4E0-F25A-4910-B377-61F2EADC2012}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fashion.Browser", "Fashion.Browser\Fashion.Browser.csproj", "{1276D4E0-F25A-4910-B377-61F2EADC2012}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipeline", "Pipeline", "{144684BD-DEB1-42A5-9016-278777E1BDDB}"
+	ProjectSection(SolutionItems) = preProject
+		bitbucket-pipelines.yml = bitbucket-pipelines.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

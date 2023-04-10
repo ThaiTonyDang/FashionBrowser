@@ -1,0 +1,22 @@
+image: mcr.microsoft.com/dotnet/sdk:6.0
+
+definitions:
+  steps:   
+    - step: &build-source
+        name: Restore and Build Source
+        caches:
+          - dotnetcore
+        script:
+          - dotnet restore
+          - dotnet build --no-restore --configuration Release
+
+pipelines:
+  pull-requests:
+    '**':
+      - step: *build-source
+
+  branches:
+    develop:
+      - step: *build-source
+    master:
+      - step: *build-source
