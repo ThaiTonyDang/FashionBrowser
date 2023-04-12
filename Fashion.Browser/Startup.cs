@@ -1,7 +1,14 @@
+using ChelseaWeb.Domains.Services;
+using FashionBrowser.Domain.Services;
+using FashionBrowser.Infrastructure;
+using FashionBrowser.Infrastructure.Config;
+using FashionBrowser.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -23,6 +30,15 @@ namespace Fashion.Browser
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductServices, ProductServices>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICategoryServices, CategoryServices>();
+
+            services.Configure<FileConfig>(Configuration.GetSection("FileConfig"));
+
+            services.AddDbContext<AppDbContext>(x =>
+                                               x.UseSqlServer(Configuration.GetConnectionString("Ecommerce")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,6 +53,17 @@ namespace Fashion.Browser
                 app.UseExceptionHandler("/Home/Error");
             }
             app.UseStaticFiles();
+
+            var fileConfig = Configuration.GetSection("FileConfig");
+
+            if (fileConfig.Get<FileConfig>() != null)
+            {
+                var path = fileConfig.Get<FileConfig>().ImagePath;
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(path),
+                });
+            }
 
             app.UseRouting();
 

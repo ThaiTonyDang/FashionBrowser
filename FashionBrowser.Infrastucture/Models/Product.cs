@@ -9,7 +9,7 @@
         public string Description { get; set; }
         public int UnitsInStock { get; set; }
         public string ImagePath { get; set; }
-        public bool Discontinued { get; set; }
+        public bool Enable { get; set; }
         public string Type { get; set; }
         public Guid CategoryId { get; set; }
         public Category Category { get; set; }

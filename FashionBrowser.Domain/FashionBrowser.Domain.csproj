@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FashionBrowser.Infrastucture\FashionBrowser.Infrastructure.csproj" />
+    <ProjectReference Include="..\FashionBrowser.Utilities\FashionBrowser.Utilities.csproj" />
+  </ItemGroup>
+
 </Project>

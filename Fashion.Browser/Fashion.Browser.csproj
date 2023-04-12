@@ -3,5 +3,10 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\FashionBrowser.Domain\FashionBrowser.Domain.csproj" />
+    <ProjectReference Include="..\FashionBrowser.Infrastucture\FashionBrowser.Infrastructure.csproj" />
+  </ItemGroup>
 
 </Project>
