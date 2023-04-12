@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ChelseaWeb.Domains.Services;
+using FashionBrowser.Domain.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -11,15 +13,17 @@ namespace Fashion.Browser.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IProductServices _productServices;
+        public HomeController(ILogger<HomeController> logger, IProductServices productServices)
         {
             _logger = logger;
+            _productServices = productServices;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }     
+            var productViewModel = await _productServices.GetProductViewModelAsync();
+            return View(productViewModel);
+        }
     }
 }

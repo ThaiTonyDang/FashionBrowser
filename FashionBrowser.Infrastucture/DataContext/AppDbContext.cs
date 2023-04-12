@@ -1,7 +1,7 @@
 ﻿using FashionBrowser.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace EcommercyWeb.Infrastructure
+namespace FashionBrowser.Infrastructure
 {
     public class AppDbContext : DbContext
     {
