@@ -9,6 +9,7 @@ definitions:
         script:
           - dotnet restore
           - dotnet build --no-restore --configuration Release
+          - dotnet test --no-restore --no-build --configuration Release -v d
 
 pipelines:
   pull-requests:
