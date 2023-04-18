@@ -5,6 +5,9 @@
 
 @await Html.PartialAsync("_Banner")
 
+<partial name="_Alert" />
+
+<form asp-action="Index" id="form-product" asp-controller="Product" method="post" enctype="multipart/form-data">
 <section class="section-margin calc-60px">
     <div class="container">
         <div class="section-intro pb-60px">
@@ -43,3 +46,4 @@
         </div>
     </div>
 </section>
+</form>

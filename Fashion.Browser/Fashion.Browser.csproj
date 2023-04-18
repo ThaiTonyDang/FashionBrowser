@@ -1,12 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\FashionBrowser.Domain\FashionBrowser.Domain.csproj" />
-    <ProjectReference Include="..\FashionBrowser.Infrastucture\FashionBrowser.Infrastructure.csproj" />
   </ItemGroup>
-
+ 
 </Project>

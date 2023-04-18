@@ -40,7 +40,33 @@ namespace ChelseaWeb.Domains.Services
 			return listProductViewModel;
 		}
 
-		public async Task<ProductViewModel> GetProductViewModelAsync()
+		public async Task<ProductItemViewModel> GetProductByIdAsync(Guid id)
+		{
+			var product = await _productRepository.GetProductByIdAsync(id);
+
+			if (product != null)
+			{
+				var productItemViewModel = new ProductItemViewModel()
+				{
+					Id = product.Id,
+					Name = product.Name,
+					Provider = product.Provider,
+					Price = product.Price,
+					DisplayPrice = product.Price.GetPriceFormat(),
+					Description = product.Description,
+					ImagePath = product.ImagePath,
+					CategoryId = product.CategoryId,
+					UnitsInStock = product.UnitsInStock,
+					Type = product.Type,
+					Enable = product.Enable
+				};
+
+				return productItemViewModel;
+			}
+		
+			return null;
+		}
+	public async Task<ProductViewModel> GetProductViewModelAsync()
 		{
 			var productViewModel = new ProductViewModel();
 			productViewModel.ListProduct = await GetListProductAsync();
