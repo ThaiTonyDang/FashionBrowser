@@ -17,64 +17,74 @@ using System.Threading.Tasks;
 
 namespace Fashion.Browser
 {
-    public class Startup
-    {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+	public class Startup
+	{
+		public Startup(IConfiguration configuration)
+		{
+			Configuration = configuration;
+		}
 
-        public IConfiguration Configuration { get; }
+		public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddControllersWithViews();
-            services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped<IProductServices, ProductServices>();
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
-            services.AddScoped<ICategoryServices, CategoryServices>();
+		// This method gets called by the runtime. Use this method to add services to the container.
+		public void ConfigureServices(IServiceCollection services)
+		{
+			services.AddControllersWithViews();
+			services.AddScoped<IProductRepository, ProductRepository>();
+			services.AddScoped<IProductServices, ProductServices>();
+			services.AddScoped<ICategoryRepository, CategoryRepository>();
+			services.AddScoped<ICategoryServices, CategoryServices>();
+			services.AddScoped<ICartServices, CartService>();
 
-            services.Configure<FileConfig>(Configuration.GetSection("FileConfig"));
+			services.AddDistributedMemoryCache();
 
-            services.AddDbContext<AppDbContext>(x =>
-                                               x.UseSqlServer(Configuration.GetConnectionString("Ecommerce")));
-        }
+			services.AddSession(cfg => {
+				cfg.Cookie.Name = "productData";
+				cfg.IdleTimeout = new TimeSpan(0, 30, 0);
+			});
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
-            app.UseStaticFiles();
+			services.Configure<FileConfig>(Configuration.GetSection("FileConfig"));
 
-            var fileConfig = Configuration.GetSection("FileConfig");
+			services.AddDbContext<AppDbContext>(x =>
+											   x.UseSqlServer(Configuration.GetConnectionString("Ecommerce")));
+		}
 
-            if (fileConfig.Get<FileConfig>() != null)
-            {
-                var path = fileConfig.Get<FileConfig>().ImagePath;
-                app.UseStaticFiles(new StaticFileOptions
-                {
-                    FileProvider = new PhysicalFileProvider(path),
-                });
-            }
+		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		{
+			if (env.IsDevelopment())
+			{
+				app.UseDeveloperExceptionPage();
+			}
+			else
+			{
+				app.UseExceptionHandler("/Home/Error");
+			}
+			app.UseStaticFiles();
 
-            app.UseRouting();
+			var fileConfig = Configuration.GetSection("FileConfig");
 
-            app.UseAuthorization();
+			if (fileConfig.Get<FileConfig>() != null)
+			{
+				var path = fileConfig.Get<FileConfig>().ImagePath;
+				app.UseStaticFiles(new StaticFileOptions
+				{
+					FileProvider = new PhysicalFileProvider(path),
+				});
+			}
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-            });
-        }
-    }
+			app.UseSession();
+
+			app.UseRouting();
+
+			app.UseAuthorization();
+
+			app.UseEndpoints(endpoints =>
+			{
+				endpoints.MapControllerRoute(
+					name: "default",
+					pattern: "{controller=Home}/{action=Index}/{id?}");
+			});
+		}
+	}
 }

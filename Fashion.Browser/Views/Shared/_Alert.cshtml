@@ -1,0 +1,54 @@
+﻿@{
+    var warning = TempData["StatusWarning"] as string;
+    var message = TempData["StatusMessage"] as string;
+}
+
+@if (!string.IsNullOrEmpty(warning))
+{
+    <div class="modal fade show" id="fail-modal"
+    tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle"
+    style="display: block; padding-right: 15px;"
+    aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body text-center font-18">
+                    <h3 class="mb-20" style="color:blue">@warning</h3>
+                    <div class="mb-30 text-center">
+                        <img src="~/img/cancel.png">
+                    </div>
+                    FAIL !!
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="closemodal">
+                        Done
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="modal fade show" id="success-modal"
+    tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    style="display: block; padding-right: 15px;" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body text-center font-18">
+                    <h3 class="mb-20" style="color:blue">@message</h3>
+                    <div class="mb-30 text-center">
+                        <img src="~/img/success.png">
+                    </div>
+                    CONGRATULATUON !!
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="closemodal">
+                        Done
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

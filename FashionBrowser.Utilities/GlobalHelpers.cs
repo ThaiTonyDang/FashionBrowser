@@ -11,8 +11,8 @@ namespace FashionBrowser.Utilities
     {
         public static string GetPriceFormat(this decimal price)
         {
-            CultureInfo cul = CultureInfo.GetCultureInfo("vi-VN");
-            return price.ToString("#,###", cul.NumberFormat);
+            CultureInfo cultureInfo = CultureInfo.GetCultureInfo("en-GB");
+            return string.Format(cultureInfo, "{0:C0}", price);
         }
     }
 }
