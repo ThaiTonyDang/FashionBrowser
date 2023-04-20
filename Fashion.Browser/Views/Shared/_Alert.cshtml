@@ -1,11 +1,15 @@
-﻿@{
-    var warning = TempData["StatusWarning"] as string;
-    var message = TempData["StatusMessage"] as string;
+﻿@using FashionBrowser.Utilities;
+@{
+    var mode = TempData[Mode.MODE] as string;
+    var modalFail = TempData[Mode.MODAL_CONFIRM_FAIL] as string;   
+    var modalSuccess = TempData[Mode.MODAL_CONFIRM_SUCCESS] as string;
+    var labelSuccess = TempData[Mode.LABEL_CONFIRM_SUCCESS] as string;
+    var labelFail = TempData[Mode.LABEL_CONFIRM_FAIL] as  string;
 }
-
-@if (!string.IsNullOrEmpty(warning))
+ 
+@if (mode == Mode.USING_MODAL_CONFIRM)
 {
-    <div class="modal fade show" id="fail-modal"
+    <div class="modal fade show" id="confirm-modal"
     tabindex="-1" role="dialog"
     aria-labelledby="exampleModalCenterTitle"
     style="display: block; padding-right: 15px;"
@@ -13,11 +17,22 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-body text-center font-18">
-                    <h3 class="mb-20" style="color:blue">@warning</h3>
-                    <div class="mb-30 text-center">
-                        <img src="~/img/cancel.png">
-                    </div>
-                    FAIL !!
+                    @if (!string.IsNullOrEmpty(modalSuccess))
+                    {
+                        <h3 class="mb-20" style="color:blue">@modalSuccess</h3>
+                        <div class="mb-30 text-center">
+                            <img src="~/img/success.png">
+                        </div>
+                        <p>CONGRATULATUON !</p>
+                    }
+                    @if (!string.IsNullOrEmpty(modalFail))
+                    {
+                        <h3 class="mb-20" style="color:red">@modalFail</h3>
+                        <div class="mb-30 text-center">
+                            <img src="~/img/cancel.png">
+                        </div>
+                        <p>FAIL !</p>
+                    }
                 </div>
                 <div class="modal-footer justify-content-center">
                     <button type="button" class="btn btn-primary" data-dismiss="modal" id="closemodal">
@@ -29,26 +44,25 @@
     </div>
 }
 
-@if (!string.IsNullOrEmpty(message))
+@if (mode == Mode.USING_LABEL_CONFIRM)
 {
-    <div class="modal fade show" id="success-modal"
-    tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    style="display: block; padding-right: 15px;" aria-modal="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-body text-center font-18">
-                    <h3 class="mb-20" style="color:blue">@message</h3>
-                    <div class="mb-30 text-center">
-                        <img src="~/img/success.png">
-                    </div>
-                    CONGRATULATUON !!
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="closemodal">
-                        Done
-                    </button>
-                </div>
-            </div>
+    if (!string.IsNullOrEmpty(labelFail))
+    {
+        <div class="alert alert-danger alert-secondary fade show" role="alert">
+            <strong>FAIL !</strong> @labelFail
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-    </div>
+    }
+
+    if (!string.IsNullOrEmpty(labelSuccess))
+    {
+        <div class="alert alert-danger alert-secondary fade show" role="alert">
+            <strong>Success !</strong> @labelSuccess
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
 }

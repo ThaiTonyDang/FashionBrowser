@@ -3,9 +3,9 @@
     Layout = "_Layout";
 }
 
-@await Html.PartialAsync("_Banner")
-
 <partial name="_Alert" />
+@await Html.PartialAsync("_Banner")
+<link href="@Url.Content("~/css/home.css")" rel="stylesheet" />
 
 <form asp-action="Index" id="form-product" asp-controller="Product" method="post" enctype="multipart/form-data">
 <section class="section-margin calc-60px">
@@ -37,8 +37,16 @@
                         </div>
                         <div class="card-body">
                             <h4 class="card-product__title"><a href="single-product.html">@product.Name</a></h4>
-                            <p>Đơn Vị Phân Phối : @product.Provider</p>
-                            <p class="card-product__price">@product.DisplayPrice VNĐ</p>
+                            <p>Provider : @product.Provider</p>
+                            @if (product.UnitsInStock == 0)
+                            {
+                               <p style="color:firebrick">OUT OF STOCK</p>
+                            }
+                            else
+                            {
+                               <p style="color:blue; font-weight:500">Quantity In Stock : @product.UnitsInStock</p>
+                            }
+                            <p class="card-product__price">@product.DisplayPrice</p>
                         </div>
                     </div>
                 </div>
