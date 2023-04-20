@@ -1,0 +1,108 @@
+﻿@using FashionBrowser.Domain.ViewModels;
+@using FashionBrowser.Utilities;
+@model CartViewModel
+
+@{
+    ViewData["Title"] = "Cart";
+    Layout = "_Layout";
+}
+
+<partial name="_Alert" />
+
+<section class="blog-banner-area" id="category">
+    <div class="container h-100">
+        <div class="blog-banner">
+            <div class="text-center">
+                <h1>Shopping Cart</h1>
+                <nav aria-label="breadcrumb" class="banner-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cart_area">
+    <div class="container">
+        <div class="cart_inner">
+            <div class="table-responsive">
+                @if (Model.ListCartItem.Count > 0)
+                {
+                    decimal totalPrice = 0;
+                    <table class="table" style="text-align:center">
+                        <thead>
+                            <tr>
+                                <th scope="col">IMAGE</th>
+                                <th scope="col">PRODUCT NAME</th>
+                                <th scope="col">PRICE</th>
+                                <th scope="col">QUANTITY</th>
+                                <th scope="col">TOTAL PRICE</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cartItem in Model.ListCartItem)
+                            {
+                                var price = cartItem.Quantity * cartItem.ProductItemViewModel.Price;
+                                totalPrice += price;
+                                <tr>
+                                    <td>
+                                        <div class="d-flex">
+                                            <img src="~/Product/@cartItem.ProductItemViewModel.ImagePath"
+                                                 style="width:200px; height:200px" alt="">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="media-body">
+                                            <p>@cartItem.ProductItemViewModel.Name</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <h5>@cartItem.ProductItemViewModel.DisplayPrice</h5>
+                                    </td>
+                                    <td>
+                                        <input asp-for="@cartItem.Quantity"
+                                               id="@($"quantity-{cartItem.ProductItemViewModel.Id}")"
+                                               class="input-text qty" min="1" style="width:50px; border-color:blue">
+                                    </td>
+                                    <td>
+                                        <h5>@price.GetPriceFormat() VNĐ</h5>
+                                    </td>
+                                    <td>
+                                        <a asp-route="remove" asp-route-productid="@cartItem.ProductItemViewModel.Id"
+                                           class="btn btn-danger">DELETE</a>
+                                    </td>
+                                </tr>
+                            }
+                            <tr>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                    <h5>Subtotal</h5>
+                                </td>
+                                <td>
+                                    <h5>@totalPrice.GetPriceFormat()</h5>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="alert alert-primary" style="color:blue">SHOP CART EMPTY</p>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="@Url.Content("~/js/alertmodal.js")"></script>
+}
