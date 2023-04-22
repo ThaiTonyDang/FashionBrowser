@@ -35,12 +35,13 @@ namespace Fashion.Browser
 			services.AddScoped<ICategoryRepository, CategoryRepository>();
 			services.AddScoped<ICategoryServices, CategoryServices>();
 			services.AddScoped<ICartServices, CartService>();
+			services.AddHttpContextAccessor();
 
 			services.AddDistributedMemoryCache();
 
 			services.AddSession(cfg => {
 				cfg.Cookie.Name = "productData";
-				cfg.IdleTimeout = new TimeSpan(0, 30, 0);
+				cfg.IdleTimeout = new TimeSpan(24, 0, 0);
 			});
 
 			services.Configure<FileConfig>(Configuration.GetSection("FileConfig"));

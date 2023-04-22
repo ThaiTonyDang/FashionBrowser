@@ -69,7 +69,7 @@
                                                class="input-text qty" min="1" style="width:50px; border-color:blue">
                                     </td>
                                     <td>
-                                        <h5>@price.GetPriceFormat() VNĐ</h5>
+                                        <h5>@price.GetPriceFormat()</h5>
                                     </td>
                                     <td>
                                         <a asp-route="remove" asp-route-productid="@cartItem.ProductItemViewModel.Id"
