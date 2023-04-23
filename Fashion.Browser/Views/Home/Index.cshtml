@@ -1,13 +1,22 @@
-﻿@{
+﻿@using FashionBrowser.Domain.ViewModels;
+@using FashionBrowser.Utilities;
+@{
     ViewData["Title"] = "Home Page";
     Layout = "_Layout";
 }
 
 <partial name="_Alert" />
+
 @await Html.PartialAsync("_Banner")
+@section Scripts {
+    <script src="@Url.Content("~/js/cart.js")"></script>
+}
+
 <link href="@Url.Content("~/css/home.css")" rel="stylesheet" />
 
-<form asp-action="Index" id="form-product" asp-controller="Product" method="post" enctype="multipart/form-data">
+@model ProductViewModel
+
+<form asp-action= method="post"> 
 <section class="section-margin calc-60px">
     <div class="container">
         <div class="section-intro pb-60px">
@@ -15,28 +24,74 @@
             <h2>Trending <span class="section-intro__style">Product</span></h2>
         </div>
         <div class="row">
+           
+            <input type="hidden" id="products__count" value="" />
             @foreach (var product in Model.ListProduct)
             {
                 <div class="col-md-6 col-lg-4 col-xl-3">
                     <div class="card text-center card-product">
                         <div class="card-product__img">
+
+                            <input type="hidden" id="product__id-@product.Id" value="@product.Id" />
+
                             <a class="product-img" href="~/Product/Detail/@product.Id">
-                                <img class="card-img" src="~/Product/@product.ImagePath" alt="">
+
+                                <input type="hidden" id="product__image-@product.Id" value="@product.ImagePath" />
+                                @if (product.UnitsInStock > 0)
+                                {
+                                    <img class="card-img" src="~/Product/@product.ImagePath" alt="">
+                                }
+                                else
+                                {
+                                    <img class="card-img" src="~/Product/@product.ImagePath" style="opacity:0.5" alt="">
+                                }                                                       
                             </a>
-                            <ul class="card-product__imgOverlay">
-                                <li><button><i class="ti-search"></i></button></li>
-                                <li>
-                                    <button type="submit"
-                                            formaction="@Url.Action("AddToCart", "Cart", new {productId = product.Id})"
-                                            formmethod="post">
-                                        <i class="ti-shopping-cart"></i>
+                            <ul class="card-product__imgOverlay">                  
+                                <li class="li-product">
+                                    <button class="title-text" title="REVIEWS">
+                                        <i class="ti-heart">
+
+                                        </i>
                                     </button>
+                                </li>                            
+                                @if (product.UnitsInStock > 0)
+                                {
+                                    <li class="li-product">
+                                        <button 
+                                            class="title-text"
+                                            title="ADD TO CART"
+                                            onclick="addToCart('@product.Id', event)">
+                                            <i class="bi bi-basket"></i>
+                                        </button>
+                                    </li>
+                                }                              
+                                <li class="li-product">
+                                    <button
+                                        class="title-text"
+                                        title="DETAIL"
+                                        type="submit"
+                                        formaction="@Url.Action("Detail", "Product")"
+                                        formmethod="post">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </button>                                                   
                                 </li>
-                                <li><button><i class="ti-heart"></i></button></li>
+                                <li>
+                                    <div title="ADDED">
+                                        <i class="bi bi-check-circle-fill"
+                                        id="bi-fill-visibility-@product.Id"
+                                        style="font-weight:600; font-size:20px; visibility:hidden" ></i>
+                                    </div>  
+                                </li>
                             </ul>
                         </div>
                         <div class="card-body">
+
+                            <input type="hidden" id="product__name-@product.Id" value="@product.Name" />
+
                             <h4 class="card-product__title"><a href="single-product.html">@product.Name</a></h4>
+
+                            <input type="hidden" id="product__provider-@product.Id" value="@product.Provider" />
+
                             <p>Provider : @product.Provider</p>
                             @if (product.UnitsInStock == 0)
                             {
@@ -44,9 +99,16 @@
                             }
                             else
                             {
+                               <input type="hidden" id="product__unitstock-@product.Id" value="@product.UnitsInStock" />
+
                                <p style="color:blue; font-weight:500">Quantity In Stock : @product.UnitsInStock</p>
                             }
+
+                            <input type="hidden" id="product__displayprice-@product.Id" value="@product.DisplayPrice" />
+
                             <p class="card-product__price">@product.DisplayPrice</p>
+
+                            <input type="hidden" id="product__description-@product.Id" value="@product.Description" />
                         </div>
                     </div>
                 </div>

@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FashionBrowser.Domain.ViewModels
+﻿namespace FashionBrowser.Domain.ViewModels
 {
     public class ProductItemViewModel
     {
@@ -26,9 +16,8 @@ namespace FashionBrowser.Domain.ViewModels
         public List<CategoryItemViewModel> Categories { get; set; }
         public string CategoryName { get; set; }
         public CategoryItemViewModel Category { get; set; }
-        public int QuantityInput { get; set; } = 1;
+        public int QuantityInput { get; set; }
     }
-
     public class ProductViewModel
     {
         public List<ProductItemViewModel> ListProduct { get; set; }

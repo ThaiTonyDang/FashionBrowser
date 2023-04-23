@@ -1,4 +1,14 @@
 ﻿.card-img {
     width: 255px;
-    height: 255px;
+    height: 255px; 
+}
+
+.li-product:hover .cart-bag {
+    background-color: #001489;
+    width: 1.5rem;
+    height: 1.5rem;
+    text-align: center;
+    color: white;
+    font-weight: 900;
+    font-size: 17px;
 }
