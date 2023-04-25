@@ -29,17 +29,16 @@
     <div class="container">
         <div class="cart_inner">
             <div class="table-responsive">
-                @if (Model.ListCartItem.Count > 0)
+                 @if (Model.ListCartItem.Count > 0)
                 {
                     decimal totalPrice = 0;
-                    <table class="table" style="text-align:center">
+                    <table class="table">
                         <thead>
                             <tr>
-                                <th scope="col">IMAGE</th>
-                                <th scope="col">PRODUCT NAME</th>
-                                <th scope="col">PRICE</th>
-                                <th scope="col">QUANTITY</th>
-                                <th scope="col">TOTAL PRICE</th>
+                                <th scope="col">Product</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total</th>
                                 <th>ACTION</th>
                             </tr>
                         </thead>
@@ -48,38 +47,37 @@
                             {
                                 var price = cartItem.Quantity * cartItem.ProductItemViewModel.Price;
                                 totalPrice += price;
-                                <tr>
-                                    <td>
+                               <tr>
+                                <td>
+                                    <div class="media">
                                         <div class="d-flex">
                                             <img src="~/Product/@cartItem.ProductItemViewModel.ImagePath"
                                                  style="width:200px; height:200px" alt="">
                                         </div>
-                                    </td>
-                                    <td>
                                         <div class="media-body">
-                                            <p>@cartItem.ProductItemViewModel.Name</p>
+                                             <p>@cartItem.ProductItemViewModel.Name</p>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <h5>@cartItem.ProductItemViewModel.DisplayPrice</h5>
-                                    </td>
-                                    <td>
-                                        <input asp-for="@cartItem.Quantity"
-                                               id="@($"quantity-{cartItem.ProductItemViewModel.Id}")"
-                                               class="input-text qty" min="1" style="width:50px; border-color:blue">
-                                    </td>
-                                    <td>
-                                        <h5>@price.GetPriceFormat()</h5>
-                                    </td>
-                                    <td>
-                                        <a asp-route="remove" asp-route-productid="@cartItem.ProductItemViewModel.Id"
-                                           class="btn btn-danger">DELETE</a>
-                                    </td>
-                                </tr>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h5>@cartItem.ProductItemViewModel.DisplayPrice</h5>
+                                </td>
+                                <td>
+                                    <div class="product_count">
+                                        <input id="sst" value="@cartItem.Quantity" title="Quantity:" class="input-text qty" min="1">
+                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
+                                        class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
+                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
+                                        class="reduced items-count" type="button">
+                                        <i class="lnr lnr-chevron-down"></i></button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h5>@price.GetPriceFormat()</h5>
+                                </td>
+                            </tr>
                             }
                             <tr>
-                                <td>
-                                </td>
                                 <td>
                                 </td>
                                 <td>
@@ -89,6 +87,20 @@
                                 </td>
                                 <td>
                                     <h5>@totalPrice.GetPriceFormat()</h5>
+                                </td>
+                            </tr>
+                            <tr class="out_button_area">
+                                <td class="d-none-l">
+                                </td>
+                                <td class="">
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                    <div class="checkout_btn_inner d-flex align-items-center">
+                                        <a class="gray_btn" href="#">Continue Shopping</a>
+                                        <a class="primary-btn ml-2" href="#">Proceed to checkout</a>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
