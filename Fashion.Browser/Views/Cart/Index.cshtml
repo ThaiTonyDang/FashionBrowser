@@ -13,11 +13,11 @@
     <div class="container h-100">
         <div class="blog-banner">
             <div class="text-center">
-                <h1>Shopping Cart</h1>
-                <nav aria-label="breadcrumb" class="banner-breadcrumb">
+                <h1 style="color:#001489; font-size:50px">Shopping Cart</h1>
+                <nav aria-label="breadcrumb" class="banner-breadcrumb"> 
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
+                        <li class="breadcrumb-item" style="font-size:20px"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active" style="font-size:20px" aria-current="page">Shopping Cart</li>
                     </ol>
                 </nav>
             </div>
@@ -35,7 +35,7 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th scope="col">Product</th>
+                                <th scope="col" style="padding-left:60px">Product</th>
                                 <th scope="col">Price</th>
                                 <th scope="col">Quantity</th>
                                 <th scope="col">Total</th>
@@ -55,7 +55,7 @@
                                                  style="width:200px; height:200px" alt="">
                                         </div>
                                         <div class="media-body">
-                                             <p>@cartItem.ProductItemViewModel.Name</p>
+                                             <p style="font-size:16px; font-weight:600">@cartItem.ProductItemViewModel.Name</p>
                                         </div>
                                     </div>
                                 </td>
@@ -74,6 +74,13 @@
                                 </td>
                                 <td>
                                     <h5>@price.GetPriceFormat()</h5>
+                                </td>
+                                <td>
+                                    <button
+                                    type="button" class="btn btn-outline-primary"
+                                    onclick="deleteCart('@cartItem.ProductItemViewModel.Id')">
+                                    <i class="icon-copy bi bi-trash-fill" style="cursor:pointer; font-size:25px"></i>
+                                    </button>
                                 </td>
                             </tr>
                             }
@@ -108,7 +115,18 @@
                 }
                 else
                 {
-                    <p class="alert alert-primary" style="color:blue">SHOP CART EMPTY</p>
+                    <div style="text-align:center">
+                        <img src="https://fptshop.com.vn/cart/Content/Desktop/images/empty-cart.png" alt="">
+                    </div style="text-align:center">
+                    <p style="color:#001489; font-size:20px; text-align:center ">
+                        THERE ARE NO PRODUCTS IN YOUR CART !
+                    </p>
+                    <p class="cart-footer alert alert-primary" style="text-align:center; font-size:30px">
+                        <a href="~/Home/Index" style="color:#001489; text-decoration:none; font-weight:500">BACK TO HOME</a>
+                    </p>
+                    <p class="cart-footer" style="text-align:center">
+                        When you need help, please call 1800.1060 or 0768.515.122 (7h30 - 22h)
+                    </p>
                 }
             </div>
         </div>

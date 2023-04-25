@@ -1,4 +1,5 @@
 ﻿using FashionBrowser.Domain.ViewModels;
+using FashionBrowser.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FashionBrowser.Domain.Services
 {
-	public class CartService : ICartServices
+	public class CartServices : ICartServices
 	{
 		public void AddToCart(ProductItemViewModel product, List<CartItemViewModel> carts, int quantityInput)
 		{
@@ -29,11 +30,29 @@ namespace FashionBrowser.Domain.Services
 			}
 		}
 
+		public bool DeleteCartItems(List<CartItemViewModel> carts, Guid id)
+		{
+			var cartItem = GetCartItemByProductId(carts, id);
+			if (cartItem != null)
+			{
+				carts.Remove(cartItem);
+				return true;
+			}
+
+			return false;
+		}
+
 		public CartViewModel GetCartViewModel(List<CartItemViewModel> carts)
 		{
 			var cartViewModel = new CartViewModel();
 			cartViewModel.ListCartItem = carts;
 			return cartViewModel;
+		}
+
+		public CartItemViewModel GetCartItemByProductId(List<CartItemViewModel> carts, Guid id)
+		{
+			var cartitem = carts.Find(item => item.ProductItemViewModel.Id == id);
+			return cartitem;
 		}
 	}
 }

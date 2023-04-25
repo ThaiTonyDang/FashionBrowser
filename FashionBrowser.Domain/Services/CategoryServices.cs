@@ -1,5 +1,4 @@
-﻿
-using FashionBrowser.Domain.ViewModels;
+﻿using FashionBrowser.Domain.ViewModels;
 using FashionBrowser.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChelseaWeb.Domains.Services
+namespace FashionBrowser.Domain.Services
 {
     public class CategoryServices : ICategoryServices
     {

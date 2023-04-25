@@ -1,4 +1,5 @@
-﻿using FashionBrowser.Infrastructure.Models;
+﻿using FashionBrowser.Infrastructure.DataContext;
+using FashionBrowser.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
