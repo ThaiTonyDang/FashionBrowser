@@ -1,4 +1,5 @@
-﻿using FashionBrowser.Infrastructure.Models;
+﻿using FashionBrowser.Infrastructure.DataContext;
+using FashionBrowser.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,13 +9,14 @@ using System.Threading.Tasks;
 
 namespace FashionBrowser.Infrastructure.Repositories
 {
-	public class ProductRepository : IProductRepository
+    public class ProductRepository : IProductRepository
 	{
 		private readonly AppDbContext _appDataContext;
 		public ProductRepository(AppDbContext appDataContext)
 		{
 			this._appDataContext = appDataContext;
 		}
+
 		public async Task<List<Product>> GetListAsync()
 		{
 			 return await _appDataContext.Products.ToListAsync();
@@ -26,5 +28,6 @@ namespace FashionBrowser.Infrastructure.Repositories
 														.FirstOrDefaultAsync();
 			return product;
 		}
+
 	}
 }

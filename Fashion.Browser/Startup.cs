@@ -1,7 +1,6 @@
-using ChelseaWeb.Domains.Services;
 using FashionBrowser.Domain.Services;
-using FashionBrowser.Infrastructure;
 using FashionBrowser.Infrastructure.Config;
+using FashionBrowser.Infrastructure.DataContext;
 using FashionBrowser.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Fashion.Browser
 {
-	public class Startup
+    public class Startup
 	{
 		public Startup(IConfiguration configuration)
 		{
@@ -34,7 +33,7 @@ namespace Fashion.Browser
 			services.AddScoped<IProductServices, ProductServices>();
 			services.AddScoped<ICategoryRepository, CategoryRepository>();
 			services.AddScoped<ICategoryServices, CategoryServices>();
-			services.AddScoped<ICartServices, CartService>();
+			services.AddScoped<ICartServices, CartServices>();
 			services.AddHttpContextAccessor();
 
 			services.AddDistributedMemoryCache();

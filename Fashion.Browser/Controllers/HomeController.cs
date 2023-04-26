@@ -1,5 +1,4 @@
-﻿using ChelseaWeb.Domains.Services;
-using FashionBrowser.Domain.Services;
+﻿using FashionBrowser.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;

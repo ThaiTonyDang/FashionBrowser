@@ -49,6 +49,31 @@ namespace Fashion.Browser.Controllers
             HttpContext.Session.SetObjectAsJson(CartKeyName.Cart_Key, cartItems);
 
             return Ok(cartItems);
-        }   
+        }
+
+        [HttpDelete]
+        [Route("/delete/{productId}")]
+        public IActionResult DeleteToCart(string productId)
+        {
+            var session = HttpContext.Session;
+            var carts = session.GetObjectFromJson<List<CartItemViewModel>>(CartKeyName.Cart_Key);
+
+            if (carts == null) return StatusCode(404);
+
+            var result = productId.IsGuidParseFromString();
+            if (result)
+            {
+                var isSucces = _cartServices.DeleteCartItems(carts, new Guid(productId));
+                if (isSucces)
+                {
+                    HttpContext.Session.SetObjectAsJson(CartKeyName.Cart_Key, carts);
+
+                    return Ok(carts);
+                }
+
+            }
+            
+            return BadRequest();
+        }
     }
 }

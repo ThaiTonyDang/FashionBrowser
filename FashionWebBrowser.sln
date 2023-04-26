@@ -9,14 +9,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FashionBrowser.Infrastructu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FashionBrowser.Utilities", "FashionBrowser.Utilities\FashionBrowser.Utilities.csproj", "{D673367C-D381-40FE-9871-5524DD8CEAA9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FashionBrowser.Test", "FashionBrowser.Test\FashionBrowser.Test.csproj", "{C35B8402-5273-4039-B37F-6BDD291E545F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fashion.Browser", "Fashion.Browser\Fashion.Browser.csproj", "{1276D4E0-F25A-4910-B377-61F2EADC2012}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipeline", "Pipeline", "{144684BD-DEB1-42A5-9016-278777E1BDDB}"
 	ProjectSection(SolutionItems) = preProject
 		bitbucket-pipelines.yml = bitbucket-pipelines.yml
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FashionBrowser.Test", "FashionBrowser.Test\FashionBrowser.Test.csproj", "{F5900CBB-A641-40FD-AF39-F1D8F735CE5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,14 +36,14 @@ Global
 		{D673367C-D381-40FE-9871-5524DD8CEAA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D673367C-D381-40FE-9871-5524DD8CEAA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D673367C-D381-40FE-9871-5524DD8CEAA9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C35B8402-5273-4039-B37F-6BDD291E545F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C35B8402-5273-4039-B37F-6BDD291E545F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C35B8402-5273-4039-B37F-6BDD291E545F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C35B8402-5273-4039-B37F-6BDD291E545F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1276D4E0-F25A-4910-B377-61F2EADC2012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1276D4E0-F25A-4910-B377-61F2EADC2012}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1276D4E0-F25A-4910-B377-61F2EADC2012}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1276D4E0-F25A-4910-B377-61F2EADC2012}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5900CBB-A641-40FD-AF39-F1D8F735CE5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5900CBB-A641-40FD-AF39-F1D8F735CE5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5900CBB-A641-40FD-AF39-F1D8F735CE5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5900CBB-A641-40FD-AF39-F1D8F735CE5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
