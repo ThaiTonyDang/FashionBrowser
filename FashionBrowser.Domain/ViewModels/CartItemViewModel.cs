@@ -9,7 +9,7 @@ namespace FashionBrowser.Domain.ViewModels
 	public class CartItemViewModel
 	{
 		public int Quantity { set; get; }
-		public ProductItemViewModel ProductItemViewModel { set; get; }
+		public ProductItemViewModel Product { set; get; }
 	}
 
 	public class CartViewModel

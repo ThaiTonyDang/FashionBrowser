@@ -21,4 +21,10 @@ namespace FashionBrowser.Utilities
 		public const string MODAL_CONFIRM_SUCCESS = "SUCCESS MODAL CONFIRM";
 		public const string MODAL_CONFIRM_FAIL = "FAIL MODAL CONFIRM";
 	}
+
+	public struct OPERATOR
+	{
+		public const string SUBTRACT = "SUB";
+		public const string ADDITION = "ADD";
+	}
 }
