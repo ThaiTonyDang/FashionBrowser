@@ -39,46 +39,55 @@
                                 <th scope="col">Price</th>
                                 <th scope="col">Quantity</th>
                                 <th scope="col">Total</th>
-                                <th>ACTION</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var cartItem in Model.ListCartItem)
                             {
-                                var price = cartItem.Quantity * cartItem.ProductItemViewModel.Price;
+                                var price = cartItem.Quantity * cartItem.Product.Price;
                                 totalPrice += price;
                                <tr>
                                 <td>
                                     <div class="media">
                                         <div class="d-flex">
-                                            <img src="~/Product/@cartItem.ProductItemViewModel.ImagePath"
+                                            <img src="~/Product/@cartItem.Product.ImagePath"
                                                  style="width:200px; height:200px" alt="">
                                         </div>
                                         <div class="media-body">
-                                             <p style="font-size:16px; font-weight:600">@cartItem.ProductItemViewModel.Name</p>
+                                             <p style="font-size:16px; font-weight:600">@cartItem.Product.Name</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <h5>@cartItem.ProductItemViewModel.DisplayPrice</h5>
+                                    <h5>@cartItem.Product.DisplayPrice</h5>
                                 </td>
                                 <td>
                                     <div class="product_count">
-                                        <input id="sst" value="@cartItem.Quantity" title="Quantity:" class="input-text qty" min="1">
-                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-                                        class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-                                        class="reduced items-count" type="button">
-                                        <i class="lnr lnr-chevron-down"></i></button>
+                                         <input type="hidden" id="cartitem-price-@cartItem.Product.Id"
+                                                value="@cartItem.Product.Price" />
+                                        <input id="sst-@cartItem.Product.Id" value="@cartItem.Quantity"
+                                        title="Quantity:" class="input-text qty" min="1">
+
+                                        <button class="increase items-count" type="button"
+                                        data-value="@cartItem.Product.Id"
+                                                value="@OPERATOR.ADDITION">
+                                        <i class="lnr lnr-chevron-up"></i>
+                                        </button>
+
+                                        <button class="reduced items-count" type="button" data-value="@cartItem.Product.Id"
+                                                value="@OPERATOR.SUBTRACT">
+                                        <i class="lnr lnr-chevron-down"></i>
+                                        </button>
                                     </div>
                                 </td>
                                 <td>
-                                    <h5>@price.GetPriceFormat()</h5>
+                                        <h5 id="item-price-@cartItem.Product.Id">@price.GetPriceFormat()</h5>
                                 </td>
                                 <td>
                                     <button
                                     type="button" class="btn btn-outline-primary"
-                                    onclick="deleteCart('@cartItem.ProductItemViewModel.Id')">
+                                    onclick="deleteCart('@cartItem.Product.Id')">
                                     <i class="icon-copy bi bi-trash-fill" style="cursor:pointer; font-size:25px"></i>
                                     </button>
                                 </td>
@@ -93,7 +102,7 @@
                                     <h5>Subtotal</h5>
                                 </td>
                                 <td>
-                                    <h5>@totalPrice.GetPriceFormat()</h5>
+                                    <h5 id="total-price">@totalPrice.GetPriceFormat()</h5>
                                 </td>
                             </tr>
                             <tr class="out_button_area">

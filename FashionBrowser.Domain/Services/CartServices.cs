@@ -1,10 +1,5 @@
 ﻿using FashionBrowser.Domain.ViewModels;
-using FashionBrowser.Infrastructure.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using FashionBrowser.Utilities;
 
 namespace FashionBrowser.Domain.Services
 {
@@ -12,7 +7,7 @@ namespace FashionBrowser.Domain.Services
 	{
 		public void AddToCart(ProductItemViewModel product, List<CartItemViewModel> carts, int quantityInput)
 		{
-			var cartitem = carts.Find(item => item.ProductItemViewModel.Id == product.Id);
+			var cartitem = carts.Find(item => item.Product.Id == product.Id);
 			if (cartitem != null)
 			{
 				if (quantityInput == 0)
@@ -26,7 +21,7 @@ namespace FashionBrowser.Domain.Services
 			}
 			else
 			{
-				carts.Add(new CartItemViewModel() { Quantity = 1, ProductItemViewModel = product });
+				carts.Add(new CartItemViewModel() { Quantity = 1, Product = product });
 			}
 		}
 
@@ -42,16 +37,27 @@ namespace FashionBrowser.Domain.Services
 			return false;
 		}
 
-		public CartViewModel GetCartViewModel(List<CartItemViewModel> carts)
+		public void AdjustQuantity(CartItemViewModel cartItem, string operate)
 		{
-			var cartViewModel = new CartViewModel();
-			cartViewModel.ListCartItem = carts;
-			return cartViewModel;
+			switch(operate)
+			{
+				case OPERATOR.ADDITION:
+					cartItem.Quantity++;
+					break;
+				default:
+					cartItem.Quantity--;
+					if (cartItem.Quantity < 1)
+					{
+						cartItem.Quantity = 1;
+
+					}
+					break;
+			}
 		}
 
 		public CartItemViewModel GetCartItemByProductId(List<CartItemViewModel> carts, Guid id)
 		{
-			var cartitem = carts.Find(item => item.ProductItemViewModel.Id == id);
+			var cartitem = carts.Find(item => item.Product.Id == id);
 			return cartitem;
 		}
 	}

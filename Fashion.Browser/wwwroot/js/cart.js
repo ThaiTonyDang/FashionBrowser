@@ -1,6 +1,7 @@
-﻿$(document).on("click", "#closemodal", function () {
-    $('#confirm-modal').hide();
-})
+﻿const OPERATOR = {
+    SUBTRACT: "SUB",
+    ADDITION: "ADD"
+}
 
 function addToCart(id, e) {
     e.preventDefault();
@@ -84,6 +85,56 @@ function deleteCart(id) {
     })
 }
 
+$(".items-count").on("click", function () {
+    let id = $(this).data('value');
+    let productPrice = $('#cartitem-price-' + id).val();
+    let quantity = $('#sst-' + id).val();
+    let operator = $(this).val();
+    getQuantityAdjustment(operator, id);
+    $.ajax({
+        url: '/adjustquantity/' + id + '/' + operator,
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        success: function (response) {
+            saveCartDataToLocalStorage(response);       
+            let price = quantity * productPrice;
+            let format = getPriceFormat(price);
+            $('#item-price-' + id).html(format);
+            let data = getDataCartFromStorage();
+            var totalPrice = data.reduce(function (accumulator, current) {
+                return accumulator + current.product.price * current.quantity;
+            }, 0);
+
+            $('#total-price').html(getPriceFormat(totalPrice));
+        },
+        error: function (response, status, error) {
+            if (response.status === 404) {
+                Swal.fire({
+                    icon: 'error',
+                    title: error,
+                    text: 'CART NOT FOUND',
+                    footer: '<a href="/shoppingcart/">VISIT CART</a>'
+                })
+            }
+            if (response.status === 401) {
+                var name = response.productItemViewModel.name;
+                Swal.fire({
+                    icon: 'error',
+                    title: error,
+                    text: 'ID OF PRODUCTs' + name + 'WRONG',
+                    footer: '<a href="/shoppingcart/">VISIT CART</a>'
+                })
+            }
+            Swal.fire({
+                icon: 'error',
+                title: error,
+                text: 'SERVER ERROR',
+                footer: '<a href="/shoppingcart/">VISIT CART</a>'
+            })
+        }
+    });
+});
+
 function checkMark(id) {
     document.getElementById("bi-fill-visibility-" + id).style.visibility = "visible";
     document.getElementById("bi-fill-visibility-" + id).style.opacity = "1";
@@ -103,4 +154,44 @@ function getDataCartFromStorage() {
     let dataLocal = localStorage.getItem("localProductData");
     if (dataLocal) return JSON.parse(dataLocal);
     return dataLocal;
+}
+
+function getPriceFormat(price) {
+    return new Intl.NumberFormat(
+        'en-GB',
+        {
+            style: 'currency',
+            currency: 'GBP' 
+        }
+    ).format(price);
+}
+
+function getQuantityAdjustment(operator, productId) {
+    var result = $('#sst-' + productId);
+    var sst = result.val();
+    switch (operator) {
+        case OPERATOR.ADDITION:
+            if (!isNaN(sst)) {
+                sst++;
+                result.val(sst);
+            } 
+            break;
+        default:
+            if (!isNaN(sst)) {
+                sst--;
+                result.val(sst);
+            }
+            if (sst < 1) {
+                result.val(1);
+                deleteCart(productId);
+            }
+            break;
+    }
+}
+
+
+function getTotalPrice(data) {
+    var totalPrice = data.reduce(function (accumulator, current) {
+        return accumulator + current.product.price;
+    }, 0);
 }

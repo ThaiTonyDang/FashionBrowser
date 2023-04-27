@@ -12,7 +12,7 @@ namespace FashionBrowser.Utilities
         public static string GetPriceFormat(this decimal price)
         {
             CultureInfo cultureInfo = CultureInfo.GetCultureInfo("en-GB");
-            return string.Format(cultureInfo, "{0:C0}", price);
+            return string.Format(cultureInfo, "{0:C2}", price);
         }
 
         public static bool IsGuidParseFromString(this string str)
