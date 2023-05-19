@@ -27,4 +27,9 @@ namespace FashionBrowser.Utilities
 		public const string SUBTRACT = "SUB";
 		public const string ADDITION = "ADD";
 	}
+
+    public struct HTTP
+    {
+        public const string SLUG = "resource/";
+    }
 }

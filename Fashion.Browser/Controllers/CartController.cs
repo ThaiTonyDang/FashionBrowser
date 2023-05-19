@@ -36,9 +36,9 @@ namespace Fashion.Browser.Controllers
         public async Task<IActionResult> AddToCart(string productId, int quantityInput = 0)
         {
             var session = HttpContext.Session;
-            var product = await _productServices.GetProductByIdAsync(new Guid(productId));
-
-            if (product.UnitsInStock == 0)
+            var tuple = await _productServices.GetProductByIdAsync(productId);
+            var product = tuple.Item1;
+            if (product.QuantityInStock == 0)
             {
                 return BadRequest("OUT OF STOCK");
             }

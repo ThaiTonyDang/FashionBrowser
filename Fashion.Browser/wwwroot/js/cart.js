@@ -1,7 +1,7 @@
-﻿const OPERATOR = {
+﻿const OPERATORS = {
     SUBTRACT: "SUB",
     ADDITION: "ADD"
-}
+};
 
 function addToCart(id, e) {
     e.preventDefault();
@@ -88,9 +88,8 @@ function deleteCart(id) {
 $(".items-count").on("click", function () {
     let id = $(this).data('value');
     let productPrice = $('#cartitem-price-' + id).val();
-    let quantity = $('#sst-' + id).val();
     let operator = $(this).val();
-    getQuantityAdjustment(operator, id);
+    let quantity = getQuantityAdjustment(operator, id);
     $.ajax({
         url: '/adjustquantity/' + id + '/' + operator,
         type: 'POST',
@@ -158,10 +157,10 @@ function getDataCartFromStorage() {
 
 function getPriceFormat(price) {
     return new Intl.NumberFormat(
-        'en-GB',
+        'en-US',
         {
             style: 'currency',
-            currency: 'GBP' 
+            currency: 'USD' 
         }
     ).format(price);
 }
@@ -170,12 +169,12 @@ function getQuantityAdjustment(operator, productId) {
     var result = $('#sst-' + productId);
     var sst = result.val();
     switch (operator) {
-        case OPERATOR.ADDITION:
+        case OPERATORS.ADDITION:
             if (!isNaN(sst)) {
                 sst++;
                 result.val(sst);
             } 
-            break;
+            return sst;
         default:
             if (!isNaN(sst)) {
                 sst--;
@@ -185,7 +184,7 @@ function getQuantityAdjustment(operator, productId) {
                 result.val(1);
                 deleteCart(productId);
             }
-            break;
+            return sst;
     }
 }
 

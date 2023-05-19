@@ -25,11 +25,18 @@
     </div>
 </section>
 
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="/" class="link" style="color:#001489; font-weight:600">Home
+            </a>
+    </li>
+    <li class="breadcrumb-item">Shopping Cart</li>
+</ol>
 <section class="cart_area">
     <div class="container">
         <div class="cart_inner">
             <div class="table-responsive">
-                 @if (Model.ListCartItem.Count > 0)
+                @if (Model.ListCartItem.Count > 0)
                 {
                     decimal totalPrice = 0;
                     <table class="table">
@@ -51,7 +58,7 @@
                                 <td>
                                     <div class="media">
                                         <div class="d-flex">
-                                            <img src="~/Product/@cartItem.Product.ImagePath"
+                                            <img src="@cartItem.Product.ImageUrl"
                                                  style="width:200px; height:200px" alt="">
                                         </div>
                                         <div class="media-body">
@@ -82,7 +89,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                        <h5 id="item-price-@cartItem.Product.Id">@price.GetPriceFormat()</h5>
+                                    <h5 id="item-price-@cartItem.Product.Id">@price.GetPriceFormat()</h5>
                                 </td>
                                 <td>
                                     <button
@@ -114,8 +121,8 @@
                                 </td>
                                 <td>
                                     <div class="checkout_btn_inner d-flex align-items-center">
-                                        <a class="gray_btn" href="#">Continue Shopping</a>
-                                        <a class="primary-btn ml-2" href="#">Proceed to checkout</a>
+                                        <a class="gray_btn" href="/">Continue Shopping</a>
+                                        <a class="primary-btn ml-2" href="~/Checkout/Index">Proceed To Checkout</a>
                                     </div>
                                 </td>
                             </tr>
