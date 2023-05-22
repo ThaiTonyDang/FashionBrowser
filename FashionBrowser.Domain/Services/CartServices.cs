@@ -1,10 +1,15 @@
 ﻿using FashionBrowser.Domain.ViewModels;
 using FashionBrowser.Utilities;
+using System.Net.Http;
 
 namespace FashionBrowser.Domain.Services
 {
 	public class CartServices : ICartServices
 	{
+        public CartServices()
+		{
+
+		}
 		public void AddToCart(ProductItemViewModel product, List<CartItemViewModel> carts, int quantityInput)
 		{
 			var cartitem = carts.Find(item => item.Product.Id == product.Id);
@@ -59,6 +64,6 @@ namespace FashionBrowser.Domain.Services
 		{
 			var cartitem = carts.Find(item => item.Product.Id == id);
 			return cartitem;
-		}
-	}
+        }
+    }
 }

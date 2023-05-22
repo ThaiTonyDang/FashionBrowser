@@ -1,24 +1,41 @@
-﻿@using FashionBrowser.Utilities;
-
+﻿@using FashionBrowser.Domain.ViewModels;
+@using FashionBrowser.Utilities;
+@model CheckoutItemViewModel;
 @{
     ViewData["Title"] = "Checkout";
     Layout = "_Layout";
 }
 
 <partial name="_Alert" />
-<section class="checkout_area section-margin--small">
-    <div class="container">
-        <div class="returning_customer">
-            <div class="check_title">
-                <h2>Returning Customer? <a href="#">Click here to login</a></h2>
-            </div>
-            <p>
-                If you have shopped with us before, please enter your details in the boxes below. If you are a new
-                customer, please proceed to the Billing &amp; Shipping section.
-            </p>
-            
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="~/Home/Index" class="link" style="color:#001489; font-weight:600">
+            Home
+        </a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="~/shoppingcart/" style="color:#001489; font-weight:600">
+            Shopping Cart
+        </a>
+    </li>
+    <li class="breadcrumb-item">Checkout</li>
+</ol>
+<form asp-action="Confirmation" asp-controller="Checkout" method="post" enctype="multipart/form-data">
+
+    <section class="checkout_area section-margin--small">
+        <div class="container">
+            <div class="returning_customer">
+                <div class="check_title">
+                    <h2>Returning Customer? <a href="#">Click here to login</a></h2>
+                </div>
+                <p>
+                    If you have shopped with us before, please enter your details in the boxes below. If you are a new
+                    customer, please proceed to the Billing &amp; Shipping section.
+                </p>
+
                 <div class="col-md-6 form-group p_star">
-                    <input type="text" class="form-control" placeholder="Username or Email*" onfocus="this.placeholder=''" onblur="this.placeholder = 'Username or Email*'" id="name" name="name">
+                    <input type="text" class="form-control" placeholder="Username or Email*"
+                           onfocus="this.placeholder=''" onblur="this.placeholder = 'Username or Email*'" id="name" name="name">
                     <!-- <span class="placeholder" data-placeholder="Username or Email"></span> -->
                 </div>
                 <div class="col-md-6 form-group p_star">
@@ -33,125 +50,162 @@
                     </div>
                     <a class="lost_pass" href="#">Lost your password?</a>
                 </div>
-           
-        </div>
-        <div class="cupon_area">
-            <div class="check_title">
-                <h2>Have a coupon? <a href="#">Click here to enter your code</a></h2>
+
             </div>
-            <input type="text" placeholder="Enter coupon code">
-            <a class="button button-coupon" href="#">Apply Coupon</a>
-        </div>
-        <div class="billing_details">
-            <div class="row">
-                <div class="col-lg-8">
-                    <h3>Your Information</h3>
-                    <form class="row contact_form" action="#" method="post" novalidate="novalidate">
-                        <div class="col-md-6 form-group p_star">
-                            <input type="text" class="form-control" id="first" name="name" placeholder="First Name">
-                            <span class="placeholder" data-placeholder="First name"></span>
-                        </div>
-                        <div class="col-md-6 form-group p_star">
-                            <input type="text" class="form-control" id="last" name="name" placeholder="Last Name">
-                            <span class="placeholder" data-placeholder="Last name"></span>
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" id="company" name="company" placeholder="Company Name">
-                        </div>
-                        <div class="col-md-6 form-group p_star">
-                            <input type="text" class="form-control" id="number" name="number" placeholder="Phone Number">
-                            <span class="placeholder" data-placeholder="Phone number"></span>
-                        </div>
-                        <div class="col-md-6 form-group p_star">
-                            <input type="text" class="form-control" id="email" name="compemailany" placeholder="Email Address">
-                            <span class="placeholder" data-placeholder="Email Address"></span>
-                        </div>
-                        <div class="col-md-4 form-group p_star">
-                            <select class="province_select">
-                                <option>Province / City</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 form-group p_star">
-                            <select class="province_select">
-                                <option>County / District</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 form-group p_star">
-                            <select class="province_select">
-                                <option>Ward / Commune</option>
-                            </select>
-                        </div>
-                                              
-                        <div class="col-md-12 form-group p_star">
-                            <input type="text" class="form-control" id="add1" name="add1" placeholder="Address Line 01">
-                            <span class="placeholder" data-placeholder="Address line 01"></span>
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <input type="text" class="form-control" id="zip" name="zip" placeholder="Postcode/ZIP">
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <div class="creat_account">
-                                <input type="checkbox" id="f-option2" name="selector">
-                                <label for="f-option2">Create an account?</label>
+            @if (Model.CartViewModel.ListCartItem != null && Model.CartViewModel.ListCartItem.Count > 0)
+            {
+                <div class="billing_details">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h3>Your Information</h3>
+                            
+                            <div class="col-md-12 form-group p_star">
+                                <input asp-for=CustomerItemViewModel.Name class="form-control" placeholder="Your Name">
+                                <span asp-validation-for=@Model.CustomerItemViewModel.Name class="text-danger"></span>
                             </div>
-                        </div>
-                        <div class="col-md-12 form-group mb-0">
-                            <div class="creat_account">
-                                <h3>Shipping Details</h3>
-                                <input type="checkbox" id="f-option3" name="selector">
-                                <label for="f-option3">Ship to a different address?</label>
+                            <div class="col-md-12 form-group p_star">
+                                <input asp-for= "CustomerItemViewModel.Phone" type="tel" class="form-control" 
+                                placeholder="Phone Number">
+                                <span asp-validation-for="@Model.CustomerItemViewModel.Phone" class="text-danger"></span>
                             </div>
-                            <textarea class="form-control" name="message" id="message" rows="1" placeholder="Order Notes"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-lg-4">
-                    <div class="order_box">
-                        <h2>Your Order</h2>
-                        <ul class="list">
-                            <li><a href="#"><h4>Product <span>Total</span></h4></a></li>
-                            <li><a href="#">Fresh Blackberry <span class="middle">x 02</span> <span class="last">$720.00</span></a></li>
-                            <li><a href="#">Fresh Tomatoes <span class="middle">x 02</span> <span class="last">$720.00</span></a></li>
-                            <li><a href="#">Fresh Brocoli <span class="middle">x 02</span> <span class="last">$720.00</span></a></li>
-                        </ul>
-                        <ul class="list list_2">
-                            <li><a href="#">Subtotal <span>$2160.00</span></a></li>
-                            <li><a href="#">Shipping <span>Flat rate: $50.00</span></a></li>
-                            <li><a href="#">Total <span>$2210.00</span></a></li>
-                        </ul>
-                        <div class="payment_item">
-                            <div class="radion_btn">
-                                <input type="radio" id="f-option5" name="selector">
-                                <label for="f-option5">Cash on Delivery</label>
-                                <div class="check"></div>
+                            <div class="col-md-12 form-group p_star">
+                                <input asp-for=CustomerItemViewModel.Email class="form-control" type="email" placeholder="Email Address">
+                                <span asp-validation-for="@Model.CustomerItemViewModel.Email" class="text-danger"></span>
                             </div>
-                            <p>
-                                COD is a type of transaction in which payment for a good is made at the time of delivery
-                            </p>
-                        </div>
-                        <div class="payment_item active">
-                            <div class="radion_btn">
-                                <input type="radio" id="f-option6" name="selector">
-                                <label for="f-option6">Paypal</label>
-                                <img src="~/img/card.jpg" alt="">
-                                <div class="check"></div>
+                            <div class="col-md-12 form-group p_star">
+                                <select asp-for=CustomerItemViewModel.City class="form-select form-select-sm province_select" id="city">
+                                    <option value="@Model.CustomerItemViewModel.City">Province / City</option>
+                                </select>
                             </div>
-                            <p>
-                                Pay via PayPal; you can pay with your credit card if you don’t have a PayPal
-                                account.
-                            </p>
+                            <div class="col-md-12 form-group p_star">
+                                <select asp-for=CustomerItemViewModel.County class="province_select" id="district">
+                                    <option value="@Model.CustomerItemViewModel.County">County / District</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <select asp-for=CustomerItemViewModel.Ward class="province_select" id="ward">
+                                    <option value="@Model.CustomerItemViewModel.Ward">Ward / Commune</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-12 form-group p_star">
+                                <label class="control-label">Number Department</label>
+                                <input asp-for=@Model.CustomerItemViewModel.NumberDepartment type="text"
+                                class="form-control" placeholder="Number Department">
+                                <span asp-validation-for="@Model.CustomerItemViewModel.NumberDepartment" class="text-danger"></span>
+                          
+                            </div>
+                            <div class="cupon_area col-md-12 form-group"> 
+                                <div class="check_title">
+                                    <h2>Have a coupon? <a href="#">Click here to enter your code</a></h2>
+                                </div>
+                                <input type="text" placeholder="Enter coupon code">
+                                <a class="button button-coupon" href="#">Apply Coupon</a>
+                            </div>
+                            <div class="col-md-12 form-group mb-0">
+                                <div class="creat_account">
+                                    <h3>Shipping Details</h3>
+                                    <input type="checkbox" id="f-option3" name="selector">
+                                    <label for="f-option3">Ship to a different address?</label>
+                                </div>
+                                <textarea class="form-control" name="message" id="message" rows="1" placeholder="Order Notes"></textarea>
+                            </div>
+                           
                         </div>
-                        <div class="creat_account">
-                            <input type="checkbox" id="f-option4" name="selector">
-                            <label for="f-option4">I’ve read and accept the </label>
-                            <a href="#">terms &amp; conditions*</a>
-                        </div>
-                        <div class="text-center">
-                            <a class="button button-paypal" href="#">Proceed to Checkout</a>
+                        <div class="col-lg-6">
+                            <div class="order_box">
+                                <h2>Your Order</h2>
+                                <ul class="list">
+                                    <li><a href="#"><h4>Product <span> Total</span></h4></a></li>
+                                    @{
+                                        decimal subTotalPrice = 0;
+                                        decimal shipping = 5;
+                                    }
+   
+                                    @foreach (var cartItem in Model.CartViewModel.ListCartItem)
+                                    {
+                                        var price = cartItem.Quantity * cartItem.Product.Price;
+                                        subTotalPrice += price;
+                                        <li>
+                                            <a href="#">
+                                                @cartItem.Product.Name
+                                                <span class="middle" style="width:100px">
+                                                 @cartItem.Product.Price.GetPriceFormat() X @cartItem.Quantity</span>
+                                                <span class="last">@price.GetPriceFormat()</span>
+                                            </a>
+                                        </li>
+                                    }
+
+                                    @{
+                                        decimal total = subTotalPrice + shipping;
+                                    }
+                                </ul>
+                                <ul class="list list_2">
+                                    <li><a href="#">Subtotal <span>@subTotalPrice.GetPriceFormat()</span></a></li>
+                                    <li><a href="#">Shipping <span>Flat rate: @shipping.GetPriceFormat()</span></a></li>
+                                    <li><a href="#">Total <span>@total.GetPriceFormat()</span></a></li>
+                                </ul>
+                                <div class="payment_item">
+                                    <div class="radion_btn">
+                                        <input type="radio" id="f-option5" name="selector">
+                                        <label for="f-option5">Cash on Delivery</label>
+                                        <div class="check"></div>
+                                    </div>
+                                    <p>
+                                        COD is a type of transaction in which payment for a good is made at the time of delivery
+                                    </p>
+                                </div>
+                                <div class="payment_item active">
+                                    <div class="radion_btn">
+                                        <input type="radio" id="f-option6" name="selector">
+                                        <label for="f-option6">Paypal</label>
+                                        <img src="~/img/card.jpg" alt="">
+                                        <div class="check"></div>
+                                    </div>
+                                    <p>
+                                        Pay via PayPal; you can pay with your credit card if you don’t have a PayPal
+                                        account.
+                                    </p>
+                                </div>
+                                <div class="creat_account">
+                                    <input type="checkbox" id="f-option4" name="selector">
+                                    <label for="f-option4">I’ve read and accept the </label>
+                                    <a href="#">terms &amp; conditions*</a>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="button button-paypal" href="~/Checkout/Confirmation">Proceed to Checkout</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
+
+            @if (Model.CartViewModel.ListCartItem != null && Model.CartViewModel.ListCartItem.Count == 0)
+            {
+                <div class="billing_details">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <h3>Your Information</h3>
+                        </div>
+                    </div>
+                    <p style="color:#001489; font-size:20px; text-align:center ">
+                        THERE ARE NO PRODUCTS TO PAY FOR !
+                    </p>
+                    <p class="cart-footer alert alert-primary" style="text-align:center; font-size:30px">
+                        <a href="~/Home/Index" style="color:#001489; text-decoration:none; font-weight:500">BACK TO HOME</a>
+                    </p>
+                    <p class="cart-footer" style="text-align:center">
+                        When you need help, please call 1800.1060 or 0768.515.122 (7h30 - 22h)
+                    </p>
+                </div>
+            }
+
         </div>
-    </div>
-</section>
+    </section>
+</form>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

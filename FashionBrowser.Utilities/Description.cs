@@ -32,4 +32,8 @@ namespace FashionBrowser.Utilities
     {
         public const string SLUG = "resource/";
     }
+    public struct ADDDATE
+    {
+        public const double EXPIREDATE = 1.5;
+    }
 }
