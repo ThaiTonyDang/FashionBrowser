@@ -15,9 +15,7 @@ namespace FashionBrowser.Domain.ViewModels
         public Guid CategoryId { get; set; }
         public string ImageUrl { get; set; }
         public string ImageName { get; set; }
-        public List<CategoryItemViewModel> Categories { get; set; }
         public string CategoryName { get; set; }
-        public CategoryItemViewModel Category { get; set; }
         public int QuantityInput { get; set; }
     }
     public class ProductViewModel

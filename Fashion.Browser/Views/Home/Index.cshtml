@@ -1,5 +1,7 @@
 ﻿@using FashionBrowser.Domain.ViewModels;
 @using FashionBrowser.Utilities;
+@model ProductViewModel
+
 @{
     ViewData["Title"] = "Home Page";
     Layout = "_Layout";
@@ -10,7 +12,6 @@
 @await Html.PartialAsync("_Banner")
 <link href="@Url.Content("~/css/home.css")" rel="stylesheet" />
 
-@model ProductViewModel
 
 <form asp-action= method="post"> 
 <section class="section-margin calc-60px">
