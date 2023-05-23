@@ -22,13 +22,13 @@ namespace FashionBrowser.Domain.ViewModels
         [Required(ErrorMessage = "NUMBER DEPARTMENT IS REQUIRED")]
         public string NumberDepartment { get; set; }
         public bool RegistrationStatus { get; set; }
-        public string Address { get; set; }
+        public string Address { get => GetAddress(); }
 
         public string GetAddress()
         {
             if (string.IsNullOrEmpty(this.County) || string.IsNullOrEmpty(this.Ward) || string.IsNullOrEmpty(this.City))
             {
-                return this.NumberDepartment + " " +  "Đà NẴNG";
+                return this.NumberDepartment + "-" +  City;
             }
 
             return NumberDepartment + " " + Ward + " " + County + " " + City;

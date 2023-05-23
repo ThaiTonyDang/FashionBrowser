@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace FashionBrowser.Domain.Services
 {
-    public interface IOrderService
+    public interface ICustomerService
     {
-        public Task<bool> CreateOrder(OrderItemViewModel orderItemViewModel);
+        public Task<bool> CreateCustomerInfor(CustomerItemViewModel customerItemViewModel);
     }
 }

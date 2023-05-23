@@ -15,9 +15,5 @@ namespace FashionBrowser.Domain.ViewModels
         public int Quantity { get; set; }
         public double Discount { get; set; }
         public ICollection<CartItemViewModel> CartItemViewModels{ get; set; }
-        public OrderDetailItemViewModel()
-        {
-            this.OrderItemViewModel = new OrderItemViewModel();
-        }
     }
 }

@@ -14,5 +14,10 @@ namespace FashionBrowser.Domain.ViewModels
         public string ShipAddress{ get; set; }
         public string Status { get; set; }
         public Guid CustomerId { get; set; }
+
+        public OrderItemViewModel()
+        {
+            this.Id = Guid.NewGuid();
+        }
     }
 }

@@ -4,26 +4,22 @@ using FashionBrowser.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.WebSockets;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Fashion.Browser.Controllers
 {
     public class CheckoutController : Controller
     {
-        private readonly IOrderService _orderService;
-        public CheckoutController(IOrderService orderService)
+        private readonly ICheckoutService _checkoutService;
+        public CheckoutController(ICheckoutService checkoutService)
         {
-            _orderService = orderService;
+            _checkoutService = checkoutService;
         }
         public IActionResult Index()
         {
             var checkout = new CheckoutItemViewModel();
-            checkout.CustomerItemViewModel = new CustomerItemViewModel();
-            checkout.CartViewModel = new CartViewModel();
-            var session = HttpContext.Session;
-            var cartItems = session.GetObjectFromJson<List<CartItemViewModel>>(CartKeyName.Cart_Key);         
+            var cartItems = GetCartList();
             checkout.CartViewModel.ListCartItem = cartItems;
 
             if (cartItems == null) cartItems = new List<CartItemViewModel>();
@@ -35,19 +31,22 @@ namespace Fashion.Browser.Controllers
             var message = "";
             if (ModelState.IsValid)
             {
-                var cart = checkout.CartViewModel;
                 var customer = checkout.CustomerItemViewModel;
-                var orderDetail = BuidOrderDetail(cart.ListCartItem);
-                var order = BuidOrder(checkout.CustomerItemViewModel, orderDetail);
+                customer.Id = Guid.NewGuid();
+                var cartItems = GetCartList();
+                
 
-                var result = await _orderService.CreateOrder(order);
-                var isSuccess = result.Item1;
-                message = result.Item2;
+                checkout.CartViewModel.ListCartItem = cartItems;
+                checkout.CustomerItemViewModel = customer;
+                checkout.OrderItem = BuidOrder(customer);
+
+                var isSuccess = await _checkoutService.CreateCheckout(checkout);
+
                 TempData[Mode.MODE] = Mode.USING_MODAL_CONFIRM;
                 if (isSuccess)
                 {
-                    TempData[Mode.MODAL_CONFIRM_SUCCESS] = message;
-                    return View();
+                    TempData[Mode.MODAL_CONFIRM_SUCCESS] = "Order Success !";
+                    return View(checkout);
                 }
             }
           
@@ -55,24 +54,23 @@ namespace Fashion.Browser.Controllers
             return RedirectToAction("Index", "Checkout");
         }
 
-        private OrderDetailItemViewModel BuidOrderDetail(List<CartItemViewModel> cartItemViewModels)
+        private List<CartItemViewModel> GetCartList()
         {
-            var orderDetail = new OrderDetailItemViewModel();
-          
-            orderDetail.CartItemViewModels = cartItemViewModels.Select(c => c).ToList() ;
-
-            return orderDetail;
+            var session = HttpContext.Session;
+            var cartItems = session.GetObjectFromJson<List<CartItemViewModel>>(CartKeyName.Cart_Key);
+            return cartItems;
         }
 
-        private OrderItemViewModel BuidOrder(CustomerItemViewModel customer, OrderDetailItemViewModel orderDetail)
+        private OrderItemViewModel BuidOrder(CustomerItemViewModel customer)
         {
-            var order = orderDetail.OrderItemViewModel;
-            order.OrderDate = DateTime.Now;
-            order.RequiredDate = DateTime.Now.AddDays(ADDDATE.EXPIREDATE);
-            order.CustomerId = customer.Id;
-            order.ShipAddress = customer.Address;
+			var order = new OrderItemViewModel();
+			order.Id = Guid.NewGuid();
+			order.OrderDate = DateTime.Now;
+			order.RequiredDate = DateTime.Now.AddDays(ADDDATE.EXPIREDATE);
+			order.CustomerId = customer.Id;
+			order.ShipAddress = customer.Address;
 
-            return order;
-        }
+			return order;
+		}
     }
 }

@@ -38,7 +38,6 @@
             <div class="table-responsive">
                 @if (Model.ListCartItem.Count > 0)
                 {
-                    decimal totalPrice = 0;
                     <table class="table">
                         <thead>
                             <tr>
@@ -51,9 +50,7 @@
                         </thead>
                         <tbody>
                             @foreach (var cartItem in Model.ListCartItem)
-                            {
-                                var price = cartItem.Quantity * cartItem.Product.Price;
-                                totalPrice += price;
+                            {                                
                                <tr>
                                 <td>
                                     <div class="media">
@@ -89,7 +86,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <h5 id="item-price-@cartItem.Product.Id">@price.GetPriceFormat()</h5>
+                                    <h5 id="item-price-@cartItem.Product.Id">@cartItem.Price.GetPriceFormat()</h5>
                                 </td>
                                 <td>
                                     <button
@@ -109,7 +106,7 @@
                                     <h5>Subtotal</h5>
                                 </td>
                                 <td>
-                                    <h5 id="total-price">@totalPrice.GetPriceFormat()</h5>
+                                    <h5 id="total-price">@Model.Total.GetPriceFormat()</h5>
                                 </td>
                             </tr>
                             <tr class="out_button_area">

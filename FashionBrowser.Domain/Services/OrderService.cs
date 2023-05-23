@@ -20,32 +20,24 @@ namespace FashionBrowser.Domain.Services
             _urlService = urlService;
             _httpClient = httpClient;
         }
-        public async Task<Tuple<bool, string>> CreateOrder(OrderItemViewModel orderItemViewModel)
+        public async Task<bool> CreateOrder(OrderItemViewModel orderItemViewModel)
         {
-            var message = "";
-            if (orderItemViewModel != null)
-            {              
-                try
+            
+           try
                 {
                     var apiUrl = _urlService.GetBaseUrl() + "api/orders";
                     var response = await _httpClient.PostAsJsonAsync(apiUrl, orderItemViewModel);
                     var responseList = JsonConvert.DeserializeObject<ResponseAPI<ProductItemViewModel>>
                                        (await response.Content.ReadAsStringAsync());
-                    message = responseList.Message;
 
-                    if (responseList.Success)
-                    {
-                        return Tuple.Create(true, message + " ! ");
-                    }
+                    return responseList.Success;
+
                 }
-                catch (Exception exception)
+                catch
                 {
-                    message = exception.InnerException.Message + " ! " + "Create Order Fail !";
-                    return Tuple.Create(false, message);
+                    return false;
                 }
-            }
-
-            return Tuple.Create(false, message);
+            
         }
     }
 }
