@@ -11,17 +11,33 @@ namespace Fashion.Browser.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly IProductServices _productServices;
-        public HomeController(ILogger<HomeController> logger, IProductServices productServices)
+        private readonly ICategoryServices _categoryServices;
+        public HomeController(IProductServices productServices,
+                             ICategoryServices categoryServices)
         {
-            _logger = logger;
             _productServices = productServices;
+            _categoryServices = categoryServices;
         }
 
         public async Task<IActionResult> Index()
         {
             var productViewModel = await _productServices.GetProductViewModelAsync();
+            var categoryViewModel = await _categoryServices.GetCategoryViewModelAsync();
+            var listCategory = categoryViewModel.ListCategory;
+            if (productViewModel.IsSuccess)
+            {
+                foreach (var productItemViewModel in productViewModel.ListProduct)
+                {
+                    if (listCategory == null)
+                    {
+                        productItemViewModel.CategoryName = "FEMALE FASHION";
+                        break;
+                    }
+                    var category = listCategory.Where(c => c.Id == productItemViewModel.CategoryId).FirstOrDefault();
+                    productItemViewModel.CategoryName = category.Name;
+                }
+            }
             return View(productViewModel);
         }
     }

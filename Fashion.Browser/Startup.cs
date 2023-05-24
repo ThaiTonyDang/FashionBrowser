@@ -1,18 +1,11 @@
+using FashionBrowser.Domain.Config;
 using FashionBrowser.Domain.Services;
-using FashionBrowser.Infrastructure.Config;
-using FashionBrowser.Infrastructure.DataContext;
-using FashionBrowser.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Fashion.Browser
 {
@@ -29,24 +22,25 @@ namespace Fashion.Browser
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllersWithViews();
-			services.AddScoped<IProductRepository, ProductRepository>();
 			services.AddScoped<IProductServices, ProductServices>();
-			services.AddScoped<ICategoryRepository, CategoryRepository>();
 			services.AddScoped<ICategoryServices, CategoryServices>();
 			services.AddScoped<ICartServices, CartServices>();
-			services.AddHttpContextAccessor();
+			services.AddScoped<IUrlService, UrlService>();
+			services.AddScoped<IOrderService, OrderService>();
+			services.AddScoped<IOrderDetailService, OrderDetailService>();
+			services.AddScoped<ICustomerService, CustomerService>();
+			services.AddScoped<ICheckoutService, CheckoutService>();
+            services.AddHttpContextAccessor();
+            services.AddHttpClient();
 
-			services.AddDistributedMemoryCache();
+            services.Configure<APIConfig>(Configuration.GetSection("Api"));
+
+            services.AddDistributedMemoryCache();
 
 			services.AddSession(cfg => {
 				cfg.Cookie.Name = "productData";
 				cfg.IdleTimeout = new TimeSpan(24, 0, 0);
 			});
-
-			services.Configure<FileConfig>(Configuration.GetSection("FileConfig"));
-
-			services.AddDbContext<AppDbContext>(x =>
-											   x.UseSqlServer(Configuration.GetConnectionString("Ecommerce")));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,17 +55,6 @@ namespace Fashion.Browser
 				app.UseExceptionHandler("/Home/Error");
 			}
 			app.UseStaticFiles();
-
-			var fileConfig = Configuration.GetSection("FileConfig");
-
-			if (fileConfig.Get<FileConfig>() != null)
-			{
-				var path = fileConfig.Get<FileConfig>().ImagePath;
-				app.UseStaticFiles(new StaticFileOptions
-				{
-					FileProvider = new PhysicalFileProvider(path),
-				});
-			}
 
 			app.UseSession();
 

@@ -1,74 +1,86 @@
 ﻿using FashionBrowser.Domain.ViewModels;
-using FashionBrowser.Infrastructure.Repositories;
 using FashionBrowser.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using FashionBrowser.Domain.Model;
+using Newtonsoft.Json;
 
 namespace FashionBrowser.Domain.Services
 {
     public class ProductServices : IProductServices
     {
-        private readonly IProductRepository _productRepository;
+        private readonly IUrlService _urlService;
+        private readonly HttpClient _httpClient;
+        public bool _isSuccess;
+        public string[] _errorDetail;
 
-        public ProductServices(IProductRepository productRepository)
+        public ProductServices(IUrlService urlService, HttpClient httpClient)
         {
-            _productRepository = productRepository;
+            _urlService = urlService;
+            _httpClient = httpClient;
         }
 
         public async Task<List<ProductItemViewModel>> GetListProductAsync()
         {
-            var listProduct = await _productRepository.GetListAsync();
-
-            var listProductViewModel = listProduct.Select(product => new ProductItemViewModel()
+            try
             {
-                Id = product.Id,
-                Name = product.Name,
-                Provider = product.Provider,
-                DisplayPrice = product.Price.GetPriceFormat(),
-                Description = product.Description,
-                CategoryId = product.CategoryId,
-                ImagePath = product.ImagePath,
-                UnitsInStock = product.UnitsInStock,
-                Enable = product.Enable,
-                Type = product.Type,
-            }).ToList();
+                var apiUrl = _urlService.GetBaseUrl() + "api/products";
+                var response = await _httpClient.GetAsync(apiUrl);
 
-            return listProductViewModel;
+                var responseList = JsonConvert.DeserializeObject<ResponseAPI<List<ProductItemViewModel>>>
+                                   (await response.Content.ReadAsStringAsync());
+                _isSuccess = responseList.Success;
+                _errorDetail = responseList.ErrorsDetail;
+
+                var products = responseList.Data;
+                foreach (var product in products)
+                {
+                    product.ImageUrl = _urlService.GetFileApiUrl(product.ImageName);
+                }
+
+                return products;
+            }
+            catch (Exception exception)
+            {
+                _errorDetail = new string[] { exception.InnerException.Message };
+                return null;
+            }
         }
 
-        public async Task<ProductItemViewModel> GetProductByIdAsync(Guid id)
+        public async Task<Tuple<ProductItemViewModel, string>> GetProductByIdAsync(string productId)
         {
-            var product = await _productRepository.GetProductByIdAsync(id);
-
-            if (product != null)
+            var message = "";
+            try
             {
-                var productItemViewModel = new ProductItemViewModel()
-                {
-                    Id = product.Id,
-                    Name = product.Name,
-                    Provider = product.Provider,
-                    Price = product.Price,
-                    DisplayPrice = product.Price.GetPriceFormat(),
-                    Description = product.Description,
-                    ImagePath = product.ImagePath,
-                    CategoryId = product.CategoryId,
-                    UnitsInStock = product.UnitsInStock,
-                    Type = product.Type,
-                    Enable = product.Enable
-                };
+                var apiUrl = _urlService.GetBaseUrl() + "api/products/";
+                var response = await _httpClient.GetAsync(apiUrl + productId);
+                var responseList = JsonConvert.DeserializeObject<ResponseAPI<ProductItemViewModel>>
+                                   (await response.Content.ReadAsStringAsync());
+                var productDto = responseList.Data;
+                message = responseList.Message;
 
-                return productItemViewModel;
+                productDto.ImageUrl = _urlService.GetFileApiUrl(productDto.ImageName);
+                return Tuple.Create(productDto, message);
             }
-
-            return null;
+            catch (Exception exception)
+            {
+                message = exception.InnerException.Message + "Error! An error occurred. ! ";
+                return Tuple.Create(default(ProductItemViewModel), message);
+            }
         }
         public async Task<ProductViewModel> GetProductViewModelAsync()
         {
             var productViewModel = new ProductViewModel();
             productViewModel.ListProduct = await GetListProductAsync();
+
+            productViewModel.IsSuccess = _isSuccess;
+            productViewModel.ErrorDetail = _errorDetail;
+
             return productViewModel;
         }
     }

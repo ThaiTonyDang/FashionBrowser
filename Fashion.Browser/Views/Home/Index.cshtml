@@ -1,5 +1,7 @@
 ﻿@using FashionBrowser.Domain.ViewModels;
 @using FashionBrowser.Utilities;
+@model ProductViewModel
+
 @{
     ViewData["Title"] = "Home Page";
     Layout = "_Layout";
@@ -10,7 +12,6 @@
 @await Html.PartialAsync("_Banner")
 <link href="@Url.Content("~/css/home.css")" rel="stylesheet" />
 
-@model ProductViewModel
 
 <form asp-action= method="post"> 
 <section class="section-margin calc-60px">
@@ -19,10 +20,37 @@
             <p>Popular Item in the market</p>
             <h2>Trending <span class="section-intro__style">Product</span></h2>
         </div>
-        <div class="row">
-           
-            <input type="hidden" id="products__count" value="" />
-            @foreach (var product in Model.ListProduct)
+        <div class="row">           
+            @if (!Model.IsSuccess)
+            {
+                <div class="main-container">
+                   <div class="pd-ltr-20 xs-pd-20-10">
+                   <div class="error-page d-flex align-items-center flex-wrap justify-content-center pd-20">
+                   <div class="pd-10">
+                    <div class="error-page-wrap text-center">                   
+                        <h1>500</h1>
+                        <h3>Error: 500 Internal Server Error</h3>
+                        <p style="font-size:20px">
+                            
+                        </p>
+                        <div class="pt-20 mx-auto max-width-200">
+                            <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500"
+                               class="btn btn-primary btn-block btn-lg">Check error by link</a>
+                        </div>
+                    
+                        <div class="pt-20 mx-auto max-width-200">
+                            <a href="~/Home/Index" class="btn btn-primary btn-block btn-lg">Back To Home</a>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                </div>
+                </div>
+            }
+            else
+            {
+                <input type="hidden" id="products__count" value="" />
+                @foreach (var product in Model.ListProduct)
             {
                 <div class="col-md-6 col-lg-4 col-xl-3">
                     <div class="card text-center card-product">
@@ -32,14 +60,14 @@
 
                             <a class="product-img" href="~/Product/Detail/@product.Id">
 
-                                <input type="hidden" id="product__image-@product.Id" value="@product.ImagePath" />
-                                @if (product.UnitsInStock > 0)
+                                <input type="hidden" id="product__image-@product.Id" value="@product.ImageName" />
+                                @if (product.QuantityInStock > 0)
                                 {
-                                    <img class="card-img" src="~/Product/@product.ImagePath" alt="">
+                                    <img class="card-img" src="@product.ImageUrl" alt="">
                                 }
                                 else
                                 {
-                                    <img class="card-img" src="~/Product/@product.ImagePath" style="opacity:0.5" alt="">
+                                    <img class="card-img" src="@product.ImageUrl" style="opacity:0.5" alt="">
                                 }                                                       
                             </a>
                             <ul class="card-product__imgOverlay">                  
@@ -50,7 +78,7 @@
                                         </i>
                                     </button>
                                 </li>                            
-                                @if (product.UnitsInStock > 0)
+                                @if (product.QuantityInStock > 0)
                                 {
                                     <li class="li-product">
                                         <button 
@@ -89,26 +117,28 @@
                             <input type="hidden" id="product__provider-@product.Id" value="@product.Provider" />
 
                             <p>Provider : @product.Provider</p>
-                            @if (product.UnitsInStock == 0)
+                            @if (product.QuantityInStock == 0)
                             {
                                <p style="color:firebrick">OUT OF STOCK</p>
                             }
                             else
                             {
-                               <input type="hidden" id="product__unitstock-@product.Id" value="@product.UnitsInStock" />
+                               <input type="hidden" id="product__unitstock-@product.Id" value="@product.QuantityInStock" />
 
-                               <p style="color:blue; font-weight:500">Quantity In Stock : @product.UnitsInStock</p>
+                               <p style="color:blue; font-weight:500">Quantity In Stock : @product.QuantityInStock</p>
                             }
 
-                            <input type="hidden" id="product__displayprice-@product.Id" value="@product.DisplayPrice" />
+                            <input type="hidden" id="product__displayprice-@product.Id" value="@product.Price.GetPriceFormat()" />
 
-                            <p class="card-product__price">@product.DisplayPrice</p>
+                            <p class="card-product__price">@product.Price.GetPriceFormat()</p>
 
                             <input type="hidden" id="product__description-@product.Id" value="@product.Description" />
                         </div>
                     </div>
                 </div>
+            }   
             }
+           
         </div>
     </div>
 </section>

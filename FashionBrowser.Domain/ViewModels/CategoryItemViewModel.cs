@@ -9,10 +9,11 @@ namespace FashionBrowser.Domain.ViewModels
 {
     public class CategoryItemViewModel
     {
-        public Guid CategoryId { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string ImagePath { get; set; }
+        public string ImageName { get; set; }
+        public string ImageUrl { get; set; }
         public bool IsCheck { get; set; }       
     }
 
@@ -20,6 +21,8 @@ namespace FashionBrowser.Domain.ViewModels
     {
         public List<ProductItemViewModel> Products { get; set; }
         public List<CategoryItemViewModel> ListCategory { get; set; }
+        public string[] ErrorDetail;
+        public bool IsSuccess;
         public CategoryViewModel()
         {
             this.ListCategory = new List<CategoryItemViewModel>();

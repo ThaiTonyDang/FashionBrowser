@@ -25,13 +25,19 @@
     </div>
 </section>
 
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="/" class="link" style="color:#001489; font-weight:600">Home
+            </a>
+    </li>
+    <li class="breadcrumb-item">Shopping Cart</li>
+</ol>
 <section class="cart_area">
     <div class="container">
         <div class="cart_inner">
             <div class="table-responsive">
-                 @if (Model.ListCartItem.Count > 0)
+                @if (Model.ListCartItem.Count > 0)
                 {
-                    decimal totalPrice = 0;
                     <table class="table">
                         <thead>
                             <tr>
@@ -44,14 +50,12 @@
                         </thead>
                         <tbody>
                             @foreach (var cartItem in Model.ListCartItem)
-                            {
-                                var price = cartItem.Quantity * cartItem.Product.Price;
-                                totalPrice += price;
+                            {                                
                                <tr>
                                 <td>
                                     <div class="media">
                                         <div class="d-flex">
-                                            <img src="~/Product/@cartItem.Product.ImagePath"
+                                            <img src="@cartItem.Product.ImageUrl"
                                                  style="width:200px; height:200px" alt="">
                                         </div>
                                         <div class="media-body">
@@ -82,7 +86,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                        <h5 id="item-price-@cartItem.Product.Id">@price.GetPriceFormat()</h5>
+                                    <h5 id="item-price-@cartItem.Product.Id">@cartItem.Price.GetPriceFormat()</h5>
                                 </td>
                                 <td>
                                     <button
@@ -102,7 +106,7 @@
                                     <h5>Subtotal</h5>
                                 </td>
                                 <td>
-                                    <h5 id="total-price">@totalPrice.GetPriceFormat()</h5>
+                                    <h5 id="total-price">@Model.Total.GetPriceFormat()</h5>
                                 </td>
                             </tr>
                             <tr class="out_button_area">
@@ -114,8 +118,8 @@
                                 </td>
                                 <td>
                                     <div class="checkout_btn_inner d-flex align-items-center">
-                                        <a class="gray_btn" href="#">Continue Shopping</a>
-                                        <a class="primary-btn ml-2" href="#">Proceed to checkout</a>
+                                        <a class="gray_btn" href="/">Continue Shopping</a>
+                                        <a class="primary-btn ml-2" href="~/Checkout/Index">Proceed To Checkout</a>
                                     </div>
                                 </td>
                             </tr>
