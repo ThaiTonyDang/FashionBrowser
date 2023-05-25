@@ -22,7 +22,7 @@
     </li>
     <li class="breadcrumb-item">Checkout</li>
 </ol>
-<form asp-action="Confirmation" asp-controller="Checkout" method="post" enctype="multipart/form-data">
+<form asp-action="CreateOrder" asp-controller="Checkout" method="post" enctype="multipart/form-data">
      @if (Model.CartViewModel.ListCartItem != null && Model.CartViewModel.ListCartItem.Count > 0)
     {
         <div class="container-fluid">
@@ -44,7 +44,7 @@
                             <div class="col-md-12 form-group">
                                 <label>Mobile No</label>
                                 <input asp-for="CustomerItemViewModel.Phone" type="tel" class="form-control"
-    placeholder="Phone Number">
+                                 placeholder="Phone Number">
                                 <span asp-validation-for="@Model.CustomerItemViewModel.Phone" class="text-danger"></span>
                             </div>
                             <div class="col-md-6 form-group">
@@ -80,7 +80,7 @@
                                 <div class="check_title">
                                     <h2>Have a coupon? <a href="#">Click here to enter your code</a></h2>
                                 </div>
-                                <input type="text" placeholder="Enter coupon code">
+                                <input asp-for=@Model.Discount type="text" placeholder="Enter coupon code" value=1.1>
                                 <a class="button button-coupon" href="#">Apply Coupon</a>
                             </div>
                         </div>
@@ -92,38 +92,35 @@
                         <h2>Your Order</h2>
                         <ul class="list">
                             <li><a href="#"><h4>Product <span> Total</span></h4></a></li>
-                            @{
-                                decimal subTotalPrice = 0;
-                                decimal shipping = 5;
+                            @{                        
+                                var discountPay = decimal.Parse((1 - (1.1) / 100).ToString());
+                                var totalAmound = @Model.CartViewModel.Total;
+                                var subTotal = totalAmound * discountPay;
                             }
-
                             @foreach (var cartItem in Model.CartViewModel.ListCartItem)
                             {
-                                var price = cartItem.Quantity * cartItem.Product.Price;
-                                subTotalPrice += price;
+                                
                                 <li>
                                     <a href="#">
+                                        <img class="card-img" style="width:60px; height:60px"
+                                        src="@cartItem.Product.ImageUrl" alt="">
                                         @cartItem.Product.Name
                                         <span class="middle" style="width:100px">
                                             @cartItem.Product.Price.GetPriceFormat() X @cartItem.Quantity
                                         </span>
-                                        <span class="last">@price.GetPriceFormat()</span>
+                                        <span class="last">@cartItem.Price.GetPriceFormat()</span>
                                     </a>
                                 </li>
                             }
-
-                            @{
-                                decimal total = subTotalPrice + shipping;
-                            }
                         </ul>
                         <ul class="list list_2">
-                            <li><a href="#">Subtotal <span>@subTotalPrice.GetPriceFormat()</span></a></li>
-                            <li><a href="#">Shipping <span>Flat rate: @shipping.GetPriceFormat()</span></a></li>
-                            <li><a href="#">Total <span>@total.GetPriceFormat()</span></a></li>
+                            <li><a href="#">Product Amound <span>@totalAmound.GetPriceFormat()</span></a></li>
+                            <li><a href="#">Discount <span> 1.1 %</span></a></li>
+                            <li><a href="#">SubTotal <span>@subTotal.GetPriceFormat()</span></a></li>
                         </ul>
                         <div class="payment_item">
                             <div class="radion_btn">
-                                <input asp-for="@Model.IsCODPay" type="radio" id="f-option5" value="True">
+                                <input asp-for="@Model.IsCardCreditPay" type="radio" id="f-option5" value="False">
                                 <label for="f-option5">Cash on Delivery</label>
                                 <div class="check"></div>
                             </div>
@@ -133,7 +130,7 @@
                         </div>
                         <div class="payment_item active">
                             <div class="radion_btn">
-                                <input asp-for="@Model.IsCODPay" type="radio" id="f-option6" value="False">
+                                <input asp-for="@Model.IsCardCreditPay" type="radio" id="f-option6" value="True">
                                 <label for="f-option6">Paypal </label>
                                 <img src="/img/card.jpg" alt="">
                                 <div class="check"></div>
@@ -143,10 +140,11 @@
                                 account.
                             </p>
                         </div>
-
+                     
                         <div class="text-center">
-                            <button type="submit" class="button button-paypal" href="~/Checkout/Confirmation">Proceed to Checkout</button>                         
+                            <button type="submit" class="button button-paypal">Order Now</button>
                         </div>
+                                                           
                     </div>
                 </div>
             </div>

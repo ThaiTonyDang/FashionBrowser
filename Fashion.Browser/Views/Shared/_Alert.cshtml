@@ -5,6 +5,7 @@
     var modalSuccess = TempData[Mode.MODAL_CONFIRM_SUCCESS] as string;
     var labelSuccess = TempData[Mode.LABEL_CONFIRM_SUCCESS] as string;
     var labelFail = TempData[Mode.LABEL_CONFIRM_FAIL] as  string;
+    var modalConfirm = TempData[Mode.MODAL_CONFIRM] as string;
 }
  
 @if (mode == Mode.USING_MODAL_CONFIRM)
@@ -32,6 +33,24 @@
                             <img src="~/img/cancel.png">
                         </div>
                         <p>FAIL !</p>
+                    }
+                    @if (!string.IsNullOrEmpty(modalConfirm))
+                    {
+                        <div class="container mt-5 mb-5">
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="text-left logo p-2 px-5">
+                                            <i class="bi bi-hourglass-top" style="font-weight:600; font-size:40px; color:brown"></i>
+                                        </div>
+
+                                        <div class="invoice p-5">
+                                            <h5>@modalConfirm</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     }
                 </div>
                 <div class="modal-footer justify-content-center">

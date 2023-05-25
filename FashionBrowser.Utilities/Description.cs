@@ -9,7 +9,7 @@ namespace FashionBrowser.Utilities
 	public struct CartKeyName
 	{
 		public const string Cart_Key = "Cart";
-	}
+    }
 
 	public struct Mode
 	{
@@ -20,7 +20,8 @@ namespace FashionBrowser.Utilities
 		public const string LABEL_CONFIRM_FAIL = "FAIL LABEL CONFIRM";
 		public const string MODAL_CONFIRM_SUCCESS = "SUCCESS MODAL CONFIRM";
 		public const string MODAL_CONFIRM_FAIL = "FAIL MODAL CONFIRM";
-	}
+		public const string MODAL_CONFIRM = "MODAL CONFIRM";
+    }
 
 	public struct OPERATOR
 	{
@@ -32,8 +33,9 @@ namespace FashionBrowser.Utilities
     {
         public const string SLUG = "resource/";
     }
-    public struct ADDDATE
+
+    public struct SHIPPING_FEE
     {
-        public const double EXPIREDATE = 1.5;
+        public const decimal SHIPPING = 1;
     }
 }

@@ -12,7 +12,8 @@ namespace FashionBrowser.Domain.ViewModels
         public CustomerItemViewModel CustomerItemViewModel { get; set; }
         public CartViewModel CartViewModel { get; set; }
         public OrderItemViewModel OrderItem { get; set; }
-        public bool IsCODPay { get; set; }
+        public bool IsCardCreditPay { get; set; }
+        public double Discount { get; set; }
         public CheckoutItemViewModel()
         {
             this.CartViewModel = new CartViewModel();

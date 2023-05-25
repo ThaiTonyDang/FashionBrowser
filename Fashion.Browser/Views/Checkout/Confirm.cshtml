@@ -1,0 +1,204 @@
+﻿@using FashionBrowser.Domain.ViewModels;
+@using FashionBrowser.Utilities;
+@model CheckoutItemViewModel;
+
+<partial name="_Alert" />
+
+<div class="container mt-5 mb-5">
+   <div class="row d-flex justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="text-left logo p-2 px-5">
+                        <i class="bi bi-check-circle-fill"
+                           style="font-weight:600; font-size:40px; color:green"></i>
+                    </div>
+
+                    <div class="invoice p-5">
+                        <h5>Your order Confirmed! </h5>
+                        @if (Model.CartViewModel.ListCartItem.Count > 0 && Model.OrderItem != null)
+                        {
+                            <input asp-for="@Model.CustomerItemViewModel.Name" type="hidden" />
+                            <span class="font-weight-bold d-block mt-4">Hello, @Model.CustomerItemViewModel.Name</span>
+                            <span>You order has been confirmed and will be shipped in next two days!</span>
+
+                            <div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
+
+                                <table class="table table-borderless">
+
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="py-2">
+
+                                                    <span class="d-block text-muted" style="font-weight:700">Order Date</span>
+                                                    <span>@Model.OrderItem.OrderDate</span>
+
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="py-2">
+
+                                                    <span class="d-block text-muted" style="font-weight:700">Order No</span>
+                                                    <span>@Model.OrderItem.Id.ToString().Substring(0, 8)</span>
+
+                                                </div>
+                                            </td>
+                                        <td>
+                                            <div class="py-2">
+                                                <span class="d-block text-muted" style="font-weight:700">Payment Method</span>
+                                                @if (Model.IsCardCreditPay)
+                                                {
+                                                    <span><img src="https://img.icons8.com/color/48/000000/mastercard.png" width="20" /> </span>
+                                                }
+                                                else
+                                                {
+
+                                                    <span><img src="https://cdn-icons-png.flaticon.com/512/3796/3796120.png" width="30" height="30" /></span>
+                                                }
+
+                                            </div>
+                                        </td>
+                                            <td>
+                                                <div class="py-2">
+
+                                                    <span class="d-block text-muted" style="font-weight:700">Payment Status</span>
+                                                    <span>@Model.OrderItem.IsPaidDispay</span>
+                                                    @if (Model.OrderItem.IsPaid)
+                                                    {
+                                                        <i class="bi bi-check-circle-fill"
+                                                           style="font-weight:600; font-size:20px; color:green"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="bi bi-hourglass-split" style="font-weight:600; font-size:20px;
+                                                    color: indianred">
+                                                        </i>
+                                                    }
+
+                                                </div>
+                                            </td>
+                                          
+                                            <td>
+                                                <div class="py-2">
+                                                <span class="d-block text-muted" style="font-weight:700">Shiping Address</span>
+                                                    <span>@Model.CustomerItemViewModel.Address</span>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+
+                            <div class="product border-bottom table-responsive">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        @foreach (var cart in Model.CartViewModel.ListCartItem)
+                                        {
+                                            <tr>
+                                                <td width="20%">
+
+                                                    <img src="@cart.Product.ImageUrl" width="90">
+
+                                                </td>
+                                                <td width="60%">
+                                                    <span class="font-weight-bold">@cart.Product.Name</span>
+                                                    <div class="product-qty">
+                                                        <span class="d-block">@cart.Quantity</span>
+                                                        <span>Color:Dark</span>
+
+                                                    </div>
+                                                </td>
+                                                <td width="20%">
+                                                    <div class="text-right">
+                                                        <span class="font-weight-bold">@cart.Price.GetPriceFormat()</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+
+                                </table>
+                            </div>
+                            <div class="row d-flex justify-content-end">
+                                <div class="col-md-5">
+                                    <table class="table table-borderless">
+                                        <tbody class="totals">
+                                            <tr>
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="text-muted">Total Product Price</span>
+
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span>@Model.CartViewModel.Total.GetPriceFormat()</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="text-muted">Discount</span>
+
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span class="text-success">@Model.Discount %</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="text-muted">Shipping Fee</span>
+
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span>@SHIPPING_FEE.SHIPPING.GetPriceFormat()</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-top border-bottom">
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="font-weight-bold">Total</span>
+
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span class="font-weight-bold">@Model.OrderItem.TotalPrice.GetPriceFormat()</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                        <p style="font-size:16px; font-weight:600">We will be sending shipping confirmation email when the item shipped successfully!</p>
+                        <p class="font-weight-bold mb-0">Thanks for shopping with us!</p>
+                        <span>TONY ĐẶNG</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between footer p-3">
+
+                    <span style="font-size:20px ; color:darkblue"><a href="/">Shop Now</a></span>
+                        <span font-weight:300">@DateTime.Now.ToLongDateString()</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
