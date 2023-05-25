@@ -1,0 +1,177 @@
+﻿@using FashionBrowser.Domain.ViewModels;
+@using FashionBrowser.Utilities;
+@model CheckoutItemViewModel;
+@{
+    ViewData["Title"] = "Checkout";
+    Layout = "_Layout";
+}
+<link href="~/css/style-multi (1).css" rel="stylesheet" />
+<link href="~/css/style-multi (2).css" rel="stylesheet" />
+
+<partial name="_Alert" />
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="~/Home/Index" class="link" style="color:#001489; font-weight:600">
+            Home
+        </a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="~/shoppingcart/" style="color:#001489; font-weight:600">
+            Shopping Cart
+        </a>
+    </li>
+    <li class="breadcrumb-item">Checkout</li>
+</ol>
+<form asp-action="CreateOrder" asp-controller="Checkout" method="post" enctype="multipart/form-data">
+     @if (Model.CartViewModel.ListCartItem != null && Model.CartViewModel.ListCartItem.Count > 0)
+    {
+        <div class="container-fluid">
+            <div class="row px-xl-5">
+                <div class="col-lg-6">
+                    <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Billing Address</span></h5>
+                    <div class="bg-light p-30 mb-5">
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label>Name</label>
+                                <input asp-for=CustomerItemViewModel.Name class="form-control" placeholder="Your Name">
+                                <span asp-validation-for=@Model.CustomerItemViewModel.Name class="text-danger"></span>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <label>E-mail</label>
+                                <input asp-for=CustomerItemViewModel.Email class="form-control" type="email" placeholder="Email Address">
+                                <span asp-validation-for="@Model.CustomerItemViewModel.Email" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <label>Mobile No</label>
+                                <input asp-for="CustomerItemViewModel.Phone" type="tel" class="form-control"
+                                 placeholder="Phone Number">
+                                <span asp-validation-for="@Model.CustomerItemViewModel.Phone" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Address Line 1</label>
+                                <input class="form-control" type="text" placeholder="123 Street">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="control-label">Number Department</label>
+                                <input asp-for=@Model.CustomerItemViewModel.NumberDepartment type="text"
+                                class="form-control" placeholder="Number Department">
+                                <span asp-validation-for="@Model.CustomerItemViewModel.NumberDepartment" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label>City</label>
+                                <select asp-for=@Model.CustomerItemViewModel.City class="custom-select" id="city" aria-label=".form-select-sm">
+                                    <option value="@Model.CustomerItemViewModel.City" >Province / City</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 form-group">
+                                <label>District</label>
+                                <select asp-for=@Model.CustomerItemViewModel.County class="custom-select" id="district" aria-label=".form-select-sm">
+                                    <option value="">County / District</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 form-group" aria-label=".form-select-sm">
+                                <label>Ward</label>
+                                <select asp-for=CustomerItemViewModel.Ward class="custom-select" id="ward" aria-label=".form-select-sm">
+                                    <option value="" selected>Ward / Commune</option>
+                                </select>
+                            </div>
+                            <div class="cupon_area col-md-12 form-group">
+                                <div class="check_title">
+                                    <h2>Have a coupon? <a href="#">Click here to enter your code</a></h2>
+                                </div>
+                                <input asp-for=@Model.Discount type="text" placeholder="Enter coupon code" value=1.1>
+                                <a class="button button-coupon" href="#">Apply Coupon</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-6">
+                    <div class="order_box">
+                        <h2>Your Order</h2>
+                        <ul class="list">
+                            <li><a href="#"><h4>Product <span> Total</span></h4></a></li>
+                            @{                        
+                                var discountPay = decimal.Parse((1 - (1.1) / 100).ToString());
+                                var totalAmound = @Model.CartViewModel.Total;
+                                var subTotal = totalAmound * discountPay;
+                            }
+                            @foreach (var cartItem in Model.CartViewModel.ListCartItem)
+                            {
+                                
+                                <li>
+                                    <a href="#">
+                                        <img class="card-img" style="width:60px; height:60px"
+                                        src="@cartItem.Product.ImageUrl" alt="">
+                                        @cartItem.Product.Name
+                                        <span class="middle" style="width:100px">
+                                            @cartItem.Product.Price.GetPriceFormat() X @cartItem.Quantity
+                                        </span>
+                                        <span class="last">@cartItem.Price.GetPriceFormat()</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                        <ul class="list list_2">
+                            <li><a href="#">Product Amound <span>@totalAmound.GetPriceFormat()</span></a></li>
+                            <li><a href="#">Discount <span> 1.1 %</span></a></li>
+                            <li><a href="#">SubTotal <span>@subTotal.GetPriceFormat()</span></a></li>
+                        </ul>
+                        <div class="payment_item">
+                            <div class="radion_btn">
+                                <input asp-for="@Model.IsCardCreditPay" type="radio" id="f-option5" value="False">
+                                <label for="f-option5">Cash on Delivery</label>
+                                <div class="check"></div>
+                            </div>
+                            <p>
+                                COD is a type of transaction in which payment for a good is made at the time of delivery
+                            </p>
+                        </div>
+                        <div class="payment_item active">
+                            <div class="radion_btn">
+                                <input asp-for="@Model.IsCardCreditPay" type="radio" id="f-option6" value="True">
+                                <label for="f-option6">Paypal </label>
+                                <img src="/img/card.jpg" alt="">
+                                <div class="check"></div>
+                            </div>
+                            <p>
+                                Pay via PayPal; you can pay with your credit card if you don’t have a PayPal
+                                account.
+                            </p>
+                        </div>
+                     
+                        <div class="text-center">
+                            <button type="submit" class="button button-paypal">Order Now</button>
+                        </div>
+                                                           
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    @if (Model.CartViewModel.ListCartItem != null && Model.CartViewModel.ListCartItem.Count == 0)
+    {
+        <div class="billing_details">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h3>Your Information</h3>
+                </div>
+            </div>
+            <p style="color:#001489; font-size:20px; text-align:center ">
+                THERE ARE NO PRODUCTS TO PAY FOR !
+            </p>
+            <p class="cart-footer alert alert-primary" style="text-align:center; font-size:30px">
+                <a href="~/Home/Index" style="color:#001489; text-decoration:none; font-weight:500">BACK TO HOME</a>
+            </p>
+            <p class="cart-footer" style="text-align:center">
+                When you need help, please call 1800.1060 or 0768.515.122 (7h30 - 22h)
+            </p>
+        </div>
+    }
+</form>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

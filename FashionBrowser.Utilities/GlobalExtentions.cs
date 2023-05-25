@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 
 namespace FashionBrowser.Utilities
 {
-    public static class GlobalHelpers
+    public static class GlobalExtentions
     {
         public static string GetPriceFormat(this decimal price)
         {
-            CultureInfo cultureInfo = CultureInfo.GetCultureInfo("en-GB");
+            CultureInfo cultureInfo = CultureInfo.GetCultureInfo("en-US");
             return string.Format(cultureInfo, "{0:C2}", price);
         }
-
         public static bool IsGuidParseFromString(this string str)
         {
             Guid guid;
