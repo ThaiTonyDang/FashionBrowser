@@ -29,7 +29,7 @@ namespace FashionBrowser.Domain.Services
                 var responseList = JsonConvert.DeserializeObject<ResponseAPI<ProductItemViewModel>>
                                     (await response.Content.ReadAsStringAsync());
                 
-                return responseList.Success; ;
+                return responseList.IsSuccess; ;
             }
             catch (Exception exception)
             {

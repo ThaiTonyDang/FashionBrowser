@@ -9,8 +9,8 @@ namespace FashionBrowser.Domain.Model
 {
     public class ResponseAPI<T>
     {
-        public HttpStatusCode StatusCode { get; set; }
-        public bool Success { get; set; }
+        public int StatusCode { get; set; }
+        public bool IsSuccess { get; set; }
         public string Message { get; set; }
         public string[] ErrorsDetail { get; set; }
         public T Data { get; set; }
