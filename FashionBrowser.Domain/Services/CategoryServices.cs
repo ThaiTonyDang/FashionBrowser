@@ -37,7 +37,7 @@ namespace FashionBrowser.Domain.Services
 
                 var responseList = JsonConvert.DeserializeObject<ResponseAPI<List<CategoryItemViewModel>>>
                                    (await response.Content.ReadAsStringAsync());
-                _isSuccess = responseList.Success;
+                _isSuccess = responseList.IsSuccess;
                 _errorDetail = responseList.ErrorsDetail;
 
                 var categories = responseList.Data;
