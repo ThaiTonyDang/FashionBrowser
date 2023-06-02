@@ -30,6 +30,8 @@ namespace Fashion.Browser
 			services.AddScoped<IOrderDetailService, OrderDetailService>();
 			services.AddScoped<ICustomerService, CustomerService>();
 			services.AddScoped<ICheckoutService, CheckoutService>();
+			services.AddScoped<IUserService, UserService>();
+
             services.AddHttpContextAccessor();
             services.AddHttpClient();
 

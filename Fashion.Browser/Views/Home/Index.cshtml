@@ -187,14 +187,14 @@
                 <div class="product-item bg-light mb-4">
                      <input type="hidden" id="product__id-@product.Id" value="@product.Id" />
                     <div class="product-img position-relative overflow-hidden">
-                         @if (product.QuantityInStock > 0)
-                                {
-                                    <img class="card-img" src="@product.ImageUrl" alt="">
-                                }
-                                else
-                                {
-                                    <img class="card-img" src="@product.ImageUrl" style="opacity:0.3" alt="">
-                             }    
+                        @if (product.QuantityInStock > 0)
+                        {
+                            <img class="card-img" src="@product.ImageUrl" alt="">
+                        }
+                        else
+                        {
+                            <img class="card-img" src="@product.ImageUrl" style="opacity:0.3" alt="">
+                        }    
                         <div class="product-action">
                             <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
                             <a class="btn btn-outline-dark btn-square" href="" onclick="addToCart('@product.Id', event)">
@@ -216,7 +216,7 @@
                             {
                                <input type="hidden" id="product__unitstock-@product.Id" value="@product.QuantityInStock" />
 
-                               <p style="color:green; font-weight:500">Quantity In Stock : @product.QuantityInStock</p>
+                               <p style="color:green; font-size: 20px; font-weight:500">In Stock : @product.QuantityInStock</p>
                             }
                         <div class="d-flex align-items-center justify-content-center mb-1">
                             <small class="fa fa-star text-primary mr-1"></small>
