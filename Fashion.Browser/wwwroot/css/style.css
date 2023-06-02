@@ -4841,7 +4841,6 @@ a.badge-dark:focus, a.badge-dark.focus {
 
 .alert-primary {
   color: #856e1b;
-  background-color: #fff6d6;
   border-color: #fff3c6;
 }
 
@@ -9479,7 +9478,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .btn.btn-primary {
-  color: #3D464D !important;
+  color: #3D464D;
 }
 
 .btn-square {

@@ -26,3 +26,12 @@
     margin-top: -40px;
     margin-left: 25px;
 }
+
+.coupon-button, .my-3 {
+    font-size: 1rem;
+    background-color: rgba(0,35,71,0.980392);
+}
+
+.btn-danger {
+    border-radius: 10px
+}
