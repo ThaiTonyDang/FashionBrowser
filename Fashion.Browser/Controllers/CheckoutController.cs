@@ -24,37 +24,68 @@ namespace Fashion.Browser.Controllers
 
             if (cartItems == null) cartItems = new List<CartItemViewModel>();
             return View(checkout);
-        } 
-        
-        public async Task<IActionResult> Confirmation(CheckoutItemViewModel checkout)
+        }
+          
+        public IActionResult CreateOrder(CheckoutItemViewModel checkout)
         {
-            var message = "";
+            TempData[Mode.MODE] = Mode.USING_MODAL_CONFIRM;
             if (ModelState.IsValid)
             {
                 var customer = checkout.CustomerItemViewModel;
                 customer.Id = Guid.NewGuid();
                 var cartItems = GetCartList();
                 
-
                 checkout.CartViewModel.ListCartItem = cartItems;
                 checkout.CustomerItemViewModel = customer;
                 checkout.OrderItem = BuidOrder(customer);
 
-                var isSuccess = await _checkoutService.CreateCheckout(checkout);
-
-                TempData[Mode.MODE] = Mode.USING_MODAL_CONFIRM;
-                if (isSuccess)
-                {
-                    TempData[Mode.MODAL_CONFIRM_SUCCESS] = "Order Success !";
-                    return View(checkout);
-                }
+                return View(checkout);
             }
           
-            TempData[Mode.MODAL_CONFIRM_FAIL] = message;
+            TempData[Mode.MODAL_CONFIRM_FAIL] = "Cannot Create Order! Try Again";
             return RedirectToAction("Index", "Checkout");
         }
 
-        private List<CartItemViewModel> GetCartList()
+        public IActionResult CardCredit(CheckoutItemViewModel checkout)
+        {
+            if (!checkout.IsCardCreditPay)
+            {
+                return RedirectToAction("Index", "Home");
+            }    
+            return View(checkout);
+        }
+
+        public async Task<IActionResult> Confirm(CheckoutItemViewModel checkout)
+		{
+            TempData[Mode.MODE] = Mode.USING_MODAL_CONFIRM;
+            if (checkout.OrderItem == null)
+            {
+                TempData[Mode.MODAL_CONFIRM] = "No Orders Yet! Please Check Your Email";
+                return RedirectToAction("Index", "Home");
+            }
+            var cartItems = GetCartList();
+            checkout.CartViewModel.ListCartItem = cartItems;
+            checkout.OrderItem.IsPaidDispay = "Customer Pays After Receiving Goods";
+
+            if (checkout.IsCardCreditPay)
+            {
+                checkout.OrderItem.IsPaidDispay = "Customer Paid Via Credit Card";
+                checkout.OrderItem.IsPaid = true;
+            }    
+
+            var isSuccess = await _checkoutService.CreateCheckout(checkout);
+            if (isSuccess)
+            {
+                RemoveItemCart();
+                TempData[Mode.MODAL_CONFIRM_SUCCESS] = "Payment success !";
+                return View(checkout);
+            }
+                                                 
+            TempData[Mode.MODAL_CONFIRM_FAIL] = "Payment success Fail !";
+            return RedirectToAction("Index", "Checkout");
+        }
+
+		private List<CartItemViewModel> GetCartList()
         {
             var session = HttpContext.Session;
             var cartItems = session.GetObjectFromJson<List<CartItemViewModel>>(CartKeyName.Cart_Key);
@@ -66,11 +97,16 @@ namespace Fashion.Browser.Controllers
 			var order = new OrderItemViewModel();
 			order.Id = Guid.NewGuid();
 			order.OrderDate = DateTime.Now;
-			order.RequiredDate = DateTime.Now.AddDays(ADDDATE.EXPIREDATE);
 			order.CustomerId = customer.Id;
 			order.ShipAddress = customer.Address;
 
 			return order;
 		}
+
+        private void RemoveItemCart()
+        {
+            var session = HttpContext.Session;
+            session.Clear();
+        }
     }
 }

@@ -41,7 +41,12 @@ namespace Fashion.Browser
 				cfg.Cookie.Name = "productData";
 				cfg.IdleTimeout = new TimeSpan(24, 0, 0);
 			});
-		}
+
+            services.AddSession(cfg => {
+                cfg.Cookie.Name = "checkout";
+                cfg.IdleTimeout = new TimeSpan(24, 0, 0);
+            });
+        }
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

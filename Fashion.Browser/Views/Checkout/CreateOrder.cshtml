@@ -1,0 +1,280 @@
+﻿@using FashionBrowser.Domain.ViewModels;
+@using FashionBrowser.Utilities;
+@model CheckoutItemViewModel;
+@{
+    Layout = "_Layout";
+}
+
+<partial name="_Alert" />
+
+@{
+    var discount = $"{Model.Discount}" + "%";
+}
+
+<section class="blog-banner-area" id="category">
+    <div class="container h-100">
+        <div class="blog-banner">
+            <div class="text-center">
+                <h1>Order Confirmation</h1>
+                <nav aria-label="breadcrumb" class="banner-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Shop Category</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="~/Home/Index" class="link" style="color:#001489; font-weight:600">
+            Home
+        </a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="~/shoppingcart/" style="color:#001489; font-weight:600">
+            Shopping Cart
+        </a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="~/Checkout/Index" style="color:#001489; font-weight:600">
+            Checkout
+        </a>
+    </li>
+    <li class="breadcrumb-item">Order Information</li>
+</ol>
+
+<section class="order_details section-margin--small">
+    <form asp-action="Confirm" asp-controller="Checkout" method="post" enctype="multipart/form-data">
+        <div class="container">
+            @*<p class="text-center billing-alert">Thank you. Your order has been received.</p>*@
+            <div class="row mb-5">
+                <div class="col-md-6 col-xl-6 mb-4 mb-xl-0">
+                    <div class="confirmation-card">
+                        <h3 class="billing-title">Order Info</h3>
+
+                        <input asp-for="@Model.CustomerItemViewModel.Id" type="hidden" />
+                        <input asp-for="@Model.CustomerItemViewModel.Name" type="hidden" />
+                        <input asp-for="@Model.CustomerItemViewModel.Address" type="hidden" />
+                        <input asp-for="@Model.CustomerItemViewModel.Email" type="hidden" />
+                        <input asp-for="@Model.CustomerItemViewModel.Phone" type="hidden" />
+                        <input asp-for="@Model.CustomerItemViewModel.NumberDepartment" type="hidden" />
+                        <input asp-for="@Model.OrderItem.Id" type="hidden" />
+                        <input asp-for="@Model.OrderItem.OrderDate" type="hidden" />
+                        <input asp-for="@Model.OrderItem.CustomerId" type="hidden" />
+                        <input asp-for="@Model.OrderItem.ShipAddress" type="hidden" />
+                        <input asp-for="@Model.Discount" type="hidden" />
+                        <input asp-for="@Model.IsCardCreditPay" type="hidden" />
+                        @{
+                            var shipping = SHIPPING_FEE.SHIPPING;
+                            var discountPay = decimal.Parse((1 - (1.1) / 100).ToString());
+                            var subTotal = @Model.CartViewModel.Total * discountPay;
+                            var total = (subTotal + shipping).GetPriceFormat();
+                            Model.OrderItem.TotalPrice = subTotal + shipping;
+                        }
+                        <input asp-for="@Model.OrderItem.TotalPrice" type="hidden" />
+                        <table class="order-rable">
+                            <tbody>
+                                <tr>
+                                    <td>Order number</td>
+                                    <td>: @Model.OrderItem.Id.ToString().Substring(0, 8).ToUpper()</td>
+                                </tr>
+                                <tr>
+                                    <td>Date Order</td>
+                                    <td>: @Model.OrderItem.OrderDate.ToString("dddd, dd MMMM yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td>Time Order</td>
+                                    <td>: @Model.OrderItem.OrderDate.ToLongTimeString()</td>
+                                </tr>
+                                <tr>
+                                    <td>Total Product Price</td>
+                                    <td style="font-weight:600">: @Model.CartViewModel.Total.GetPriceFormat()</td>
+                                </tr>
+                                <tr>
+                                    <td>Discount</td>
+                                    <td>: @discount</td>
+                                </tr>
+                                <tr>
+                                    <td>Shipping Fee</td>
+                                    <td>: @SHIPPING_FEE.SHIPPING</td>
+                                </tr>
+                                <tr>
+                                    @if (Model.IsCardCreditPay)
+                                    {
+                                        <td>Payment method</td>
+                                        <td style="font-size: 18px; font-weight:600; color:#001489">: Credit Card</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Payment method</td>
+                                        <td style="font-size: 18px; font-weight:600; color:#cd1817">: COD</td>
+                                    }
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-6 mb-4 mb-xl-0">
+                    <div class="confirmation-card">
+                        <h3 class="billing-title">Shipping Address</h3>
+                        <table class="order-rable">
+                            <tbody>
+                                <tr>
+                                    <td>Customer Id</td>
+                                    <td>:  @Model.CustomerItemViewModel.Id.ToString().Substring(0, 8).ToUpper()</td>
+                                </tr>
+                                <tr>
+                                    <td>Name Customer</td>
+                                    <td>:  @Model.CustomerItemViewModel.Name</td>
+                                </tr>
+                                <tr>
+                                    <td>City</td>
+                                    <td>:  @Model.CustomerItemViewModel.City</td>
+                                </tr>
+                                <tr>
+                                    <td>Address</td>
+                                    <td>:  @Model.CustomerItemViewModel.Address</td>
+                                </tr>
+                                <tr>
+                                    <td>Phone</td>
+                                    <td>:  @Model.CustomerItemViewModel.Phone</td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td>:  @Model.CustomerItemViewModel.Email</td>
+                                </tr>
+                                <tr>
+                                    <td>Shipping Method</td>
+                                    <td>:  International express shipping</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="order_details_table">
+                <h2>Order Details</h2>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Image</th>
+                                <th scope="col">Unit Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            @foreach (var cartItem in Model.CartViewModel.ListCartItem)
+                            {
+                                <tr>
+                                    <td>
+                                        <p>@cartItem.Product.Name</p>
+                                    </td>
+                                    <td>
+                                        <img class="card-img" src="@cartItem.Product.ImageUrl"
+                                        style="width:80px; height:80px" alt="">
+                                    </td>
+                                    <td>
+                                        <p>@cartItem.Product.Price.GetPriceFormat()</p>
+                                    </td>
+                                    <td>
+                                        <h5>x @cartItem.Quantity</h5>
+                                    </td>
+                                    <td>
+                                        <p>@cartItem.Price.GetPriceFormat()</p>
+                                    </td>
+                                </tr>
+                            }
+
+                            <tr>
+                                <td>
+                                    <h4>Product Amount</h4>
+                                </td>
+                                <td>
+                                    <h5></h5>
+                                </td>
+                                <td style="font-weight:600">
+                                    <p>@Model.CartViewModel.Total.GetPriceFormat()</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h4>Discount</h4>
+                                </td>
+                                <td>
+                                    <h5></h5>
+                                </td>
+                                <td style="font-weight:600">
+                                    <p>@discount</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h4>SubTotal</h4>
+                                </td>
+                                <td>
+                                    <h5></h5>
+                                </td>
+                                <td>
+                                    <p style="font-weight:600">
+                                        @subTotal.GetPriceFormat();
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h4>Shipping</h4>
+                                </td>
+                                <td>
+                                    <h5></h5>
+                                </td>
+                                <td>
+                                    <p>Flat rate: @shipping.GetPriceFormat()</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h4>Total</h4>
+                                </td>
+                                <td>
+                                    <h5></h5>
+                                </td>
+
+                                <td>
+                                    <h4 style="font-weight:700; font-size:17px">@total</h4>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                @if (!Model.IsCardCreditPay)
+                {
+                    <div class="text-center col-md-3 " style="display:flex; float:right">
+                        <button type="submit"
+                                class="button button-paypal">
+                            Order Now
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center col-md-3 " style="display:flex; float:right;">
+                        <button formaction="@Url.Action("CardCredit", "Checkout")"
+                                formmethod="post"
+                                class="button button-paypal">
+                            Pay by Card Now
+                        </button>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </form>
+</section>

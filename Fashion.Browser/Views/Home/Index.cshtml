@@ -10,136 +10,256 @@
 <partial name="_Alert" />
 
 @await Html.PartialAsync("_Banner")
-<link href="@Url.Content("~/css/home.css")" rel="stylesheet" />
+@*<link href="@Url.Content("~/css/home.css")" rel="stylesheet" />*@
 
-
-<form asp-action= method="post"> 
-<section class="section-margin calc-60px">
-    <div class="container">
-        <div class="section-intro pb-60px">
-            <p>Popular Item in the market</p>
-            <h2>Trending <span class="section-intro__style">Product</span></h2>
-        </div>
-        <div class="row">           
-            @if (!Model.IsSuccess)
-            {
-                <div class="main-container">
-                   <div class="pd-ltr-20 xs-pd-20-10">
-                   <div class="error-page d-flex align-items-center flex-wrap justify-content-center pd-20">
-                   <div class="pd-10">
-                    <div class="error-page-wrap text-center">                   
-                        <h1>500</h1>
-                        <h3>Error: 500 Internal Server Error</h3>
-                        <p style="font-size:20px">
-                            
-                        </p>
-                        <div class="pt-20 mx-auto max-width-200">
-                            <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500"
-                               class="btn btn-primary btn-block btn-lg">Check error by link</a>
+<div class="container-fluid pt-5">
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Categories</span></h2>
+        <div class="row px-xl-5 pb-3">
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <a class="text-decoration-none" href="">
+                    <div class="cat-item d-flex align-items-center mb-4">
+                        <div class="overflow-hidden" style="width: 100px; height: 100px;">
+                            <img class="img-fluid" src="img/cat-1.jpg" alt="">
                         </div>
-                    
-                        <div class="pt-20 mx-auto max-width-200">
-                            <a href="~/Home/Index" class="btn btn-primary btn-block btn-lg">Back To Home</a>
+                        <div class="flex-fill pl-3">
+                            <h6>Category Name</h6>
+                            <small class="text-body">100 Products</small>
                         </div>
                     </div>
-                </div>
-                </div>
-                </div>
-                </div>
-            }
-            else
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <a class="text-decoration-none" href="">
+                    <div class="cat-item img-zoom d-flex align-items-center mb-4">
+                        <div class="overflow-hidden" style="width: 100px; height: 100px;">
+                            <img class="img-fluid" src="img/cat-2.jpg" alt="">
+                        </div>
+                        <div class="flex-fill pl-3">
+                            <h6>Category Name</h6>
+                            <small class="text-body">100 Products</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <a class="text-decoration-none" href="">
+                    <div class="cat-item img-zoom d-flex align-items-center mb-4">
+                        <div class="overflow-hidden" style="width: 100px; height: 100px;">
+                            <img class="img-fluid" src="img/cat-3.jpg" alt="">
+                        </div>
+                        <div class="flex-fill pl-3">
+                            <h6>Category Name</h6>
+                            <small class="text-body">100 Products</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <a class="text-decoration-none" href="">
+                    <div class="cat-item img-zoom d-flex align-items-center mb-4">
+                        <div class="overflow-hidden" style="width: 100px; height: 100px;">
+                            <img class="img-fluid" src="img/cat-4.jpg" alt="">
+                        </div>
+                        <div class="flex-fill pl-3">
+                            <h6>Category Name</h6>
+                            <small class="text-body">100 Products</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <a class="text-decoration-none" href="">
+                    <div class="cat-item img-zoom d-flex align-items-center mb-4">
+                        <div class="overflow-hidden" style="width: 100px; height: 100px;">
+                            <img class="img-fluid" src="img/cat-4.jpg" alt="">
+                        </div>
+                        <div class="flex-fill pl-3">
+                            <h6>Category Name</h6>
+                            <small class="text-body">100 Products</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <a class="text-decoration-none" href="">
+                    <div class="cat-item img-zoom d-flex align-items-center mb-4">
+                        <div class="overflow-hidden" style="width: 100px; height: 100px;">
+                            <img class="img-fluid" src="img/cat-3.jpg" alt="">
+                        </div>
+                        <div class="flex-fill pl-3">
+                            <h6>Category Name</h6>
+                            <small class="text-body">100 Products</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <a class="text-decoration-none" href="">
+                    <div class="cat-item img-zoom d-flex align-items-center mb-4">
+                        <div class="overflow-hidden" style="width: 100px; height: 100px;">
+                            <img class="img-fluid" src="img/cat-2.jpg" alt="">
+                        </div>
+                        <div class="flex-fill pl-3">
+                            <h6>Category Name</h6>
+                            <small class="text-body">100 Products</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <a class="text-decoration-none" href="">
+                    <div class="cat-item img-zoom d-flex align-items-center mb-4">
+                        <div class="overflow-hidden" style="width: 100px; height: 100px;">
+                            <img class="img-fluid" src="img/cat-1.jpg" alt="">
+                        </div>
+                        <div class="flex-fill pl-3">
+                            <h6>Category Name</h6>
+                            <small class="text-body">100 Products</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <a class="text-decoration-none" href="">
+                    <div class="cat-item img-zoom d-flex align-items-center mb-4">
+                        <div class="overflow-hidden" style="width: 100px; height: 100px;">
+                            <img class="img-fluid" src="img/cat-2.jpg" alt="">
+                        </div>
+                        <div class="flex-fill pl-3">
+                            <h6>Category Name</h6>
+                            <small class="text-body">100 Products</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <a class="text-decoration-none" href="">
+                    <div class="cat-item img-zoom d-flex align-items-center mb-4">
+                        <div class="overflow-hidden" style="width: 100px; height: 100px;">
+                            <img class="img-fluid" src="img/cat-1.jpg" alt="">
+                        </div>
+                        <div class="flex-fill pl-3">
+                            <h6>Category Name</h6>
+                            <small class="text-body">100 Products</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <a class="text-decoration-none" href="">
+                    <div class="cat-item img-zoom d-flex align-items-center mb-4">
+                        <div class="overflow-hidden" style="width: 100px; height: 100px;">
+                            <img class="img-fluid" src="img/cat-4.jpg" alt="">
+                        </div>
+                        <div class="flex-fill pl-3">
+                            <h6>Category Name</h6>
+                            <small class="text-body">100 Products</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <a class="text-decoration-none" href="">
+                    <div class="cat-item img-zoom d-flex align-items-center mb-4">
+                        <div class="overflow-hidden" style="width: 100px; height: 100px;">
+                            <img class="img-fluid" src="img/cat-3.jpg" alt="">
+                        </div>
+                        <div class="flex-fill pl-3">
+                            <h6>Category Name</h6>
+                            <small class="text-body">100 Products</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+<form asp-action= method="post"> 
+    <div class="container-fluid pt-5 pb-3">
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
+            <span class="bg-secondary pr-3">Featured Products</span></h2>
+        <div class="row px-xl-5">
+        @if (Model.IsSuccess)
+        {
+            @foreach(var product in Model.ListProduct)
             {
-                <input type="hidden" id="products__count" value="" />
-                @foreach (var product in Model.ListProduct)
-            {
-                <div class="col-md-6 col-lg-4 col-xl-3">
-                    <div class="card text-center card-product">
-                        <div class="card-product__img">
-
-                            <input type="hidden" id="product__id-@product.Id" value="@product.Id" />
-
-                            <a class="product-img" href="~/Product/Detail/@product.Id">
-
-                                <input type="hidden" id="product__image-@product.Id" value="@product.ImageName" />
-                                @if (product.QuantityInStock > 0)
+                <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <div class="product-item bg-light mb-4">
+                     <input type="hidden" id="product__id-@product.Id" value="@product.Id" />
+                    <div class="product-img position-relative overflow-hidden">
+                         @if (product.QuantityInStock > 0)
                                 {
                                     <img class="card-img" src="@product.ImageUrl" alt="">
                                 }
                                 else
                                 {
-                                    <img class="card-img" src="@product.ImageUrl" style="opacity:0.5" alt="">
-                                }                                                       
+                                    <img class="card-img" src="@product.ImageUrl" style="opacity:0.3" alt="">
+                             }    
+                        <div class="product-action">
+                            <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
+                            <a class="btn btn-outline-dark btn-square" href="" onclick="addToCart('@product.Id', event)">
+                                <i class="bi bi-basket-fill"></i>
                             </a>
-                            <ul class="card-product__imgOverlay">                  
-                                <li class="li-product">
-                                    <button class="title-text" title="REVIEWS">
-                                        <i class="ti-heart">
-
-                                        </i>
-                                    </button>
-                                </li>                            
-                                @if (product.QuantityInStock > 0)
-                                {
-                                    <li class="li-product">
-                                        <button 
-                                            class="title-text"
-                                            title="ADD TO CART"
-                                            onclick="addToCart('@product.Id', event)">
-                                            <i class="bi bi-basket"></i>
-                                        </button>
-                                    </li>
-                                }                              
-                                <li class="li-product">
-                                    <button
-                                        class="title-text"
-                                        title="DETAIL"
-                                        type="submit"
-                                        formaction="@Url.Action("Detail", "Product")"
-                                        formmethod="post">
-                                        <i class="bi bi-eye-fill"></i>
-                                    </button>                                                   
-                                </li>
-                                <li>
-                                    <div title="ADDED">
-                                        <i class="bi bi-check-circle-fill"
-                                        id="bi-fill-visibility-@product.Id"
-                                        style="font-weight:600; font-size:20px; visibility:hidden" ></i>
-                                    </div>  
-                                </li>
-                            </ul>
+                            <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-eye" aria-hidden="true"></i></a>
                         </div>
-                        <div class="card-body">
-
-                            <input type="hidden" id="product__name-@product.Id" value="@product.Name" />
-
-                            <h4 class="card-product__title"><a href="single-product.html">@product.Name</a></h4>
-
-                            <input type="hidden" id="product__provider-@product.Id" value="@product.Provider" />
-
-                            <p>Provider : @product.Provider</p>
-                            @if (product.QuantityInStock == 0)
+                    </div>
+                    <div class="text-center py-4">
+                        <a class="h6 text-decoration-none text-truncate" href="">@product.Name</a>
+                        <div class="d-flex align-items-center justify-content-center mt-2">
+                            <h5>@product.Price.GetPriceFormat()</h5><h6 class="text-muted ml-2"><del>$123.00</del></h6>
+                        </div>
+                         @if (product.QuantityInStock == 0)
                             {
-                               <p style="color:firebrick">OUT OF STOCK</p>
+                               <p style="color:red">OUT OF STOCK</p>
                             }
                             else
                             {
                                <input type="hidden" id="product__unitstock-@product.Id" value="@product.QuantityInStock" />
 
-                               <p style="color:blue; font-weight:500">Quantity In Stock : @product.QuantityInStock</p>
+                               <p style="color:green; font-weight:500">Quantity In Stock : @product.QuantityInStock</p>
                             }
-
-                            <input type="hidden" id="product__displayprice-@product.Id" value="@product.Price.GetPriceFormat()" />
-
-                            <p class="card-product__price">@product.Price.GetPriceFormat()</p>
-
-                            <input type="hidden" id="product__description-@product.Id" value="@product.Description" />
+                        <div class="d-flex align-items-center justify-content-center mb-1">
+                            <small class="fa fa-star text-primary mr-1"></small>
+                            <small class="fa fa-star text-primary mr-1"></small>
+                            <small class="fa fa-star text-primary mr-1"></small>
+                            <small class="fa fa-star text-primary mr-1"></small>
+                            <small class="fa fa-star text-primary mr-1"></small>
+                            <small>(99)</small>
                         </div>
                     </div>
                 </div>
-            }   
+            </div>
             }
-           
+            
+        }
+        else
+        {
+            <div class="main-container">
+        <div class="pd-ltr-20 xs-pd-20-10">
+            <div class="error-page d-flex align-items-center flex-wrap justify-content-center pd-20">
+                <div class="pd-10">
+                    <div class="error-page-wrap text-center">
+                        <h1>503</h1>
+                        <h3>Error: 503 Service Unavailable</h3>
+                        <p style="font-size:20px">
+                            No connection could be made because the target machine actively refused it. (localhost:44342)..<br>
+                        </p>
+                        <p>
+                            The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.
+                            Common causes are a server that is down for maintenance or that is overloaded
+                        </p>
+                        <div class="pt-20 mx-auto max-width-200">
+                            <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503" class="btn btn-primary btn-block btn-lg">Check error by link</a>
+                        </div>
+                        <div class="pt-20 mx-auto max-width-200">
+                            <a href="/Home/Index" class="btn btn-primary btn-block btn-lg">Back To Home</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</section>
+        }
+        </div>
+    </div>
 </form>

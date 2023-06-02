@@ -34,7 +34,7 @@ namespace FashionBrowser.Domain.Services
 
                 var responseList = JsonConvert.DeserializeObject<ResponseAPI<List<ProductItemViewModel>>>
                                    (await response.Content.ReadAsStringAsync());
-                _isSuccess = responseList.Success;
+                _isSuccess = responseList.IsSuccess;
                 _errorDetail = responseList.ErrorsDetail;
 
                 var products = responseList.Data;
