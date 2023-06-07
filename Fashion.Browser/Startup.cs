@@ -1,5 +1,6 @@
 using FashionBrowser.Domain.Config;
 using FashionBrowser.Domain.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -36,6 +37,12 @@ namespace Fashion.Browser
             services.AddHttpClient();
 
             services.Configure<APIConfig>(Configuration.GetSection("Api"));
+            services.Configure<TokenConfig>(Configuration.GetSection("Token"));
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+            {
+                options.LoginPath = "/users/login";
+                options.ExpireTimeSpan = TimeSpan.FromDays(1);
+            });
 
             services.AddDistributedMemoryCache();
 
@@ -45,8 +52,7 @@ namespace Fashion.Browser
 			});
 
             services.AddSession(cfg => {
-                cfg.Cookie.Name = "checkout";
-                cfg.IdleTimeout = new TimeSpan(24, 0, 0);
+                cfg.IdleTimeout = TimeSpan.FromDays(1);
             });
         }
 

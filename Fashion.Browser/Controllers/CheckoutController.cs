@@ -4,7 +4,6 @@ using FashionBrowser.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Fashion.Browser.Controllers
