@@ -76,7 +76,6 @@ namespace Fashion.Browser.Controllers
             return BadRequest();
         }
 
-
         [HttpPost]
         [Route("/adjustquantity/{productId}/{operate}")]
         public IActionResult AdjustQuantity(string operate, string productId)

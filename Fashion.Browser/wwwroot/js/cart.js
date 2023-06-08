@@ -176,18 +176,17 @@ function getQuantityAdjustment(operator, productId) {
             } 
             return sst;
         default:
-            if (!isNaN(sst)) {
+            if (!isNaN(sst) && sst!=1) {
                 sst--;
                 result.val(sst);
             }
-            if (sst < 1) {
+            if (sst == 1 || sst < 1) {
                 result.val(1);
                 deleteCart(productId);
             }
             return sst;
     }
 }
-
 
 function getTotalPrice(data) {
     var totalPrice = data.reduce(function (accumulator, current) {
