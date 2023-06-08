@@ -1,14 +1,11 @@
 ﻿using FashionBrowser.Domain.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace FashionBrowser.Domain.Services
 {
-	public interface IUserService
+    public interface IUserService
 	{
 		public Task<Tuple<bool, string>> RegisterUserAsync(UserItemViewModel registerUser);
+		public Task<Tuple<ClaimsPrincipal, bool, string>> VerifyUserAsync(LoginItemViewModel loginUser);
     }
 }
