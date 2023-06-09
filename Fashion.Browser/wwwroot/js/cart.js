@@ -105,6 +105,7 @@ $(".items-count").on("click", function () {
             }, 0);
 
             $('#total-price').html(getPriceFormat(totalPrice));
+            $('.cart-total-price').html(getPriceFormat(totalPrice + 1));
         },
         error: function (response, status, error) {
             if (response.status === 404) {
@@ -176,18 +177,18 @@ function getQuantityAdjustment(operator, productId) {
             } 
             return sst;
         default:
-            if (!isNaN(sst)) {
+            if (!isNaN(sst) && sst!=1) {
                 sst--;
                 result.val(sst);
+                return sst;
             }
-            if (sst < 1) {
+            if (sst <= 1) {
                 result.val(1);
                 deleteCart(productId);
+                return 1;       
             }
-            return sst;
     }
 }
-
 
 function getTotalPrice(data) {
     var totalPrice = data.reduce(function (accumulator, current) {

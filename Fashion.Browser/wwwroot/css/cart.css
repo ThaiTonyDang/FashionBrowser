@@ -15,14 +15,15 @@
 
 .cart-number {
     position: absolute;
-    border-radius: 50%;
-    width: 1.1rem;
-    height: 1.1rem;
-    background-color: white;
-    color: blue;
     text-align: center;
-    font-size: 13px;
     font-weight: 500;
-    margin-top: -40px;
-    margin-left: 25px;
+}
+
+.coupon-button, .my-3 {
+    font-size: 1rem;
+    background-color: rgba(0,35,71,0.980392);
+}
+
+.btn-danger {
+    border-radius: 10px
 }

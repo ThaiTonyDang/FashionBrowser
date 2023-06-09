@@ -1,4 +1,5 @@
 ﻿using FashionBrowser.Domain.Services;
+using FashionBrowser.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -39,6 +40,19 @@ namespace Fashion.Browser.Controllers
                 }
             }
             return View(productViewModel);
+        }
+
+        [Route("{productId}")]
+        public async Task<IActionResult> Detail(string productId)
+        {
+            var result = productId.IsGuidParseFromString();
+            if (result)
+            {
+                var tuple= await _productServices.GetProductByIdAsync(productId);
+                var product = tuple.Item1;
+                return View(product);
+            }    
+            return RedirectToAction("Index", "Home");
         }
     }
 }

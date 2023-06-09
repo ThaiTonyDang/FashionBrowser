@@ -6,137 +6,137 @@
     ViewData["Title"] = "Cart";
     Layout = "_Layout";
 }
-
+<link href="~/css/cart.css" rel="stylesheet" />
 <partial name="_Alert" />
 
 <section class="blog-banner-area" id="category">
     <div class="container h-100">
         <div class="blog-banner">
             <div class="text-center">
-                <h1 style="color:#001489; font-size:50px">Shopping Cart</h1>
-                <nav aria-label="breadcrumb" class="banner-breadcrumb"> 
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item" style="font-size:20px"><a href="/" style="color:rgba(0,35,71,0.980392)">Home</a></li>
-                        <li class="breadcrumb-item active" style="font-size:20px" aria-current="page">Shopping Cart</li>
-                    </ol>
-                </nav>
+                <h1 style="color:#001489; font-size:50px">Shopping Cart</h1>              
             </div>
         </div>
     </div>
 </section>
-<section class="cart_area">
-    <div class="container">
-        <div class="cart_inner">
-            <div class="table-responsive">
-                @if (Model.ListCartItem.Count > 0)
-                {
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col" style="padding-left:60px">Product</th>
-                                <th scope="col">Price</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Total</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var cartItem in Model.ListCartItem)
-                            {                                
-                               <tr>
-                                <td>
-                                    <div class="media">
-                                        <div class="d-flex">
-                                            <img src="@cartItem.Product.ImageUrl"
-                                                 style="width:200px; height:200px" alt="">
-                                        </div>
-                                        <div class="media-body">
-                                             <p style="font-size:16px; font-weight:600">@cartItem.Product.Name</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <h5>@cartItem.Product.DisplayPrice</h5>
-                                </td>
-                                <td>
-                                    <div class="product_count">
-                                         <input type="hidden" id="cartitem-price-@cartItem.Product.Id"
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="/" class="link" style="color:#001489; font-weight:600">Home
+            </a>
+    </li>
+    <li class="breadcrumb-item">Shopping Cart</li>
+</ol>
+
+@if (Model.ListCartItem.Count > 0)
+{
+<div class="container-fluid">
+    <div class="row px-xl-5">     
+            <div class="col-lg-8 table-responsive mb-5">        
+                <table class="table table-light table-borderless table-hover text-center mb-0">
+                    <thead class="thead-dark">
+                       
+                        <tr>
+                            <th>Products</th>
+                            <th></th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Remove</th>
+                        </tr>
+                        
+                    </thead>
+                    <tbody class="align-middle">
+                        @foreach (var cartItem in Model.ListCartItem)
+                        { 
+                        <tr>
+                            <td class="align-middle"><img src="@cartItem.Product.ImageUrl" alt="" style="width: 100px;">
+                            </td>
+                            <td class="align-middle" style="font-size:20px; font-weight:600">@cartItem.Product.Name</td>
+                            <td class="align-middle"style="font-size:20px; font-weight:500">@cartItem.Product.Price.GetPriceFormat()</td>
+                            <td class="align-middle">
+                                 <input type="hidden" id="cartitem-price-@cartItem.Product.Id"
                                                 value="@cartItem.Product.Price" />
-                                        <input id="sst-@cartItem.Product.Id" value="@cartItem.Quantity"
-                                        title="Quantity:" class="input-text qty" min="1">
-
-                                        <button class="increase items-count" type="button"
-                                        data-value="@cartItem.Product.Id"
-                                                value="@OPERATOR.ADDITION">
-                                        <i class="lnr lnr-chevron-up"></i>
-                                        </button>
-
-                                        <button class="reduced items-count" type="button" data-value="@cartItem.Product.Id"
-                                                value="@OPERATOR.SUBTRACT">
-                                        <i class="lnr lnr-chevron-down"></i>
+                                <div class="input-group quantity mx-auto" style="width: 100px;">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-sm btn-primary btn-minus items-count"
+                                        type="button" data-value="@cartItem.Product.Id" value="@OPERATOR.SUBTRACT">
+                                            <i class="fa fa-minus"></i>
                                         </button>
                                     </div>
-                                </td>
-                                <td>
-                                    <h5 id="item-price-@cartItem.Product.Id">@cartItem.Price.GetPriceFormat()</h5>
-                                </td>
-                                <td>
-                                    <button
-                                    type="button" class="btn btn-outline-primary"
-                                    onclick="deleteCart('@cartItem.Product.Id')">
-                                    <i class="icon-copy bi bi-trash-fill" style="cursor:pointer; font-size:25px"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            }
-                            <tr>
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                    <h5>Subtotal</h5>
-                                </td>
-                                <td>
-                                    <h5 id="total-price">@Model.Total.GetPriceFormat()</h5>
-                                </td>
-                            </tr>
-                            <tr class="out_button_area">
-                                <td class="d-none-l">
-                                </td>
-                                <td class="">
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                    <div class="checkout_btn_inner d-flex align-items-center">
-                                        <a class="gray_btn" href="/">Continue Shopping</a>
-                                        <a class="primary-btn ml-2" href="~/Checkout/Index">Proceed To Checkout</a>
+                                    <input
+                                    type="text" id="sst-@cartItem.Product.Id"
+                                    class="form-control form-control-sm bg-secondary border-0 text-center input-text qty"
+                                    value="@cartItem.Quantity" min="1">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-sm btn-primary items-count"
+                                        type="button" data-value="@cartItem.Product.Id" value="@OPERATOR.ADDITION">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
                                     </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <div style="text-align:center">
-                        <img src="https://fptshop.com.vn/cart/Content/Desktop/images/empty-cart.png" alt="">
-                    </div style="text-align:center">
-                    <p style="color:#001489; font-size:20px; text-align:center ">
-                        THERE ARE NO PRODUCTS IN YOUR CART !
-                    </p>
-                    <p class="cart-footer alert alert-primary" style="text-align:center; font-size:30px">
-                        <a href="~/Home/Index" style="color:#001489; text-decoration:none; font-weight:500">BACK TO HOME</a>
-                    </p>
-                    <p class="cart-footer" style="text-align:center">
-                        When you need help, please call 1800.1060 or 0768.515.122 (7h30 - 22h)
-                    </p>
-                }
+                                </div>
+                            </td>
+                            <td class="align-middle" id="item-price-@cartItem.Product.Id" style="font-size:20px; font-weight:500">@cartItem.Price.GetPriceFormat()</td>
+                            <td class="align-middle">
+                                <button class="btn btn-sm btn-danger trash" onclick="deleteCart('@cartItem.Product.Id')">
+                                <i class="bi bi-trash3" style="font-size : 20px"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>                             
             </div>
-        </div>
+            <div class="col-lg-4">
+                <form class="mb-30" action="">
+                    <div class="input-group">
+                        <input type="text" class="form-control border-0 p-4" placeholder="Coupon Code">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary coupon-button" style="color:azure">Apply Coupon</button>
+                        </div>
+                    </div>
+                </form>
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Cart Summary</span></h5>
+                <div class="bg-light p-30 mb-5">
+                    <div class="border-bottom pb-2">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h6>Subtotal</h6>
+                            <h6  id="total-price" style="font-size:20px; font-weight:500">@Model.Total.GetPriceFormat()</h6>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-medium">Shipping</h6>
+                            <h6 class="font-weight-medium">@SHIPPING_FEE.SHIPPING.GetPriceFormat()</h6>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5>Total</h5>
+                            @{
+                                var total = Model.Total + SHIPPING_FEE.SHIPPING;
+                            }
+                            <h5 class="cart-total-price">@total.GetPriceFormat()</h5>
+                        </div>
+                        <button class="btn btn-block btn-primary font-weight-bold my-3 py-3"
+                        style="color:azure">Proceed To Checkout</button>
+                    </div>
+                </div>
+            </div>
+            </div>
     </div>
-</section>
+}
+else
+{
+    <div style="text-align:center">
+        <img src="https://fptshop.com.vn/cart/Content/Desktop/images/empty-cart.png" alt="">
+    </div style="text-align:center">
+    <p style="color:#001489; font-size:20px; text-align:center ">
+        THERE ARE NO PRODUCTS IN YOUR CART !
+    </p>
+    <p class="cart-footer alert alert-primary" style="text-align:center; font-size:30px">
+        <a href="/" style="color:#001489; text-decoration:none; font-weight:500">BACK TO HOME</a>
+    </p>
+    <p class="cart-footer" style="text-align:center">
+        When you need help, please call 1800.1060 or 0768.515.122 (7h30 - 22h)
+    </p>
+}
 
 @section Scripts {
     <script src="@Url.Content("~/js/modal.js")"></script>
