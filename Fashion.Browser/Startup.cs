@@ -46,11 +46,6 @@ namespace Fashion.Browser
 
             services.AddDistributedMemoryCache();
 
-			services.AddSession(cfg => {
-				cfg.Cookie.Name = "productData";
-				cfg.IdleTimeout = new TimeSpan(24, 0, 0);
-			});
-
             services.AddSession(cfg => {
                 cfg.IdleTimeout = TimeSpan.FromDays(1);
             });
