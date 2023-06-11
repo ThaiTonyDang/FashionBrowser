@@ -3,9 +3,12 @@ using FashionBrowser.Domain.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using System;
 
 namespace Fashion.Browser
@@ -36,23 +39,26 @@ namespace Fashion.Browser
             services.AddHttpContextAccessor();
             services.AddHttpClient();
 
+			var tokenConfig = Configuration.GetSection("Token");
+            services.Configure<TokenConfig>(tokenConfig);
             services.Configure<APIConfig>(Configuration.GetSection("Api"));
-            services.Configure<TokenConfig>(Configuration.GetSection("Token"));
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
-            {
-                options.LoginPath = "/users/login";
-                options.ExpireTimeSpan = TimeSpan.FromDays(1);
-            });
+
+
+			var expiredTime = tokenConfig.Get<TokenConfig>().Expired;
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+			.AddCookie(options => {
+				options.LoginPath = "/users/login";
+				options.ExpireTimeSpan = TimeSpan.FromDays(expiredTime);
+			});
 
             services.AddDistributedMemoryCache();
 
-			services.AddSession(cfg => {
-				cfg.Cookie.Name = "productData";
-				cfg.IdleTimeout = new TimeSpan(24, 0, 0);
-			});
-
             services.AddSession(cfg => {
-                cfg.IdleTimeout = TimeSpan.FromDays(1);
+                cfg.Cookie.Name = "Fashion.Browser";
+                cfg.Cookie.IsEssential = true;
+                cfg.Cookie.HttpOnly = true;
+                cfg.Cookie.SameSite = SameSiteMode.Strict;
+                cfg.IdleTimeout = TimeSpan.FromDays(expiredTime);
             });
         }
 
@@ -73,6 +79,12 @@ namespace Fashion.Browser
 
 			app.UseRouting();
 
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+
+            app.UseAuthentication();
 			app.UseAuthorization();
 
 			app.UseEndpoints(endpoints =>
