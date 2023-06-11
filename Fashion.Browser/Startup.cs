@@ -3,9 +3,11 @@ using FashionBrowser.Domain.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using System;
 
 namespace Fashion.Browser
@@ -47,6 +49,10 @@ namespace Fashion.Browser
             services.AddDistributedMemoryCache();
 
             services.AddSession(cfg => {
+                cfg.Cookie.Name = "Fashion.Browser"; // <--- Add line
+                cfg.Cookie.IsEssential = true;
+                cfg.Cookie.HttpOnly = true;
+                cfg.Cookie.SameSite = SameSiteMode.Strict;
                 cfg.IdleTimeout = TimeSpan.FromDays(1);
             });
         }
