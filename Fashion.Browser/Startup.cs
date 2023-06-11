@@ -48,7 +48,7 @@ namespace Fashion.Browser
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 			.AddCookie(options => {
 				options.LoginPath = "/users/login";
-				options.ExpireTimeSpan = TimeSpan.FromDays(expiredTime);
+				options.ExpireTimeSpan = TimeSpan.FromMinutes(expiredTime);
 			});
 
             services.AddDistributedMemoryCache();
@@ -58,7 +58,7 @@ namespace Fashion.Browser
                 cfg.Cookie.IsEssential = true;
                 cfg.Cookie.HttpOnly = true;
                 cfg.Cookie.SameSite = SameSiteMode.Strict;
-                cfg.IdleTimeout = TimeSpan.FromDays(expiredTime);
+                cfg.IdleTimeout = TimeSpan.FromMinutes(expiredTime);
             });
         }
 
