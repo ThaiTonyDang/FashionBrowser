@@ -12,6 +12,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http.Headers;
 using System.Net.Http;
+using Newtonsoft.Json.Linq;
 
 namespace Fashion.Browser.Controllers
 {
@@ -30,8 +31,13 @@ namespace Fashion.Browser.Controllers
         [Route("shoppingcart")]
         public async Task<IActionResult> Index()
         {
-            var token = User.FindFirst("token").Value;
-            var cartView = await _cartServices.GetCartViewModel(token);
+            var cartView = new CartViewModel();
+            var claim = User.FindFirst("token");
+            if (claim != null)
+            {
+                var token = claim.Value;
+                cartView = await _cartServices.GetCartViewModel(token);
+            }    
 
             return View(cartView);
         }
@@ -47,7 +53,7 @@ namespace Fashion.Browser.Controllers
             }
 
             var token = claim.Value;
-            var tuple = await _productServices.GetProductByIdAsync(productId, token);
+            var tuple = await _productServices.GetProductByIdAsync(productId);
             var product = tuple.Item1;
 
             var cartItem = new CartItemViewModel()
@@ -57,38 +63,32 @@ namespace Fashion.Browser.Controllers
                 ProductId = product.Id,
                 Product = product
             };
+            var result = await _cartServices.AddToCart(cartItem, token);
 
             var cartItems = HttpContext.Session.GetObjectFromJson<List<CartItemViewModel>>(CartKeyName.Cart_Key);
             if (cartItems == null) cartItems = new List<CartItemViewModel>();
-            cartItems.Add(cartItem);
-            HttpContext.Session.SetObjectAsJson(CartKeyName.Cart_Key, cartItems);
-            var result = await _cartServices.AddToCart(cartItem, token);
+
+            var cartView = await _cartServices.GetCartViewModel(token);
+            cartItems = cartView.ListCartItem;
+
             var isSuccess = result.Item1;
-            if (isSuccess)
-            return Ok(cartItems);
-            return BadRequest();
+            if (isSuccess) return Ok(cartItems);
+                return BadRequest();
         }
 
         [HttpDelete]
         [Route("/delete/{productId}")]
-        public IActionResult DeleteToCart(string productId)
+        public async  Task<IActionResult> DeleteToCart(string productId)
         {
-            var session = HttpContext.Session;
-            var carts = session.GetObjectFromJson<List<CartItemViewModel>>(CartKeyName.Cart_Key);
+            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
+            var token = User.FindFirst("token")?.Value;
+            var result = await _cartServices.DeleteCartItem(productId, token);
+            var isSuccess = result.Item1;
+            var message = result.Item2;
 
-            if (carts == null) return StatusCode(404);
-
-            var result = productId.IsGuidParseFromString();
-            if (result)
+            if (isSuccess)
             {
-                var isSucces = _cartServices.DeleteCartItems(carts, new Guid(productId));
-                if (isSucces)
-                {
-                    HttpContext.Session.SetObjectAsJson(CartKeyName.Cart_Key, carts);
-
-                    return Ok(carts);
-                }
-
+                return Ok();
             }
 
             return BadRequest();

@@ -11,6 +11,6 @@ namespace FashionBrowser.Domain.Services
 	{
 		public Task<ProductViewModel> GetProductViewModelAsync();
 		public Task<List<ProductItemViewModel>> GetListProductAsync();
-		public Task<Tuple<ProductItemViewModel, string>> GetProductByIdAsync(string id, string token);
+		public Task<Tuple<ProductItemViewModel, string>> GetProductByIdAsync(string id);
 	}
 }

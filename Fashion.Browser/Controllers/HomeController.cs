@@ -51,11 +51,10 @@ namespace Fashion.Browser.Controllers
         [Route("{productId}")]
         public async Task<IActionResult> Detail(string productId)
         {
-            var token = User.FindFirst("token").Value;
             var result = productId.IsGuidParseFromString();
             if (result)
             {
-                var tuple= await _productServices.GetProductByIdAsync(productId, token);
+                var tuple= await _productServices.GetProductByIdAsync(productId);
                 var product = tuple.Item1;
                 return View(product);
             }    

@@ -53,13 +53,12 @@ namespace FashionBrowser.Domain.Services
             }
         }
 
-        public async Task<Tuple<ProductItemViewModel, string>> GetProductByIdAsync(string productId, string token)
+        public async Task<Tuple<ProductItemViewModel, string>> GetProductByIdAsync(string productId)
         {
             var message = "";
             try
             {
                 var apiUrl = _urlService.GetBaseUrl() + "/api/products/";
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = await _httpClient.GetAsync(apiUrl + productId);
                 var responseList = JsonConvert.DeserializeObject<ResponseAPI<ProductItemViewModel>>
                                    (await response.Content.ReadAsStringAsync());

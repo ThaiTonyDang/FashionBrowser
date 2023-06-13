@@ -22,12 +22,20 @@ namespace Fashion.Browser.Controllers
         [Route("users/register")]
         public IActionResult Register()
         {
+            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
             var user = new UserItemViewModel();
+            TempData[Mode.LABEL_CONFIRM_CHECK] = "Register To Shop Now !";
             return View(user);
         }
 
         public IActionResult Login()
         {
+            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
+            var claim = User.FindFirst("token");
+            if (claim == null)
+            {
+                TempData[Mode.LABEL_CONFIRM_CHECK] = "Login To Shop Now !";
+            }
             var loginUser = new LoginItemViewModel();
             return View(loginUser);
         }
@@ -73,7 +81,7 @@ namespace Fashion.Browser.Controllers
             }
 
             TempData[Mode.LABEL_CONFIRM_FAIL] = content;
-            return RedirectToAction("index", "home");
+            return RedirectToAction("login", "users");
 
         }
 

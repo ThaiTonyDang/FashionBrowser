@@ -45,18 +45,6 @@ namespace FashionBrowser.Domain.Services
             }
         }
 
-		public bool DeleteCartItems(List<CartItemViewModel> carts, Guid id)
-		{
-			var cartItem = GetCartItemByProductId(carts, id);
-			if (cartItem != null)
-			{
-				carts.Remove(cartItem);
-				return true;
-			}
-
-			return false;
-		}
-
 		public void AdjustQuantity(CartItemViewModel cartItem, string operate)
 		{
 			switch(operate)
@@ -122,6 +110,19 @@ namespace FashionBrowser.Domain.Services
                 _errorDetail = new string[] { exception.Message };
                 return null;
             }
+        }
+
+        public async Task<Tuple<bool, string>> DeleteCartItem(string productId, string token)
+        {
+            var apiUrl = _urlService.GetBaseUrl() + "/api/carts/";
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.DeleteAsync(apiUrl + productId);
+            var responseList = JsonConvert.DeserializeObject<ResponseAPI<bool>>
+                                   (await response.Content.ReadAsStringAsync());
+            var isSuccess = responseList.IsSuccess;
+            var message = responseList.Message;
+
+            return Tuple.Create(isSuccess, message);
         }
     }
 }
