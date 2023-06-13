@@ -31,6 +31,10 @@ function addToCart(id, e) {
                     footer: '<a href="/shoppingcart/">VISIT CART</a>'
                 })
             }
+
+            if (response.status === 401) {
+                window.location.href = '/users/login';
+            }
         }
     });
 }
@@ -95,12 +99,15 @@ $(".items-count").on("click", function () {
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
         success: function (response) {
-            saveCartDataToLocalStorage(response);       
             let price = quantity * productPrice;
+
             let format = getPriceFormat(price);
             $('#item-price-' + id).html(format);
+
+            saveCartDataToLocalStorage(response);       
             let data = getDataCartFromStorage();
-            var totalPrice = data.reduce(function (accumulator, current) {
+
+            var totalPrice = response.reduce(function (accumulator, current) {
                 return accumulator + current.product.price * current.quantity;
             }, 0);
 

@@ -7,6 +7,11 @@ using FashionBrowser.Domain.ViewModels;
 using FashionBrowser.Utilities;
 using Microsoft.AspNetCore.Routing;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http.Headers;
+using System.Net.Http;
 
 namespace Fashion.Browser.Controllers
 {
@@ -20,13 +25,13 @@ namespace Fashion.Browser.Controllers
             _cartServices = cartServices;
         }
 
+        [Authorize]
+        [HttpGet]
         [Route("shoppingcart")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var cartView = new CartViewModel();
-            var cartItems = HttpContext.Session.GetObjectFromJson<List<CartItemViewModel>>(CartKeyName.Cart_Key);
-            if (cartItems != default(List<CartItemViewModel>))
-                cartView.ListCartItem = cartItems;
+            var token = User.FindFirst("token").Value;
+            var cartView = await _cartServices.GetCartViewModel(token);
 
             return View(cartView);
         }
@@ -35,20 +40,33 @@ namespace Fashion.Browser.Controllers
         [Route("cart/addtocart/{productId}")]
         public async Task<IActionResult> AddToCart(string productId, int quantityInput = 0)
         {
-            var session = HttpContext.Session;
-            var tuple = await _productServices.GetProductByIdAsync(productId);
-            var product = tuple.Item1;
-            if (product.QuantityInStock == 0)
+            var claim = User.FindFirst("token");
+            if (claim == null)
             {
-                return BadRequest("OUT OF STOCK");
+                return Unauthorized();
             }
-            var cartItems = session.GetObjectFromJson<List<CartItemViewModel>>(CartKeyName.Cart_Key);
+
+            var token = claim.Value;
+            var tuple = await _productServices.GetProductByIdAsync(productId, token);
+            var product = tuple.Item1;
+
+            var cartItem = new CartItemViewModel()
+            {
+                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                Quantity = 1,
+                ProductId = product.Id,
+                Product = product
+            };
+
+            var cartItems = HttpContext.Session.GetObjectFromJson<List<CartItemViewModel>>(CartKeyName.Cart_Key);
             if (cartItems == null) cartItems = new List<CartItemViewModel>();
-
-            _cartServices.AddToCart(product, cartItems, quantityInput);
+            cartItems.Add(cartItem);
             HttpContext.Session.SetObjectAsJson(CartKeyName.Cart_Key, cartItems);
-
+            var result = await _cartServices.AddToCart(cartItem, token);
+            var isSuccess = result.Item1;
+            if (isSuccess)
             return Ok(cartItems);
+            return BadRequest();
         }
 
         [HttpDelete]
@@ -75,7 +93,6 @@ namespace Fashion.Browser.Controllers
 
             return BadRequest();
         }
-
 
         [HttpPost]
         [Route("/adjustquantity/{productId}/{operate}")]

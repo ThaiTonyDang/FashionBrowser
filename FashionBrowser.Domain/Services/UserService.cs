@@ -2,11 +2,14 @@
 using FashionBrowser.Domain.Config;
 using FashionBrowser.Domain.Model;
 using FashionBrowser.Domain.ViewModels;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
@@ -27,12 +30,12 @@ namespace FashionBrowser.Domain.Services
             _tokenConfig = options.Value;
         }
 
-        public async Task<Tuple<ClaimsPrincipal, bool, string>> VerifyUserAsync(LoginItemViewModel loginUser)
+        public async Task<Tuple<ClaimsPrincipal, bool, string>> LoginAsync(LoginItemViewModel loginUser)
         {
             var message = "";
             try
             {
-                var apiUrl = _urlService.GetBaseUrl() + "api/users/login";
+                var apiUrl = _urlService.GetBaseUrl() + "/api/users/login";
                 var response = await _httpClient.PostAsJsonAsync(apiUrl, loginUser);
                 var data = JsonConvert.DeserializeObject<ResponseAPI<string>>(await response.Content.ReadAsStringAsync());
                 message = data.Message;
@@ -40,16 +43,12 @@ namespace FashionBrowser.Domain.Services
                 {
                     var token = data.Data;
                     var result = VerifyToken(token);
-                    var principal = result.Item1;
+                    var claimsPrincipal = result.Item1;
                     var isVerify = result.Item2;
-                    message = result.Item3;
-                    if (isVerify)
-                    {
-                        var claims = principal.Claims;
-                        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                        var principalVerify = new ClaimsPrincipal(identity);
-                        return Tuple.Create(principalVerify, true, token);
-                    }    
+                    message = result.Item3;                  
+
+                    return Tuple.Create(claimsPrincipal, true, token);
+  
                 }    
             }
             catch (Exception e)
@@ -64,7 +63,7 @@ namespace FashionBrowser.Domain.Services
 		{
             try
             {
-                var apiUrl = _urlService.GetBaseUrl() + "api/users/register";
+                var apiUrl = _urlService.GetBaseUrl() + "/api/users/register";
                 var response = await _httpClient.PostAsJsonAsync(apiUrl, registerUser);
 
                 var responseList = JsonConvert.DeserializeObject<ResponseAPI<UserItemViewModel>>
@@ -79,6 +78,12 @@ namespace FashionBrowser.Domain.Services
             }
         }
 
+        public IEnumerable<Claim> GetClaims(ClaimsPrincipal claimsPrincipal, string token)
+        {
+            var claims = claimsPrincipal.Claims.ToList();
+            claims.Add(new Claim("token", token));
+            return claims;
+        }
 
         private Tuple<ClaimsPrincipal, bool, string> VerifyToken(string token)
         {

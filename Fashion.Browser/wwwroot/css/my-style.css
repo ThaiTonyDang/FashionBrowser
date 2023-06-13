@@ -25,3 +25,7 @@ ul {
 .flex-wrap {
     flex-wrap: wrap;
   }
+
+.text-truncate {
+    font-weight:600;
+}

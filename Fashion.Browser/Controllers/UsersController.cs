@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
+using System.Security.Claims;
 
 namespace Fashion.Browser.Controllers
 {
@@ -24,52 +26,55 @@ namespace Fashion.Browser.Controllers
             return View(user);
         }
 
-        [Route("users/login")]
         public IActionResult Login()
         {
-            return View();
+            var loginUser = new LoginItemViewModel();
+            return View(loginUser);
         }
 
         [HttpPost]
         [Route("users/login")]
-        public async Task<IActionResult> Login(LoginItemViewModel loginItemView)
+        public async Task<IActionResult> Login(LoginItemViewModel loginItemView, [FromQuery] string returnUrl)
         {
             var message = "";
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
-            if (ModelState.IsValid)
+    
+            if (loginItemView == null)
             {
-                if (loginItemView == null)
-                {
-                    TempData[Mode.LABEL_CONFIRM_FAIL] = "User information cannot be blank ";
-                    return RedirectToAction("login", "users"); ;
-                }
+                TempData[Mode.LABEL_CONFIRM_FAIL] = "User information cannot be blank ";
+                return RedirectToAction("login", "users"); ;
+            }
 
-                var result = await _userService.VerifyUserAsync(loginItemView);
-                var principal = result.Item1;
-                var isSuccess = result.Item2;
-                var content = result.Item3;
+            var result = await _userService.LoginAsync(loginItemView);
+            var claimsPrincipal = result.Item1;
+            var isSuccess = result.Item2;
+            var content = result.Item3;
 
-                if (!isSuccess)
-                {
-                    message = content;
-                    TempData[Mode.LABEL_CONFIRM_FAIL] = message;
-                    return RedirectToAction("login", "users");
-                }
-
+            if (isSuccess)
+            {
                 var token = content;
+                var claims = _userService.GetClaims(claimsPrincipal, token);
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties()
                 {
                     IsPersistent = loginItemView.RememberLogin
                 });
 
-                HttpContext.Session.SetString("JwtToken", content);
-                TempData[Mode.LABEL_CONFIRM_SUCCESS] = message;
+
+                if (!string.IsNullOrEmpty(returnUrl))
+                {
+                    TempData[Mode.LABEL_CONFIRM_SUCCESS] = message;
+                    return Redirect(returnUrl);
+                }
+
+                TempData[Mode.LABEL_CONFIRM_SUCCESS] = "Success Login !";
                 return RedirectToAction("index", "home");
-                
             }
 
-            TempData[Mode.LABEL_CONFIRM_FAIL] = "Some Fields Need Not Yet Entered";
-            return RedirectToAction("login", "users");
+            TempData[Mode.LABEL_CONFIRM_FAIL] = content;
+            return RedirectToAction("index", "home");
+
         }
 
         [HttpPost]

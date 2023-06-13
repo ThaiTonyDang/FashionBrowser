@@ -5,6 +5,7 @@
     var modalSuccess = TempData[Mode.MODAL_CONFIRM_SUCCESS] as string;
     var labelSuccess = TempData[Mode.LABEL_CONFIRM_SUCCESS] as string;
     var labelFail = TempData[Mode.LABEL_CONFIRM_FAIL] as  string;
+    var labelCheck= TempData[Mode.LABEL_CONFIRM_CHECK] as  string;
     var modalConfirm = TempData[Mode.MODAL_CONFIRM] as string;
 }
  
@@ -82,6 +83,14 @@
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
+        </div>
+    }
+    if (!string.IsNullOrEmpty(labelCheck))
+    {
+        <div class="alert alert-light" role="alert" style="opacity:0.5">
+            <h4 class="alert-heading">Welcome to S: Shop</h4>
+            <p>@labelCheck</p>
+            <hr>
         </div>
     }
 }

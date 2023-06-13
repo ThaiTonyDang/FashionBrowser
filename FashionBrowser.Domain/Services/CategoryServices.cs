@@ -32,7 +32,7 @@ namespace FashionBrowser.Domain.Services
         {
             try
             {
-                var apiUrl = _urlService.GetBaseUrl() + "api/categories";
+                var apiUrl = _urlService.GetBaseUrl() + "/api/categories";
                 var response = await _httpClient.GetAsync(apiUrl);
 
                 var responseList = JsonConvert.DeserializeObject<ResponseAPI<List<CategoryItemViewModel>>>

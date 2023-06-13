@@ -23,6 +23,7 @@ namespace Fashion.Browser.Controllers
 
         public async Task<IActionResult> Index()
         {
+            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
             var productViewModel = await _productServices.GetProductViewModelAsync();
             var categoryViewModel = await _categoryServices.GetCategoryViewModelAsync();
             var listCategory = categoryViewModel.ListCategory;
@@ -39,16 +40,22 @@ namespace Fashion.Browser.Controllers
                     productItemViewModel.CategoryName = category.Name;
                 }
             }
+
+            if (User.FindFirst("token") == null)
+            {
+                TempData[Mode.LABEL_CONFIRM_CHECK] = "Welcome to S: Shop! Please Login Now To Shopping ";
+            }
             return View(productViewModel);
         }
 
         [Route("{productId}")]
         public async Task<IActionResult> Detail(string productId)
         {
+            var token = User.FindFirst("token").Value;
             var result = productId.IsGuidParseFromString();
             if (result)
             {
-                var tuple= await _productServices.GetProductByIdAsync(productId);
+                var tuple= await _productServices.GetProductByIdAsync(productId, token);
                 var product = tuple.Item1;
                 return View(product);
             }    
