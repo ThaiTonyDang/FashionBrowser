@@ -21,6 +21,7 @@ namespace FashionBrowser.Utilities
 		public const string MODAL_CONFIRM_SUCCESS = "SUCCESS MODAL CONFIRM";
 		public const string MODAL_CONFIRM_FAIL = "FAIL MODAL CONFIRM";
 		public const string MODAL_CONFIRM = "MODAL CONFIRM";
+		public const string LABEL_CONFIRM_CHECK = "LABEL CONFIRM CHECK";
     }
 
 	public struct OPERATOR
@@ -31,7 +32,7 @@ namespace FashionBrowser.Utilities
 
     public struct HTTP
     {
-        public const string SLUG = "resource/";
+        public const string SLUG = "resource";
     }
 
     public struct SHIPPING_FEE

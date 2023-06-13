@@ -23,6 +23,7 @@ namespace Fashion.Browser.Controllers
 
         public async Task<IActionResult> Index()
         {
+            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
             var productViewModel = await _productServices.GetProductViewModelAsync();
             var categoryViewModel = await _categoryServices.GetCategoryViewModelAsync();
             var listCategory = categoryViewModel.ListCategory;
@@ -38,6 +39,11 @@ namespace Fashion.Browser.Controllers
                     var category = listCategory.Where(c => c.Id == productItemViewModel.CategoryId).FirstOrDefault();
                     productItemViewModel.CategoryName = category.Name;
                 }
+            }
+
+            if (User.FindFirst("token") == null)
+            {
+                TempData[Mode.LABEL_CONFIRM_CHECK] = "Welcome to S: Shop! Please Login Now To Shopping ";
             }
             return View(productViewModel);
         }

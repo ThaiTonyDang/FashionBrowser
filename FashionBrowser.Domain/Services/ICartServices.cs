@@ -1,5 +1,6 @@
 ﻿using FashionBrowser.Domain.ViewModels;
 using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +10,10 @@ namespace FashionBrowser.Domain.Services
 {
 	public interface ICartServices
 	{
-		public void AddToCart(ProductItemViewModel product, List<CartItemViewModel> carts, int quantityInput);
-		public bool DeleteCartItems(List<CartItemViewModel> carts, Guid id);
+		public Task<Tuple<bool, string[]>> AddToCart(CartItemViewModel cartItemViewModel, string token);
 		public void AdjustQuantity(CartItemViewModel cart, string operate);
-	}
+		public Task<CartViewModel> GetCartViewModel(string token);
+		public Task<List<CartItemViewModel>> GetCartItems(string token);
+		public Task<Tuple<bool, string>> DeleteCartItem(string productId, string token);
+    }
 }

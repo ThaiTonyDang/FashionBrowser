@@ -7,6 +7,12 @@ using FashionBrowser.Domain.ViewModels;
 using FashionBrowser.Utilities;
 using Microsoft.AspNetCore.Routing;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
 
 namespace Fashion.Browser.Controllers
 {
@@ -20,13 +26,18 @@ namespace Fashion.Browser.Controllers
             _cartServices = cartServices;
         }
 
+        [Authorize]
+        [HttpGet]
         [Route("shoppingcart")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var cartView = new CartViewModel();
-            var cartItems = HttpContext.Session.GetObjectFromJson<List<CartItemViewModel>>(CartKeyName.Cart_Key);
-            if (cartItems != default(List<CartItemViewModel>))
-                cartView.ListCartItem = cartItems;
+            var claim = User.FindFirst("token");
+            if (claim != null)
+            {
+                var token = claim.Value;
+                cartView = await _cartServices.GetCartViewModel(token);
+            }    
 
             return View(cartView);
         }
@@ -35,42 +46,47 @@ namespace Fashion.Browser.Controllers
         [Route("cart/addtocart/{productId}")]
         public async Task<IActionResult> AddToCart(string productId, int quantityInput = 0)
         {
-            var session = HttpContext.Session;
+            var claim = User.FindFirst("token");
+            if (claim == null)
+            {
+                return Unauthorized();
+            }
+
+            var token = claim.Value;
             var tuple = await _productServices.GetProductByIdAsync(productId);
             var product = tuple.Item1;
-            if (product.QuantityInStock == 0)
+
+            var cartItem = new CartItemViewModel()
             {
-                return BadRequest("OUT OF STOCK");
-            }
-            var cartItems = session.GetObjectFromJson<List<CartItemViewModel>>(CartKeyName.Cart_Key);
-            if (cartItems == null) cartItems = new List<CartItemViewModel>();
+                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                Quantity = 1,
+                ProductId = product.Id,
+                Product = product
+            };
+            var result = await _cartServices.AddToCart(cartItem, token);
+            var cartItems = new List<CartItemViewModel>();
 
-            _cartServices.AddToCart(product, cartItems, quantityInput);
-            HttpContext.Session.SetObjectAsJson(CartKeyName.Cart_Key, cartItems);
+            var cartView = await _cartServices.GetCartViewModel(token);
+            cartItems = cartView.ListCartItem;
 
-            return Ok(cartItems);
+            var isSuccess = result.Item1;
+            if (isSuccess) return Ok(cartItems);
+                return BadRequest();
         }
 
         [HttpDelete]
         [Route("/delete/{productId}")]
-        public IActionResult DeleteToCart(string productId)
+        public async  Task<IActionResult> DeleteToCart(string productId)
         {
-            var session = HttpContext.Session;
-            var carts = session.GetObjectFromJson<List<CartItemViewModel>>(CartKeyName.Cart_Key);
+            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
+            var token = User.FindFirst("token")?.Value;
+            var result = await _cartServices.DeleteCartItem(productId, token);
+            var isSuccess = result.Item1;
+            var message = result.Item2;
 
-            if (carts == null) return StatusCode(404);
-
-            var result = productId.IsGuidParseFromString();
-            if (result)
+            if (isSuccess)
             {
-                var isSucces = _cartServices.DeleteCartItems(carts, new Guid(productId));
-                if (isSucces)
-                {
-                    HttpContext.Session.SetObjectAsJson(CartKeyName.Cart_Key, carts);
-
-                    return Ok(carts);
-                }
-
+                return Ok();
             }
 
             return BadRequest();

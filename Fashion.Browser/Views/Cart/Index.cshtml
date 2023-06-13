@@ -76,7 +76,7 @@
                             </td>
                             <td class="align-middle" id="item-price-@cartItem.Product.Id" style="font-size:20px; font-weight:500">@cartItem.Price.GetPriceFormat()</td>
                             <td class="align-middle">
-                                <button class="btn btn-sm btn-danger trash" onclick="deleteCart('@cartItem.Product.Id')">
+                                <button class="btn btn-sm btn-danger trash" onclick="deleteCart('@cartItem.ProductId')">
                                 <i class="bi bi-trash3" style="font-size : 20px"></i>
                                 </button>
                             </td>
@@ -125,7 +125,7 @@
 else
 {
     <div style="text-align:center">
-        <img src="https://fptshop.com.vn/cart/Content/Desktop/images/empty-cart.png" alt="">
+        <img src="/img/mascot@2x.png" alt="">
     </div style="text-align:center">
     <p style="color:#001489; font-size:20px; text-align:center ">
         THERE ARE NO PRODUCTS IN YOUR CART !
