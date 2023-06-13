@@ -44,7 +44,7 @@ namespace Fashion.Browser.Controllers
 
         [HttpPost]
         [Route("cart/addtocart/{productId}")]
-        public async Task<IActionResult> AddToCart(string productId, int quantityInput = 0)
+        public async Task<IActionResult> AddToCart(string productId, int quantityInput = 1)
         {
             var claim = User.FindFirst("token");
             if (claim == null)
@@ -59,7 +59,7 @@ namespace Fashion.Browser.Controllers
             var cartItem = new CartItemViewModel()
             {
                 UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
-                Quantity = 1,
+                Quantity = quantityInput,
                 ProductId = product.Id,
                 Product = product
             };
@@ -82,11 +82,15 @@ namespace Fashion.Browser.Controllers
             var token = User.FindFirst("token")?.Value;
             var result = await _cartServices.DeleteCartItem(productId, token);
             var isSuccess = result.Item1;
-            var message = result.Item2;
+
+            var cartItems = new List<CartItemViewModel>();
+
+            var cartView = await _cartServices.GetCartViewModel(token);
+            cartItems = cartView.ListCartItem;
 
             if (isSuccess)
             {
-                return Ok();
+                return Ok(cartItems);
             }
 
             return BadRequest();
@@ -94,31 +98,27 @@ namespace Fashion.Browser.Controllers
 
         [HttpPost]
         [Route("/adjustquantity/{productId}/{operate}")]
-        public IActionResult AdjustQuantity(string operate, string productId)
+        public async Task<IActionResult> AdjustQuantity(string operate, string productId)
         {
-            var session = HttpContext.Session;
-            var carts = session.GetObjectFromJson<List<CartItemViewModel>>(CartKeyName.Cart_Key);
+            var token = User.FindFirst("token").Value;
+            var carts = await _cartServices.GetCartItems(token);
 
-            if (carts == null) return StatusCode(404);
+            if (carts == null) return NotFound();
 
-            var result = productId.IsGuidParseFromString();
-
-            if (result)
+            var isGuid = productId.IsGuidParseFromString();
+            if (isGuid)
             {
-                var id = new Guid(productId);
-                var cartItem = carts.Where(cart => cart.Product.Id == id).FirstOrDefault();
+                var cartItem = await _cartServices.GetCartItemByProductId(carts, new Guid(productId));
 
                 if (cartItem != null)
                 {
-                    _cartServices.AdjustQuantity(cartItem, operate);
-                    HttpContext.Session.SetObjectAsJson(CartKeyName.Cart_Key, carts);
+                    var isSuccess = _cartServices.AdjustQuantity(cartItem, operate, token);
+
                     return Ok(carts);
                 }
-
-                return StatusCode(401);
-            }
-
-            return BadRequest();
+            }    
+          
+            return BadRequest();         
         }
     }
 }

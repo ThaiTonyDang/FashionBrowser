@@ -45,7 +45,7 @@ namespace FashionBrowser.Domain.Services
             }
         }
 
-		public void AdjustQuantity(CartItemViewModel cartItem, string operate)
+		public async Task<bool> AdjustQuantity(CartItemViewModel cartItem, string operate, string token)
 		{
 			switch(operate)
 			{
@@ -57,16 +57,23 @@ namespace FashionBrowser.Domain.Services
 					if (cartItem.Quantity < 1)
 					{
 						cartItem.Quantity = 1;
-
 					}
 					break;
 			}
-		}
 
-		public CartItemViewModel GetCartItemByProductId(List<CartItemViewModel> carts, Guid id)
+            var apiUrl = _urlService.GetBaseUrl() + "/api/carts";
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.PutAsJsonAsync(apiUrl, cartItem);
+            var responseList = JsonConvert.DeserializeObject<ResponseAPI<bool>>
+                                   (await response.Content.ReadAsStringAsync());
+            var isSuccess = responseList.IsSuccess;
+            return isSuccess;
+        }
+
+		public Task<CartItemViewModel> GetCartItemByProductId(List<CartItemViewModel> carts, Guid id)
 		{
-			var cartitem = carts.Find(item => item.Product.Id == id);
-			return cartitem;
+			var cartitem = carts.Find(item => item.ProductId == id);
+			return Task.FromResult(cartitem);
         }
 
         public async Task<CartViewModel> GetCartViewModel(string token)

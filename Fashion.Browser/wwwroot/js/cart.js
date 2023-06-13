@@ -105,7 +105,6 @@ $(".items-count").on("click", function () {
             $('#item-price-' + id).html(format);
 
             saveCartDataToLocalStorage(response);       
-            let data = getDataCartFromStorage();
 
             var totalPrice = response.reduce(function (accumulator, current) {
                 return accumulator + current.product.price * current.quantity;

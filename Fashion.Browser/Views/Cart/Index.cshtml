@@ -48,33 +48,37 @@
                         @foreach (var cartItem in Model.ListCartItem)
                         { 
                         <tr>
-                            <td class="align-middle"><img src="@cartItem.Product.ImageUrl" alt="" style="width: 100px;">
+                            <td class="align-middle" title="View Detail">
+                                <a href="@Url.ActionLink("Detail", "Home", new {productId = cartItem.ProductId})">
+                                    <img src="@cartItem.Product.ImageUrl" alt="" style="width: 100px;">
+                                    </a>
+                                
                             </td>
                             <td class="align-middle" style="font-size:20px; font-weight:600">@cartItem.Product.Name</td>
                             <td class="align-middle"style="font-size:20px; font-weight:500">@cartItem.Product.Price.GetPriceFormat()</td>
                             <td class="align-middle">
-                                 <input type="hidden" id="cartitem-price-@cartItem.Product.Id"
+                                 <input type="hidden" id="cartitem-price-@cartItem.ProductId"
                                                 value="@cartItem.Product.Price" />
                                 <div class="input-group quantity mx-auto" style="width: 100px;">
                                     <div class="input-group-btn">
                                         <button class="btn btn-sm btn-primary btn-minus items-count"
-                                        type="button" data-value="@cartItem.Product.Id" value="@OPERATOR.SUBTRACT">
+                                        type="button" data-value="@cartItem.ProductId" value="@OPERATOR.SUBTRACT">
                                             <i class="fa fa-minus"></i>
                                         </button>
                                     </div>
                                     <input
-                                    type="text" id="sst-@cartItem.Product.Id"
+                                    type="text" id="sst-@cartItem.ProductId"
                                     class="form-control form-control-sm bg-secondary border-0 text-center input-text qty"
                                     value="@cartItem.Quantity" min="1">
                                     <div class="input-group-btn">
                                         <button class="btn btn-sm btn-primary items-count"
-                                        type="button" data-value="@cartItem.Product.Id" value="@OPERATOR.ADDITION">
+                                        type="button" data-value="@cartItem.ProductId" value="@OPERATOR.ADDITION">
                                             <i class="fa fa-plus"></i>
                                         </button>
                                     </div>
                                 </div>
                             </td>
-                            <td class="align-middle" id="item-price-@cartItem.Product.Id" style="font-size:20px; font-weight:500">@cartItem.Price.GetPriceFormat()</td>
+                            <td class="align-middle" id="item-price-@cartItem.ProductId" style="font-size:20px; font-weight:500">@cartItem.Price.GetPriceFormat()</td>
                             <td class="align-middle">
                                 <button class="btn btn-sm btn-danger trash" onclick="deleteCart('@cartItem.ProductId')">
                                 <i class="bi bi-trash3" style="font-size : 20px"></i>
