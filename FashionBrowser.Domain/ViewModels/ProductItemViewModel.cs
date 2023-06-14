@@ -14,7 +14,7 @@ namespace FashionBrowser.Domain.ViewModels
         public bool IsEnabled { get; set; }
         public Guid CategoryId { get; set; }
         public string ImageUrl { get; set; }
-        public string ImageName { get; set; }
+        public string MainImageName { get; set; }
         public string CategoryName { get; set; }
         public int QuantityInput { get; set; }
     }

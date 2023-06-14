@@ -75,8 +75,6 @@ namespace Fashion.Browser
 			}
 			app.UseStaticFiles();
 
-			app.UseSession();
-
 			app.UseRouting();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -86,7 +84,7 @@ namespace Fashion.Browser
 
             app.UseAuthentication();
 			app.UseAuthorization();
-
+			app.UseSession();
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllerRoute(

@@ -25,7 +25,7 @@ namespace FashionBrowser.Domain.Services
             
            try
                 {
-                    var apiUrl = _urlService.GetBaseUrl() + "api/orders";
+                    var apiUrl = _urlService.GetBaseUrl() + "/api/orders";
                     var response = await _httpClient.PostAsJsonAsync(apiUrl, orderItemViewModel);
                     var responseList = JsonConvert.DeserializeObject<ResponseAPI<ProductItemViewModel>>
                                        (await response.Content.ReadAsStringAsync());

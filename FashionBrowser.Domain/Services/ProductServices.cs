@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FashionBrowser.Domain.Model;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace FashionBrowser.Domain.Services
 {
@@ -29,7 +30,7 @@ namespace FashionBrowser.Domain.Services
         {
             try
             {
-                var apiUrl = _urlService.GetBaseUrl() + "api/products";
+                var apiUrl = _urlService.GetBaseUrl() + "/api/products";
                 var response = await _httpClient.GetAsync(apiUrl);
 
                 var responseList = JsonConvert.DeserializeObject<ResponseAPI<List<ProductItemViewModel>>>
@@ -40,7 +41,7 @@ namespace FashionBrowser.Domain.Services
                 var products = responseList.Data;
                 foreach (var product in products)
                 {
-                    product.ImageUrl = _urlService.GetFileApiUrl(product.ImageName);
+                    product.ImageUrl = _urlService.GetFileApiUrl(product.MainImageName);
                 }
 
                 return products;
@@ -57,14 +58,14 @@ namespace FashionBrowser.Domain.Services
             var message = "";
             try
             {
-                var apiUrl = _urlService.GetBaseUrl() + "api/products/";
+                var apiUrl = _urlService.GetBaseUrl() + "/api/products/";
                 var response = await _httpClient.GetAsync(apiUrl + productId);
                 var responseList = JsonConvert.DeserializeObject<ResponseAPI<ProductItemViewModel>>
                                    (await response.Content.ReadAsStringAsync());
                 var productDto = responseList.Data;
                 message = responseList.Message;
 
-                productDto.ImageUrl = _urlService.GetFileApiUrl(productDto.ImageName);
+                productDto.ImageUrl = _urlService.GetFileApiUrl(productDto.MainImageName);
                 return Tuple.Create(productDto, message);
             }
             catch (Exception exception)
