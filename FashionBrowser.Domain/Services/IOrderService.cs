@@ -1,4 +1,5 @@
-﻿using FashionBrowser.Domain.ViewModels;
+﻿using FashionBrowser.Domain.Dto;
+using FashionBrowser.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace FashionBrowser.Domain.Services
 {
     public interface IOrderService
     {
-        public Task<bool> CreateOrder(OrderItemViewModel orderItemViewModel);
+        public Task<bool> CreateOrder(OrderDto orderDto, string token);
     }
 }

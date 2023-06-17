@@ -4,17 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FashionBrowser.Domain.ViewModels
+namespace FashionBrowser.Domain.Dto
 {
-    public class OrderItemViewModel
+    public class OrderDto
     {
         public Guid Id { get; set; }
         public DateTime OrderDate { get; set; }
-        public string ShipAddress{ get; set; }
+        public string ShipAddress { get; set; }
         public bool IsPaid { get; set; }
-        public string IsPaidDispay { get; set; }
         public decimal TotalPrice { get; set; }
         public Guid UserId { get; set; }
-        public string UserName { get; set; }
+        public ICollection<OrderDetailDto> OrderDetails { get; set; }
     }
 }

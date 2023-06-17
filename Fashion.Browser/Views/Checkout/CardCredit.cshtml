@@ -5,13 +5,12 @@
     Layout = "";
 }
 
-<partial name="_Alert" />
 <link href="~/css/cardcredit.css" rel="stylesheet" />
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/imask/3.4.0/imask.min.js'></script>
 <script src="@Url.Content("~/js/cardcredit.js")"></script>
 
- <form asp-action="Confirm" asp-controller="Checkout" method="post" enctype="multipart/form-data">
+ <form asp-action="CreateOrder" asp-controller="Checkout" method="post" enctype="multipart/form-data">
 <div class="row mb-6">
     <div class="col-md-6 col-xl-6 mb-4 mb-xl-0">
         <div class="payment-title">
@@ -115,19 +114,23 @@
                 </div>
             </div >
         </div>
-        <input asp-for="@Model.CustomerItemViewModel.Id" type="hidden" />
-        <input asp-for="@Model.CustomerItemViewModel.Name" type="hidden" />
-        <input asp-for="@Model.CustomerItemViewModel.Address" type="hidden" />
-        <input asp-for="@Model.CustomerItemViewModel.Email" type="hidden" />
-        <input asp-for="@Model.CustomerItemViewModel.Phone" type="hidden" />
-        <input asp-for="@Model.CustomerItemViewModel.NumberDepartment" type="hidden" />
+
+        <input asp-for="@Model.UserItemViewModel.LastName" type="hidden" />
+        <input asp-for="@Model.UserItemViewModel.FirstName" type="hidden" />
+        <input asp-for="@Model.UserItemViewModel.CityName" type="hidden" />
+        <input asp-for="@Model.UserItemViewModel.DistrictName" type="hidden" />
+        <input asp-for="@Model.UserItemViewModel.WardName" type="hidden" />
+        <input asp-for="@Model.UserItemViewModel.NumberDepartment" type="hidden" />
+        <input asp-for="@Model.UserItemViewModel.Email" type="hidden" />
+        <input asp-for="@Model.UserItemViewModel.PhoneNumber" type="hidden" />
         <input asp-for="@Model.OrderItem.Id" type="hidden" />
         <input asp-for="@Model.OrderItem.OrderDate" type="hidden" />
-        <input asp-for="@Model.OrderItem.CustomerId" type="hidden" />
+        <input asp-for="@Model.OrderItem.UserName" type="hidden" />
         <input asp-for="@Model.OrderItem.ShipAddress" type="hidden" />
         <input asp-for="@Model.OrderItem.IsPaid" type="hidden" />
         <input asp-for="@Model.OrderItem.IsPaidDispay" type="hidden" />
         <input asp-for="@Model.OrderItem.TotalPrice" type="hidden" />
+        <input asp-for="@Model.OrderItem.UserId" type="hidden" />
         <input asp-for="@Model.Discount" type="hidden" />
         <input asp-for="@Model.IsCardCreditPay" type="hidden" />
         <div class="form-container">

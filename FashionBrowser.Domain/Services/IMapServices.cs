@@ -1,4 +1,4 @@
-﻿using FashionBrowser.Domain.ViewModels;
+﻿using FashionBrowser.Domain.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace FashionBrowser.Domain.Services
 {
-    public interface IOrderDetailService
+    public interface IMapServices
     {
-        public Task<bool> CreateOrderDetail(OrderDetailItemViewModel orderDetailItem);
+        public Task<List<City>> GetCities();
     }
 }

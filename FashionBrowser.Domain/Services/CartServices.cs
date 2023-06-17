@@ -1,9 +1,12 @@
 ﻿using FashionBrowser.Domain.Model;
 using FashionBrowser.Domain.ViewModels;
 using FashionBrowser.Utilities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -27,7 +30,8 @@ namespace FashionBrowser.Domain.Services
             try
             {
                 var apiUrl = _urlService.GetBaseUrl() + "/api/carts";
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                                              JwtBearerDefaults.AuthenticationScheme, token);
                 var response = await _httpClient.PostAsJsonAsync(apiUrl , cartItemViewModel);
 
                 var responseList = JsonConvert.DeserializeObject<ResponseAPI<CartItemViewModel>>
@@ -62,7 +66,8 @@ namespace FashionBrowser.Domain.Services
 			}
 
             var apiUrl = _urlService.GetBaseUrl() + "/api/carts";
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                                             JwtBearerDefaults.AuthenticationScheme, token);
             var response = await _httpClient.PutAsJsonAsync(apiUrl, cartItem);
             var responseList = JsonConvert.DeserializeObject<ResponseAPI<bool>>
                                    (await response.Content.ReadAsStringAsync());
@@ -92,7 +97,8 @@ namespace FashionBrowser.Domain.Services
 			try
 			{
                 var apiUrl = _urlService.GetBaseUrl() + "/api/carts/";
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                                              JwtBearerDefaults.AuthenticationScheme, token);
                 var response = await _httpClient.GetAsync(apiUrl);
                 var responseList = JsonConvert.DeserializeObject<ResponseAPI<List<CartItemViewModel>>>
                                    (await response.Content.ReadAsStringAsync());
@@ -121,8 +127,9 @@ namespace FashionBrowser.Domain.Services
 
         public async Task<Tuple<bool, string>> DeleteCartItem(string productId, string token)
         {
-            var apiUrl = _urlService.GetBaseUrl() + "/api/carts/";
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var apiUrl = _urlService.GetBaseUrl() + "/api/carts/delete-item/";
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                                              JwtBearerDefaults.AuthenticationScheme, token);
             var response = await _httpClient.DeleteAsync(apiUrl + productId);
             var responseList = JsonConvert.DeserializeObject<ResponseAPI<bool>>
                                    (await response.Content.ReadAsStringAsync());
@@ -130,6 +137,16 @@ namespace FashionBrowser.Domain.Services
             var message = responseList.Message;
 
             return Tuple.Create(isSuccess, message);
+        }
+
+        public async Task<bool> DeleteAllCartByUser(string token)
+        {
+            var apiUrl = _urlService.GetBaseUrl() + "/api/carts/delete";
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                                             JwtBearerDefaults.AuthenticationScheme, token);
+            var response = await _httpClient.DeleteAsync(apiUrl);
+
+            return response.IsSuccessStatusCode;
         }
     }
 }

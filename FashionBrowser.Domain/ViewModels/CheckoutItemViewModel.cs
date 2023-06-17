@@ -9,7 +9,7 @@ namespace FashionBrowser.Domain.ViewModels
 {
     public class CheckoutItemViewModel
     {
-        public CustomerItemViewModel CustomerItemViewModel { get; set; }
+        public UserItemViewModel UserItemViewModel { get; set; }
         public CartViewModel CartViewModel { get; set; }
         public OrderItemViewModel OrderItem { get; set; }
         public bool IsCardCreditPay { get; set; }
@@ -17,7 +17,6 @@ namespace FashionBrowser.Domain.ViewModels
         public CheckoutItemViewModel()
         {
             this.CartViewModel = new CartViewModel();
-            this.CustomerItemViewModel = new CustomerItemViewModel();
         }
     }
 }
