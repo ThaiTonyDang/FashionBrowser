@@ -1,54 +1,62 @@
-﻿using FashionBrowser.Domain.ViewModels;
+﻿using FashionBrowser.Domain.Dto;
+using FashionBrowser.Domain.ViewModels;
 
 namespace FashionBrowser.Domain.Services
 {
     public class CheckoutService : ICheckoutService
     {
-        private readonly ICustomerService _customerService;
         private readonly IOrderService _orderService;
-        private readonly IOrderDetailService _orderDetailService;
         private double _discount;
-        public CheckoutService(ICustomerService customerService, IOrderService orderService, IOrderDetailService orderDetailService)
+        public CheckoutService(IOrderService orderService)
         {
-            _customerService = customerService;
             _orderService = orderService;
-            _orderDetailService = orderDetailService;
         }
-        public async Task<bool> CreateCheckout(CheckoutItemViewModel checkout)
+
+        public async Task<bool> CreateCheckoutAsync(CheckoutItemViewModel checkout, string token)
         {           
-            var customer = checkout.CustomerItemViewModel;
             var cartItems = checkout.CartViewModel.ListCartItem;
             var order = checkout.OrderItem;
             var discount = checkout.Discount;
+            var orderDetails = await GetOrderDetails(cartItems, order.Id, discount);
 
-            var iSuccessCustomer = await _customerService.CreateCustomerInfor(customer);
-            var iSuccessOrder = await _orderService.CreateOrder(order);
-            var iSuccessOrderDetail = await CreateOrderDetail(cartItems, order.Id, discount);
+            var orderDto = new OrderDto
+            {
+                Id = order.Id,
+                OrderDate = order.OrderDate,
+                IsPaid = order.IsPaid,
+                ShipAddress = order.ShipAddress,
+                TotalPrice = order.TotalPrice,
+                UserId = order.UserId,
+                OrderDetails = orderDetails
+            };
 
-            if (iSuccessCustomer)                              
-                if (iSuccessOrder)
-                    if (iSuccessOrderDetail)
-                        return true;                  
+            var iSuccessOrder = await _orderService.CreateOrder(orderDto, token);        
+            if (iSuccessOrder)
+               return true;                  
             return false;
         }
 
-        private async Task<bool> CreateOrderDetail(List<CartItemViewModel> cartItems, Guid OrderId, double discount)
+        private Task<List<OrderDetailDto>> GetOrderDetails(List<CartItemViewModel> cartItems, Guid OrderId, double discount)
         {
-            var orderDetail = new OrderDetailItemViewModel();
-            var isSuccess = false;
-            orderDetail.OrderId = OrderId;
+            var orderDetails = new List<OrderDetailDto> { };
+            
+          
             if (cartItems != null)
             {
                 foreach (var cart in cartItems)
                 {
-                    orderDetail.ProductId = cart.Product.Id;
-                    orderDetail.Price = cart.Product.Price;
-                    orderDetail.Quantity = cart.Quantity;
-                    orderDetail.Discount = discount;
-                    isSuccess = await _orderDetailService.CreateOrderDetail(orderDetail);
+                    var orderDetailDto = new OrderDetailDto {
+                        OrderId = OrderId,
+                        ProductId = cart.ProductId,
+                        Price = cart.Product.Price,
+                        Quantity = cart.Quantity,
+                        Discount = discount
+                    };
+                    
+                    orderDetails.Add(orderDetailDto);
                 }
             }
-            return isSuccess;
+            return Task.FromResult(orderDetails);
         }
     }
 }

@@ -9,6 +9,6 @@ namespace FashionBrowser.Domain.Services
 {
     public interface ICheckoutService
     {
-        public Task<bool> CreateCheckout(CheckoutItemViewModel checkout);
+        public Task<bool> CreateCheckoutAsync(CheckoutItemViewModel checkout, string token);
     }
 }

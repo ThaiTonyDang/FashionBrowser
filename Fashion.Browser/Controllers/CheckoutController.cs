@@ -1,47 +1,100 @@
-﻿using FashionBrowser.Domain.Services;
+﻿using FashionBrowser.Domain.Model;
+using FashionBrowser.Domain.Services;
 using FashionBrowser.Domain.ViewModels;
 using FashionBrowser.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.WebSockets;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Fashion.Browser.Controllers
 {
+    [Authorize]
     public class CheckoutController : Controller
     {
         private readonly ICheckoutService _checkoutService;
-        public CheckoutController(ICheckoutService checkoutService)
+        private readonly ICartServices _cartServices;
+        private readonly IMapServices _mapServices;
+        public CheckoutController(ICheckoutService checkoutService, ICartServices cartServices, IMapServices mapServices)
         {
             _checkoutService = checkoutService;
+            _cartServices = cartServices;
+            _mapServices = mapServices;
         }
-        public IActionResult Index()
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
             var checkout = new CheckoutItemViewModel();
-            var cartItems = GetCartList();
+            var cartItems = await GetCartList();
+
             checkout.CartViewModel.ListCartItem = cartItems;
+            checkout.UserItemViewModel = new UserItemViewModel
+            {
+                FirstName = User.Claims.FirstOrDefault(x => x.Type == "firstName")?.Value,
+                LastName = User.Claims.FirstOrDefault(x => x.Type == "lastName")?.Value,
+                Email = User.FindFirstValue(ClaimTypes.Email),
+                PhoneNumber = User.FindFirstValue(ClaimTypes.MobilePhone), 
+                AvailableAddress = User.FindFirstValue(ClaimTypes.StreetAddress), 
+            };
 
             if (cartItems == null) cartItems = new List<CartItemViewModel>();
             return View(checkout);
         }
-          
-        public IActionResult CreateOrder(CheckoutItemViewModel checkout)
-        {
-            TempData[Mode.MODE] = Mode.USING_MODAL_CONFIRM;
-            if (ModelState.IsValid)
-            {
-                var customer = checkout.CustomerItemViewModel;
-                customer.Id = Guid.NewGuid();
-                var cartItems = GetCartList();
-                
-                checkout.CartViewModel.ListCartItem = cartItems;
-                checkout.CustomerItemViewModel = customer;
-                checkout.OrderItem = BuidOrder(customer);
 
+        [HttpPost]               
+        public async Task<IActionResult> ConfirmOrder(CheckoutItemViewModel checkout)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            TempData[Mode.MODE] = Mode.USING_MODAL_CONFIRM;
+       
+            if(!userId.IsGuidParseFromString())
+            {
+                TempData[Mode.LABEL_CONFIRM_FAIL] = "Cannot Create Order! User Id Invalid";
+                return RedirectToAction("index", "home");
+            }
+            var address = await GetAddress(checkout);
+
+            var cartItems = await GetCartList();          
+            checkout.CartViewModel.ListCartItem = cartItems;
+            checkout.OrderItem = BuidOrder(address);
+
+            return View(checkout);   
+        }
+
+        public async Task<IActionResult> CreateOrder(CheckoutItemViewModel checkout)
+        {
+            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
+            
+            var token = User.FindFirst("token").Value;
+            if (checkout.OrderItem == null)
+            {
+                TempData[Mode.LABEL_CONFIRM_CHECK] = "No Orders Yet! Please Check Your Email";
+                return View();
+            }
+            var cartItems = await GetCartList();
+            checkout.CartViewModel.ListCartItem = cartItems;
+            checkout.OrderItem.IsPaidDispay = "Customer Pays After Receiving Goods";
+
+            if (checkout.IsCardCreditPay)
+            {
+                checkout.OrderItem.IsPaidDispay = "Customer Paid Via Credit Card";
+                checkout.OrderItem.IsPaid = true;
+            }
+
+            var isSuccess = await _checkoutService.CreateCheckoutAsync(checkout, token);
+            var isSuccessRemove = await RemoveItemCart(token);
+            if (isSuccess && isSuccessRemove)
+            {
+                TempData[Mode.LABEL_CONFIRM_SUCCESS] = "Payment success !";
                 return View(checkout);
             }
-          
-            TempData[Mode.MODAL_CONFIRM_FAIL] = "Cannot Create Order! Try Again";
+
+            TempData[Mode.LABEL_CONFIRM_FAIL] = "Payment success Fail !";
             return RedirectToAction("Index", "Checkout");
         }
 
@@ -54,58 +107,56 @@ namespace Fashion.Browser.Controllers
             return View(checkout);
         }
 
-        public async Task<IActionResult> Confirm(CheckoutItemViewModel checkout)
-		{
-            TempData[Mode.MODE] = Mode.USING_MODAL_CONFIRM;
-            if (checkout.OrderItem == null)
-            {
-                TempData[Mode.MODAL_CONFIRM] = "No Orders Yet! Please Check Your Email";
-                return RedirectToAction("Index", "Home");
-            }
-            var cartItems = GetCartList();
-            checkout.CartViewModel.ListCartItem = cartItems;
-            checkout.OrderItem.IsPaidDispay = "Customer Pays After Receiving Goods";
+        private async Task<string> GetAddress(CheckoutItemViewModel checkout)
+        {
+            var cities = await _mapServices.GetCities();
+            var cityId = checkout.UserItemViewModel.CityId;
+            var districtId = checkout.UserItemViewModel.DistrictId;
+            var wardId = checkout.UserItemViewModel.WardId;
 
-            if (checkout.IsCardCreditPay)
-            {
-                checkout.OrderItem.IsPaidDispay = "Customer Paid Via Credit Card";
-                checkout.OrderItem.IsPaid = true;
-            }    
+            var city = cities.Where(c => c.Id == cityId).FirstOrDefault();
+            var district = new District();
+            var ward = new Ward();
 
-            var isSuccess = await _checkoutService.CreateCheckout(checkout);
-            if (isSuccess)
+            if (districtId != null)
             {
-                RemoveItemCart();
-                TempData[Mode.MODAL_CONFIRM_SUCCESS] = "Payment success !";
-                return View(checkout);
+                district = city.Districts.Where(d => d.Id == districtId).FirstOrDefault();
             }
-                                                 
-            TempData[Mode.MODAL_CONFIRM_FAIL] = "Payment success Fail !";
-            return RedirectToAction("Index", "Checkout");
+
+            if (wardId != null)
+            {
+                ward = district.Wards.Where(w => w.Id == wardId).FirstOrDefault();
+            }
+            
+            checkout.UserItemViewModel.CityName = city.Name;
+            checkout.UserItemViewModel.DistrictName = district.Name;
+            checkout.UserItemViewModel.WardName = ward.Name;
+
+            var address = checkout.UserItemViewModel.Address;
+            return address;
         }
 
-		private List<CartItemViewModel> GetCartList()
+		private async Task<List<CartItemViewModel>> GetCartList()
         {
-            var session = HttpContext.Session;
-            var cartItems = session.GetObjectFromJson<List<CartItemViewModel>>(CartKeyName.Cart_Key);
+            var token = User.FindFirst("token").Value;
+            var cartItems = await _cartServices.GetCartItems(token);
             return cartItems;
         }
 
-        private OrderItemViewModel BuidOrder(CustomerItemViewModel customer)
+        private OrderItemViewModel BuidOrder(string address)
         {
 			var order = new OrderItemViewModel();
 			order.Id = Guid.NewGuid();
 			order.OrderDate = DateTime.Now;
-			order.CustomerId = customer.Id;
-			order.ShipAddress = customer.Address;
-
+			order.UserId = new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier));
+			order.ShipAddress = address;
 			return order;
 		}
 
-        private void RemoveItemCart()
+        private async Task<bool> RemoveItemCart(string token)
         {
-            var session = HttpContext.Session;
-            session.Clear();
+            var result = await _cartServices.DeleteAllCartByUser(token);
+            return result;
         }
     }
 }

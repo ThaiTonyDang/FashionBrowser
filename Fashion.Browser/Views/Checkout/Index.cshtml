@@ -4,11 +4,9 @@
 @{
     ViewData["Title"] = "Checkout";
     Layout = "_Layout";
-}
-<link href="~/css/style-multi (1).css" rel="stylesheet" />
-<link href="~/css/style-multi (2).css" rel="stylesheet" />
-
-<partial name="_Alert" />
+}>
+<link href="~/css/checkout.css" rel="stylesheet" />
+<link href="~/css/my-style.css" rel="stylesheet" />
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
         <a href="~/Home/Index" class="link" style="color:#001489; font-weight:600">
@@ -22,60 +20,86 @@
     </li>
     <li class="breadcrumb-item">Checkout</li>
 </ol>
-<form asp-action="CreateOrder" asp-controller="Checkout" method="post" enctype="multipart/form-data">
+<form asp-action="ConfirmOrder" method="post" enctype="multipart/form-data">
      @if (Model.CartViewModel.ListCartItem != null && Model.CartViewModel.ListCartItem.Count > 0)
     {
         <div class="container-fluid">
             <div class="row px-xl-5">
                 <div class="col-lg-6">
-                    <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Billing Address</span></h5>
+                    <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">YOUR INFORMATION</span></h5>
                     <div class="bg-light p-30 mb-5">
                         <div class="row">
                             <div class="col-md-12 form-group">
-                                <label>Name</label>
-                                <input asp-for=CustomerItemViewModel.Name class="form-control" placeholder="Your Name">
-                                <span asp-validation-for=@Model.CustomerItemViewModel.Name class="text-danger"></span>
+                                <label>First Name</label>
+                                <input asp-for=UserItemViewModel.FirstName class="form-control" placeholder="Your Name"
+                                value="@Model.UserItemViewModel.FirstName">
+                                <span asp-validation-for=@Model.UserItemViewModel.FirstName class="text-danger"></span>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <label>Last Name</label>
+                                <input asp-for=UserItemViewModel.LastName class="form-control"
+                                   value="@Model.UserItemViewModel.LastName">
+                                <span asp-validation-for=@Model.UserItemViewModel.LastName class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
                                 <label>E-mail</label>
-                                <input asp-for=CustomerItemViewModel.Email class="form-control" type="email" placeholder="Email Address">
-                                <span asp-validation-for="@Model.CustomerItemViewModel.Email" class="text-danger"></span>
+                                <input asp-for=UserItemViewModel.Email class="form-control" type="email"
+                                 value="@Model.UserItemViewModel.Email">
+                                <span asp-validation-for="@Model.UserItemViewModel.Email" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
                                 <label>Mobile No</label>
-                                <input asp-for="CustomerItemViewModel.Phone" type="tel" class="form-control"
-                                 placeholder="Phone Number">
-                                <span asp-validation-for="@Model.CustomerItemViewModel.Phone" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Address Line 1</label>
-                                <input class="form-control" type="text" placeholder="123 Street">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label class="control-label">Number Department</label>
-                                <input asp-for=@Model.CustomerItemViewModel.NumberDepartment type="text"
-                                class="form-control" placeholder="Number Department">
-                                <span asp-validation-for="@Model.CustomerItemViewModel.NumberDepartment" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-4 form-group">
-                                <label>City</label>
-                                <select asp-for=@Model.CustomerItemViewModel.City class="custom-select" id="city" aria-label=".form-select-sm">
-                                    <option value="@Model.CustomerItemViewModel.City" >Province / City</option>
-                                </select>
+                                <input asp-for="UserItemViewModel.PhoneNumber" type="tel" class="form-control"
+                                 value="@Model.UserItemViewModel.PhoneNumber">
+                                <span asp-validation-for="@Model.UserItemViewModel.PhoneNumber" class="text-danger"></span>
                             </div>
 
-                            <div class="col-md-4 form-group">
-                                <label>District</label>
-                                <select asp-for=@Model.CustomerItemViewModel.County class="custom-select" id="district" aria-label=".form-select-sm">
-                                    <option value="">County / District</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 form-group" aria-label=".form-select-sm">
-                                <label>Ward</label>
-                                <select asp-for=CustomerItemViewModel.Ward class="custom-select" id="ward" aria-label=".form-select-sm">
-                                    <option value="" selected>Ward / Commune</option>
-                                </select>
-                            </div>
+                            @if (string.IsNullOrEmpty(Model.UserItemViewModel.AvailableAddress))
+                            {
+                                <div class="col-md-12 form-group">
+                                    <label class="control-label">Number Department</label>
+                                    <input asp-for=UserItemViewModel.NumberDepartment type="text"
+                                           class="form-control" placeholder="Number Department" value="@Model.UserItemViewModel.NumberDepartment">
+                                    <span asp-validation-for="@Model.UserItemViewModel.NumberDepartment" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label>City</label>
+
+                                    <select asp-for=UserItemViewModel.CityId class="custom-select city-provice" id="city"
+                                            aria-label=".form-select-sm">
+                                        <option value="@Model.UserItemViewModel.CityId">City / Province</option>
+                                    </select>
+                                    <span asp-validation-for="UserItemViewModel.CityId" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-md-4 form-group">
+                                    <label>District</label>
+                                    <select asp-for=UserItemViewModel.DistrictId class="custom-select" id="district" aria-label=".form-select-sm">
+                                        <option value="@Model.UserItemViewModel.DistrictId">County / District</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 form-group" aria-label=".form-select-sm">
+                                    <label>Ward</label>
+                                    <select asp-for=UserItemViewModel.WardId class="custom-select" id="ward" aria-label=".form-select-sm">
+                                        <option value="@Model.UserItemViewModel.WardId" selected>Ward / Commune</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <label class="control-label" style="color:firebrick">
+                                        Notice! Your address is not available in the registration system, please update later
+                                    </label>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-md-12 form-group">
+                                    <label>Available Address</label>
+                                    <input asp-for="UserItemViewModel.AvailableAddress" type="text" class="form-control"
+                                   value="@Model.UserItemViewModel.AvailableAddress">
+                                    <span asp-validation-for="@Model.UserItemViewModel.AvailableAddress" class="text-danger"></span>
+                                </div>
+                            }
+
                             <div class="cupon_area col-md-12 form-group">
                                 <div class="check_title">
                                     <h2>Have a coupon? <a href="#">Click here to enter your code</a></h2>
@@ -99,10 +123,10 @@
                             }
                             @foreach (var cartItem in Model.CartViewModel.ListCartItem)
                             {
-                                
-                                <li>
-                                    <a href="#">
-                                        <img class="card-img" style="width:60px; height:60px"
+
+                                <li style="font-size:15px">
+                                    <a href="" >
+                                        <img class="card-img" style="width:100px;"
                                         src="@cartItem.Product.ImageUrl" alt="">
                                         @cartItem.Product.Name
                                         <span class="middle" style="width:100px">
@@ -142,9 +166,8 @@
                         </div>
                      
                         <div class="text-center">
-                            <button type="submit" class="button button-paypal">Order Now</button>
-                        </div>
-                                                           
+                            <button type="submit" class="button button-paypal" style="cursor:pointer;">Order Now</button>
+                        </div>                                                        
                     </div>
                 </div>
             </div>

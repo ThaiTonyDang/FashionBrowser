@@ -31,10 +31,9 @@ namespace Fashion.Browser
 			services.AddScoped<ICartServices, CartServices>();
 			services.AddScoped<IUrlService, UrlService>();
 			services.AddScoped<IOrderService, OrderService>();
-			services.AddScoped<IOrderDetailService, OrderDetailService>();
-			services.AddScoped<ICustomerService, CustomerService>();
 			services.AddScoped<ICheckoutService, CheckoutService>();
 			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<IMapServices, MapServices>();
 
             services.AddHttpContextAccessor();
             services.AddHttpClient();
