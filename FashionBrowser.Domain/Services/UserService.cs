@@ -4,11 +4,13 @@ using FashionBrowser.Domain.Model;
 using FashionBrowser.Domain.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
@@ -20,13 +22,15 @@ namespace FashionBrowser.Domain.Services
 	{
         private readonly IUrlService _urlService;
         private readonly HttpClient _httpClient;
+        private readonly IFileService _fileService;
         private readonly TokenConfig _tokenConfig;
         public bool _isSuccess;
 
-        public UserService(IUrlService urlService, HttpClient httpClient, IOptions<TokenConfig> options)
+        public UserService(IUrlService urlService, IFileService fileService,  HttpClient httpClient, IOptions<TokenConfig> options)
         {
             _urlService = urlService;
             _httpClient = httpClient;
+            _fileService = fileService;
             _tokenConfig = options.Value;
         }
 
@@ -120,6 +124,36 @@ namespace FashionBrowser.Domain.Services
             };
 
             return tokenOptions;
+        }
+
+        public async Task<Tuple<bool, string>> UpdateUserAsync(UserItemViewModel userItemViewModel, string token)
+        {
+            var file = userItemViewModel.File;
+            var fileName = "";
+            var link = "";
+            if (file != null)
+            {
+                var dataList  = await _fileService.GetResponeUploadFileAsync(file, _httpClient, token);
+                if (dataList != null)
+                {
+                    fileName = dataList[0];
+                    link = dataList[1];
+                }
+            }
+            if (!string.IsNullOrEmpty(userItemViewModel.AvatarImage) && file == null)
+            {
+                fileName = userItemViewModel.AvatarImage;
+            }
+            userItemViewModel.AvatarImage = fileName;
+            userItemViewModel.ImageUrl = link;
+            var urlApi = _urlService.GetBaseUrl() + "/api/users/update";
+            var response = await _httpClient.PutAsJsonAsync(urlApi, userItemViewModel);
+            var isSuccess = response.IsSuccessStatusCode;
+            if(isSuccess)
+            {
+                return Tuple.Create(isSuccess, "Update Information Success !");
+            }
+            return Tuple.Create(false, "Update Information Fail !");
         }
     }
 }
