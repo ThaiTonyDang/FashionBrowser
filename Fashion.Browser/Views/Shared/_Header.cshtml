@@ -1,9 +1,16 @@
 ﻿@using FashionBrowser.Domain.Services;
 @using System.Security.Claims;
 @inject ICartServices cartservice
+@inject IUrlService urlService
 @{
     var count = 0;
     var token = "";
+    var fullName = "";
+    var urlImage = "";
+
+    var fnameClaim = User.Claims.FirstOrDefault(x => x.Type == "firstName");
+    var lnameClaim = User.Claims.FirstOrDefault(x => x.Type == "lastName");
+    var avatarClaim = User.Claims.FirstOrDefault(x => x.Type == "avatar");
     if (User.FindFirst("token") != null)
         token = User.FindFirst("token").Value;
     var cartViemodel = await cartservice.GetCartViewModel(token);
@@ -11,11 +18,7 @@
     {
         count = cartViemodel.ListCartItem.Count;
     }
-
-    var fnameClaim = User.Claims.FirstOrDefault(x => x.Type == "firstName");
-    var lnameClaim = User.Claims.FirstOrDefault(x => x.Type == "lastName");
-    var fullName = "";
-    @if (fnameClaim != null && lnameClaim != null)
+    if (fnameClaim != null && lnameClaim != null)
     {
         fullName = fnameClaim.Value + " " + lnameClaim.Value;
     }
@@ -25,6 +28,11 @@
     }
 
     var email = User.FindFirstValue(ClaimTypes.Email);
+
+    if (avatarClaim != null)
+    {
+        urlImage = urlService.GetFileApiUrl(avatarClaim.Value);
+    }
 
 }
 
@@ -44,7 +52,9 @@
                     @if (User.FindFirst("token") == null)
                     {
                         <button type="button" class="btn btn-sm btn-light dropdown-toggle"
-                         data-toggle="dropdown">My Account</button>
+                                data-toggle="dropdown">
+                            My Account
+                        </button>
 
                         <div class="dropdown-menu dropdown-menu-right">
                             <a href="~/users/login" class="dropdown-item">Sign in</a>
@@ -54,28 +64,45 @@
                     else
                     {
                         <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" style="text-decoration:none">
-                            <span class="user-icon">
-                                <img style="height:50px; border-radius:50%" src="/img/myseft.jpg" alt="">
-                            </span>                          
-                                <span class="user-name" style="font-weight:600">@fullName</span>                          
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list" style="border-radius:9px; z-index:11">
-                            
-                            <form method="post">
-                                <span class="user-icon" style="padding-left:20px">
+                            @if (avatarClaim != null)
+                            {
+                                <span class="user-icon">
+                                    <img style="height:50px; border-radius:50%" src="@urlImage" alt="">
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="user-icon">
                                     <img style="height:50px; border-radius:50%" src="/img/myseft.jpg" alt="">
                                 </span>
-                                <span class="user-name" style="font-weight:600">@fullName</span>
-                                <span style="font-size:15px; padding-left:20px">@email</span>
-                                <hr>
-                                <button type="submit" class="dropdown-item" asp-controller="users" >
-                                    <i class="bi bi-gear" style="font-size:20px; font-style:normal"> Settings</i>
-                                </button>
-                                <button type="submit" class="dropdown-item" asp-controller="users">
-                                    <i class="bi bi-gear" style="font-size:20px; font-style:normal"> Order History</i>
-                                </button>
-                               
-                            </form>
+                            }
+                            <span class="user-name" style="font-weight:600">@fullName</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list" style="border-radius:9px; z-index:11">
+
+                            @if (avatarClaim != null)
+                            {
+                                <span class="user-icon">
+                                    <img style="height:50px; border-radius:50%" src="@urlImage" alt="">
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="user-icon">
+                                    <img style="height:50px; border-radius:50%" src="/img/myseft.jpg" alt="">
+                                </span>
+                            }
+                            <span class="user-name" style="font-weight:600">@fullName</span>
+                            <span style="font-size:15px; padding-left:20px">@email</span>
+                            <hr>
+                            <a class="dropdown-item" href="~/users/profile">
+                                <i class="bi bi-gear" style="font-size:20px; font-style:normal"> User Settings</i>
+                            </a>
+                            <a class="dropdown-item">
+                                <i class="bi bi-gear" style="font-size:20px; font-style:normal"> Order History</i>
+                            </a>
+
+
                             <a href="" class="dropdown-item" style="cursor:pointer" onclick="logoutConfirm(event)">
                                 <i class="fa fa-sign-out fa-logout" aria-hidden="true"
                                    style="font-size:20px; font-style:normal"> Log Out</i>
@@ -83,8 +110,8 @@
                         </div>
                     }
                 </div>
-                    
-                    <div class="btn-group mx-2">
+
+                <div class="btn-group mx-2">
                     <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">USD</button>
                     <div class="dropdown-menu dropdown-menu-right">
                         <button class="dropdown-item" type="button">EUR</button>
@@ -174,7 +201,7 @@
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto py-0">
                         <a href="/" class="nav-item nav-link active">Home</a>
-                        <a href="~/shoppingcart" class="nav-item nav-link">Shopping Cart</a>                    
+                        <a href="~/shoppingcart" class="nav-item nav-link">Shopping Cart</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pages <i class="fa fa-angle-down mt-1"></i></a>
                             <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
@@ -182,10 +209,6 @@
                                 <a href="checkout.html" class="dropdown-item">Checkout</a>
                             </div>
                         </div>
-                        @if (User.FindFirst("token") != null)
-                        {
-                            <a href="~/profile/index" class="nav-item nav-link">Order History</a>
-                        }
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
                     </div>
                     <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
@@ -195,11 +218,11 @@
                         </a>
                         <a href="~/shoppingcart" class="btn px-0 ml-3 cart-shopping">
                             <i class="fas fa-shopping-cart text-primary"></i>
-                           
+
                             <span class="badge text-secondary border border-secondary rounded-circle cart-number" id="cart__item-number" style="padding-bottom: 2px;">
                                 @count
                             </span>
-                            
+
                         </a>
                     </div>
                 </div>

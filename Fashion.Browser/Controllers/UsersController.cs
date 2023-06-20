@@ -8,27 +8,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 using System.Security.Claims;
+using System.Linq;
+using FashionBrowser.Domain.Model;
+using System;
 
 namespace Fashion.Browser.Controllers
 {
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
-        public UsersController(IUserService userService)
+        private readonly IUrlService _urlService;
+        public UsersController(IUserService userService, IUrlService urlService)
         {
             _userService = userService;
+            _urlService = urlService;
         }
 
-        [Route("users/register")]
-        public IActionResult Register()
-        {
-            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
-            var user = new UserItemViewModel();
-            TempData[Mode.LABEL_CONFIRM_CHECK] = "Register To Shop Now !";
-            return View(user);
-        }
-
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
             var claim = User.FindFirst("token");
@@ -37,7 +33,7 @@ namespace Fashion.Browser.Controllers
                 TempData[Mode.LABEL_CONFIRM_CHECK] = "Login To Shop Now !";
             }
             var loginUser = new LoginItemViewModel();
-            return View(loginUser);
+            return await Task.Run(() => View(loginUser));
         }
 
         [HttpPost]
@@ -46,7 +42,7 @@ namespace Fashion.Browser.Controllers
         {
             var message = "";
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
-    
+
             if (loginItemView == null)
             {
                 TempData[Mode.LABEL_CONFIRM_FAIL] = "User information cannot be blank ";
@@ -85,6 +81,16 @@ namespace Fashion.Browser.Controllers
 
         }
 
+        [HttpGet]
+        [Route("users/register")]
+        public async Task<IActionResult> Register()
+        {
+            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
+            var user = new UserItemViewModel();
+            TempData[Mode.LABEL_CONFIRM_CHECK] = "Register To Shop Now !";
+            return await Task.Run(() => View(user));
+        }
+
         [HttpPost]
         [Route("users/register")]
         public async Task<IActionResult> Register(UserItemViewModel registerUser)
@@ -106,8 +112,8 @@ namespace Fashion.Browser.Controllers
                 if (isSuccess)
                 {
                     TempData[Mode.LABEL_CONFIRM_SUCCESS] = message;
-                    return RedirectToAction("login","users");
-                }             
+                    return RedirectToAction("login", "users");
+                }
             }
 
             TempData[Mode.LABEL_CONFIRM_FAIL] = message;
@@ -120,6 +126,50 @@ namespace Fashion.Browser.Controllers
         {
             await HttpContext.SignOutAsync();
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("users/profile")]
+        public async Task<IActionResult> Profile()
+        {
+            var user = new UserItemViewModel
+            {
+                FirstName = User.Claims.FirstOrDefault(x => x.Type == "firstName")?.Value,
+                LastName = User.Claims.FirstOrDefault(x => x.Type == "lastName")?.Value,
+                AvatarImage = User.Claims.FirstOrDefault(x => x.Type == "avatar")?.Value,
+                Email = User.FindFirstValue(ClaimTypes.Email),
+                PhoneNumber = User.FindFirstValue(ClaimTypes.MobilePhone),
+                AvailableAddress = User.FindFirstValue(ClaimTypes.StreetAddress),
+                DateOfBirth = User.FindFirstValue(ClaimTypes.DateOfBirth),
+            };
+            // load dữ liệu User lên đây - sau khji cập nhật vẫn lấy claim cũ
+            user.ImageUrl = _urlService.GetFileApiUrl(user.AvatarImage);
+            return await Task.Run(() => View(user));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Profile(UserItemViewModel userItemViewModel)
+        {
+            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var token = User.FindFirst("token").Value;
+            if (userItemViewModel == null)
+            {
+                return View(new UserItemViewModel());
+            }
+
+            userItemViewModel.Id = new Guid(userId);
+            var result = await _userService.UpdateUserAsync(userItemViewModel, token);
+            var isSuccess = result.Item1;
+            var message = result.Item2;
+            if (!isSuccess)
+            {
+                TempData[Mode.LABEL_CONFIRM_FAIL] = message;
+                return View(new UserItemViewModel());
+            }
+
+            TempData[Mode.LABEL_CONFIRM_SUCCESS] = message;
+            return View(userItemViewModel);
         }
     }
 }
