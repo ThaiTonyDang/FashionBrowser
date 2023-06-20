@@ -113,5 +113,13 @@ namespace Fashion.Browser.Controllers
             TempData[Mode.LABEL_CONFIRM_FAIL] = message;
             return View();
         }
+
+        [HttpPost]
+        [Route("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return Ok();
+        }
     }
 }

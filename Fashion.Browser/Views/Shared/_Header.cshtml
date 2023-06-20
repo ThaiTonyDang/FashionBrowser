@@ -1,9 +1,6 @@
 ﻿@using FashionBrowser.Domain.Services;
+@using System.Security.Claims;
 @inject ICartServices cartservice
-<style>
-   
-</style>
-
 @{
     var count = 0;
     var token = "";
@@ -14,6 +11,21 @@
     {
         count = cartViemodel.ListCartItem.Count;
     }
+
+    var fnameClaim = User.Claims.FirstOrDefault(x => x.Type == "firstName");
+    var lnameClaim = User.Claims.FirstOrDefault(x => x.Type == "lastName");
+    var fullName = "";
+    @if (fnameClaim != null && lnameClaim != null)
+    {
+        fullName = fnameClaim.Value + " " + lnameClaim.Value;
+    }
+    else
+    {
+        fullName = "Tony";
+    }
+
+    var email = User.FindFirstValue(ClaimTypes.Email);
+
 }
 
 <div class="container-fluid">
@@ -29,13 +41,50 @@
         <div class="col-lg-6 text-center text-lg-right">
             <div class="d-inline-flex align-items-center">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">My Account</button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a href="~/users/login" class="dropdown-item">Sign in</a>
-                        <a href="~/users/register" class="dropdown-item">Sign up</a>
-                    </div>
+                    @if (User.FindFirst("token") == null)
+                    {
+                        <button type="button" class="btn btn-sm btn-light dropdown-toggle"
+                         data-toggle="dropdown">My Account</button>
+
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a href="~/users/login" class="dropdown-item">Sign in</a>
+                            <a href="~/users/register" class="dropdown-item">Sign up</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" style="text-decoration:none">
+                            <span class="user-icon">
+                                <img style="height:50px; border-radius:50%" src="/img/myseft.jpg" alt="">
+                            </span>                          
+                                <span class="user-name" style="font-weight:600">@fullName</span>                          
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list" style="border-radius:9px; z-index:11">
+                            
+                            <form method="post">
+                                <span class="user-icon" style="padding-left:20px">
+                                    <img style="height:50px; border-radius:50%" src="/img/myseft.jpg" alt="">
+                                </span>
+                                <span class="user-name" style="font-weight:600">@fullName</span>
+                                <span style="font-size:15px; padding-left:20px">@email</span>
+                                <hr>
+                                <button type="submit" class="dropdown-item" asp-controller="users" >
+                                    <i class="bi bi-gear" style="font-size:20px; font-style:normal"> Settings</i>
+                                </button>
+                                <button type="submit" class="dropdown-item" asp-controller="users">
+                                    <i class="bi bi-gear" style="font-size:20px; font-style:normal"> Order History</i>
+                                </button>
+                               
+                            </form>
+                            <a href="" class="dropdown-item" style="cursor:pointer" onclick="logoutConfirm(event)">
+                                <i class="fa fa-sign-out fa-logout" aria-hidden="true"
+                                   style="font-size:20px; font-style:normal"> Log Out</i>
+                            </a>
+                        </div>
+                    }
                 </div>
-                <div class="btn-group mx-2">
+                    
+                    <div class="btn-group mx-2">
                     <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">USD</button>
                     <div class="dropdown-menu dropdown-menu-right">
                         <button class="dropdown-item" type="button">EUR</button>
@@ -43,21 +92,13 @@
                         <button class="dropdown-item" type="button">CAD</button>
                     </div>
                 </div>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">EN</button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <button class="dropdown-item" type="button">FR</button>
-                        <button class="dropdown-item" type="button">AR</button>
-                        <button class="dropdown-item" type="button">RU</button>
-                    </div>
-                </div>
             </div>
             <div class="d-inline-flex align-items-center d-block d-lg-none">
-                <a href="" class="btn px-0 ml-2">
+                <a href="" class="btn px-0 ml-2" style="font-size:20px">
                     <i class="fas fa-heart text-dark"></i>
                     <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">0</span>
                 </a>
-                <a href="~/shoppingcart" class="btn px-0 ml-2">
+                <a href="~/shoppingcart" class="btn px-0 ml-2" style="font-size:20px">
                     <i class="fas fa-shopping-cart text-dark"></i>
                     <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">@count</span>
                 </a>
@@ -143,7 +184,7 @@
                         </div>
                         @if (User.FindFirst("token") != null)
                         {
-                            <a href="detail.html" class="nav-item nav-link">Order History</a>
+                            <a href="~/profile/index" class="nav-item nav-link">Order History</a>
                         }
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
                     </div>

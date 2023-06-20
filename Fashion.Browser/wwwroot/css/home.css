@@ -5,7 +5,7 @@
 
 .header_area {
     width: 100%;
-    z-index: 9999;
+    z-index: 10;
     transition: background 0.4s, all 0.3s linear;
     box-shadow: 0px 10px 27px 3px rgba(221,221,221,0.3)
 }
@@ -17,6 +17,15 @@
     width: 100%
 }
 
+.user-name {
+    color: rgba(0, 35, 71, 0.98);
+    font-weight: 600;
+}
+
 a {
-    color: #FFD333;
+    text-decoration:none;
+}
+
+.fa-logout :hover{
+    color:gray;
 }
