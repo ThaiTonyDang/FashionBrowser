@@ -54,7 +54,7 @@
                                 <span asp-validation-for="@Model.UserItemViewModel.PhoneNumber" class="text-danger"></span>
                             </div>
 
-                            @if (string.IsNullOrEmpty(Model.UserItemViewModel.AvailableAddress))
+                            @if (string.IsNullOrEmpty(Model.UserItemViewModel.Address))
                             {
                                 <div class="col-md-12 form-group">
                                     <label class="control-label">Number Department</label>
@@ -94,9 +94,9 @@
                             {
                                 <div class="col-md-12 form-group">
                                     <label>Available Address</label>
-                                    <input asp-for="UserItemViewModel.AvailableAddress" type="text" class="form-control"
-                                   value="@Model.UserItemViewModel.AvailableAddress">
-                                    <span asp-validation-for="@Model.UserItemViewModel.AvailableAddress" class="text-danger"></span>
+                                    <input asp-for="UserItemViewModel.Address" type="text" class="form-control"
+                                   value="@Model.UserItemViewModel.Address">
+                                    <span asp-validation-for="@Model.UserItemViewModel.Address" class="text-danger"></span>
                                 </div>
                             }
 

@@ -1,39 +1,27 @@
 ﻿@using FashionBrowser.Domain.Services;
 @using System.Security.Claims;
+@using FashionBrowser.Domain.ViewModels;
 @inject ICartServices cartservice
-@inject IUrlService urlService
+@inject IUserService userService
 @{
     var count = 0;
     var token = "";
-    var fullName = "";
-    var urlImage = "";
+    var user = new UserItemViewModel();
 
-    var fnameClaim = User.Claims.FirstOrDefault(x => x.Type == "firstName");
-    var lnameClaim = User.Claims.FirstOrDefault(x => x.Type == "lastName");
-    var avatarClaim = User.Claims.FirstOrDefault(x => x.Type == "avatar");
-    if (User.FindFirst("token") != null)
-        token = User.FindFirst("token").Value;
     var cartViemodel = await cartservice.GetCartViewModel(token);
     if (cartViemodel.ListCartItem != null)
     {
         count = cartViemodel.ListCartItem.Count;
     }
-    if (fnameClaim != null && lnameClaim != null)
-    {
-        fullName = fnameClaim.Value + " " + lnameClaim.Value;
-    }
-    else
-    {
-        fullName = "Tony";
-    }
 
-    var email = User.FindFirstValue(ClaimTypes.Email);
-
-    if (avatarClaim != null)
+    if (User.FindFirst("token") != null)
     {
-        urlImage = urlService.GetFileApiUrl(avatarClaim.Value);
+        token = User.FindFirst("token").Value;
+        user = await userService.GetUserAsync(token);
     }
-
+    var email = user.Email;
+    var avatar = user.ImageUrl;
+    var fullName = user.FirstName + " " + user.LastName;
 }
 
 <div class="container-fluid">
@@ -64,32 +52,32 @@
                     else
                     {
                         <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" style="text-decoration:none">
-                            @if (avatarClaim != null)
+                            @if (!string.IsNullOrEmpty(avatar))
                             {
                                 <span class="user-icon">
-                                    <img style="height:50px; border-radius:50%" src="@urlImage" alt="">
+                                    <img style="height:50px; width:50px; border-radius:50%" src="@avatar" alt="">
                                 </span>
                             }
                             else
                             {
                                 <span class="user-icon">
-                                    <img style="height:50px; border-radius:50%" src="/img/myseft.jpg" alt="">
+                                    <img style="height:50px; width:50px; border-radius:50%" src="/img/myseft.jpg" alt="">
                                 </span>
                             }
                             <span class="user-name" style="font-weight:600">@fullName</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list" style="border-radius:9px; z-index:11">
 
-                            @if (avatarClaim != null)
+                            @if (!string.IsNullOrEmpty(avatar))
                             {
                                 <span class="user-icon">
-                                    <img style="height:50px; border-radius:50%" src="@urlImage" alt="">
+                                    <img style="height:50px; width:50px; border-radius:50%" src="@avatar" alt="">
                                 </span>
                             }
                             else
                             {
                                 <span class="user-icon">
-                                    <img style="height:50px; border-radius:50%" src="/img/myseft.jpg" alt="">
+                                    <img style="height:50px; width:50px; border-radius:50%" src="/img/myseft.jpg" alt="">
                                 </span>
                             }
                             <span class="user-name" style="font-weight:600">@fullName</span>
