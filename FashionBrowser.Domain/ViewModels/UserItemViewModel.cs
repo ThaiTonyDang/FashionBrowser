@@ -35,27 +35,23 @@ namespace FashionBrowser.Domain.ViewModels
         public string? CityId { get; set; }
 
         public string PhoneNumber { get; set; }
-		public string Address { get => GetAddress(); }
-        public string AvailableAddress { get; set; }
+		public string Address { get; set; }
 
 		public string? DistrictId { get; set; }
 		public string? WardId { get; set; }
-
 		public string CityName { get; set; }
 		public string DistrictName { get; set; }
 		public string WardName { get; set; }
-
 		public string AvatarImage { get; set; }
 		public string ImageUrl { get; set; }
-
-        public string DateOfBirth { get; set; }
-        public DateTime Birthday { get => DateTime.Parse(DateOfBirth); }
+        public DateTime Birthday { get; set; }
+        public PasswordItemViewModel PasswordItemViewModel { get; set; }
 
         public string GetAddress()
 		{
             if (string.IsNullOrEmpty(this.CityName) && string.IsNullOrEmpty(this.WardName) && string.IsNullOrEmpty(this.DistrictName))
             {
-                return this.AvailableAddress;
+                return this.Address;
             }    
             if (string.IsNullOrEmpty(this.WardName) && string.IsNullOrEmpty(this.DistrictName))
 			{
@@ -71,5 +67,5 @@ namespace FashionBrowser.Domain.ViewModels
             }
             return string.Empty;
 		}
-	}
+    }
 }

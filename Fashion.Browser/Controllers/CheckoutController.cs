@@ -39,7 +39,7 @@ namespace Fashion.Browser.Controllers
                 LastName = User.Claims.FirstOrDefault(x => x.Type == "lastName")?.Value,
                 Email = User.FindFirstValue(ClaimTypes.Email),
                 PhoneNumber = User.FindFirstValue(ClaimTypes.MobilePhone), 
-                AvailableAddress = User.FindFirstValue(ClaimTypes.StreetAddress), 
+                Address = User.FindFirstValue(ClaimTypes.StreetAddress), 
             };
 
             if (cartItems == null) cartItems = new List<CartItemViewModel>();
@@ -57,8 +57,13 @@ namespace Fashion.Browser.Controllers
                 TempData[Mode.LABEL_CONFIRM_FAIL] = "Cannot Create Order! User Id Invalid";
                 return RedirectToAction("index", "home");
             }
-            var address = await GetAddress(checkout);
 
+            var address = checkout.UserItemViewModel.Address;
+            if (string.IsNullOrEmpty(address))
+            {
+                address = await GetAddress(checkout);
+            }    
+           
             var cartItems = await GetCartList();          
             checkout.CartViewModel.ListCartItem = cartItems;
             checkout.OrderItem = BuidOrder(address);
@@ -132,7 +137,7 @@ namespace Fashion.Browser.Controllers
             checkout.UserItemViewModel.DistrictName = district.Name;
             checkout.UserItemViewModel.WardName = ward.Name;
 
-            var address = checkout.UserItemViewModel.Address;
+            var address = checkout.UserItemViewModel.GetAddress();
             return address;
         }
 

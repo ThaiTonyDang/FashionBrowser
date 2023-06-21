@@ -17,11 +17,9 @@ namespace Fashion.Browser.Controllers
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IUrlService _urlService;
-        public UsersController(IUserService userService, IUrlService urlService)
+        public UsersController(IUserService userService)
         {
             _userService = userService;
-            _urlService = urlService;
         }
 
         public async Task<IActionResult> Login()
@@ -132,33 +130,23 @@ namespace Fashion.Browser.Controllers
         [Route("users/profile")]
         public async Task<IActionResult> Profile()
         {
-            var user = new UserItemViewModel
-            {
-                FirstName = User.Claims.FirstOrDefault(x => x.Type == "firstName")?.Value,
-                LastName = User.Claims.FirstOrDefault(x => x.Type == "lastName")?.Value,
-                AvatarImage = User.Claims.FirstOrDefault(x => x.Type == "avatar")?.Value,
-                Email = User.FindFirstValue(ClaimTypes.Email),
-                PhoneNumber = User.FindFirstValue(ClaimTypes.MobilePhone),
-                AvailableAddress = User.FindFirstValue(ClaimTypes.StreetAddress),
-                DateOfBirth = User.FindFirstValue(ClaimTypes.DateOfBirth),
-            };
-            // load dữ liệu User lên đây - sau khji cập nhật vẫn lấy claim cũ
-            user.ImageUrl = _urlService.GetFileApiUrl(user.AvatarImage);
+            var token = User.FindFirst("token").Value;
+            var user = await _userService.GetUserAsync(token);             
             return await Task.Run(() => View(user));
         }
 
         [HttpPost]
+        [Route("users/profile")]
         public async Task<IActionResult> Profile(UserItemViewModel userItemViewModel)
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var email = User.FindFirstValue(ClaimTypes.Email);
             var token = User.FindFirst("token").Value;
             if (userItemViewModel == null)
             {
                 return View(new UserItemViewModel());
             }
-
-            userItemViewModel.Id = new Guid(userId);
+            userItemViewModel.Email = email;
             var result = await _userService.UpdateUserAsync(userItemViewModel, token);
             var isSuccess = result.Item1;
             var message = result.Item2;
@@ -169,7 +157,57 @@ namespace Fashion.Browser.Controllers
             }
 
             TempData[Mode.LABEL_CONFIRM_SUCCESS] = message;
-            return View(userItemViewModel);
+            return RedirectToAction("Profile", "Users");
         }
+
+        
+        [HttpPost]
+        [Route("users/avatar-update")]
+        public async Task<IActionResult> Avatar(UserItemViewModel userItemViewModel)
+        {
+            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
+            var token = User.FindFirst("token").Value;
+            if (userItemViewModel == null)
+            {
+                return RedirectToAction("Profile", "Users");
+            }
+
+            var result = await _userService.UpdateUserAvatarAsync(userItemViewModel, token);
+            var isSuccess = result.Item1;
+            var message = result.Item2;
+            if (!isSuccess)
+            {
+                TempData[Mode.LABEL_CONFIRM_FAIL] = message;
+                return RedirectToAction("Profile", "Users");
+            }
+
+            TempData[Mode.LABEL_CONFIRM_SUCCESS] = message;
+            return RedirectToAction("Profile", "Users");
+        }
+
+        [HttpPost]
+        [Route("users/change-password")]
+        public async Task<IActionResult> ChangePassword(UserItemViewModel userItemViewModel)
+        {
+            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
+            var token = User.FindFirst("token").Value;
+            if (userItemViewModel == null)
+            {
+                return RedirectToAction("Profile", "Users");
+            }
+            var paswordItem = userItemViewModel.PasswordItemViewModel;
+            var result = await _userService.ChangePassword(paswordItem, token);
+            var isSuccess = result.Item1;
+            var message = result.Item2;
+            if (!isSuccess)
+            {
+                TempData[Mode.LABEL_CONFIRM_FAIL] = message;
+                return RedirectToAction("Profile", "Users");
+            }
+
+            TempData[Mode.LABEL_CONFIRM_SUCCESS] = message;
+            return RedirectToAction("Profile", "Users");
+        }
+
     }
 }
