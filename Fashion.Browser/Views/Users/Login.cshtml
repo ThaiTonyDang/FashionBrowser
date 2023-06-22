@@ -34,6 +34,7 @@
                         <div class="col-md-12 form-group">
                             <input asp-for="Password" type="password" class="form-control"
                             placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
+                            <span asp-validation-for=Password style="color:red"></span>
                         </div>
                         <div class="col-md-12 form-group">
                             <div class="creat_account">

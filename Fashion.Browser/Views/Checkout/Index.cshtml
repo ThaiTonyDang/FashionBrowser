@@ -53,53 +53,12 @@
                                  value="@Model.UserItemViewModel.PhoneNumber">
                                 <span asp-validation-for="@Model.UserItemViewModel.PhoneNumber" class="text-danger"></span>
                             </div>
-
-                            @if (string.IsNullOrEmpty(Model.UserItemViewModel.Address))
-                            {
-                                <div class="col-md-12 form-group">
-                                    <label class="control-label">Number Department</label>
-                                    <input asp-for=UserItemViewModel.NumberDepartment type="text"
-                                           class="form-control" placeholder="Number Department" value="@Model.UserItemViewModel.NumberDepartment">
-                                    <span asp-validation-for="@Model.UserItemViewModel.NumberDepartment" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-4 form-group">
-                                    <label>City</label>
-
-                                    <select asp-for=UserItemViewModel.CityId class="custom-select city-provice" id="city"
-                                            aria-label=".form-select-sm">
-                                        <option value="@Model.UserItemViewModel.CityId">City / Province</option>
-                                    </select>
-                                    <span asp-validation-for="UserItemViewModel.CityId" class="text-danger"></span>
-                                </div>
-
-                                <div class="col-md-4 form-group">
-                                    <label>District</label>
-                                    <select asp-for=UserItemViewModel.DistrictId class="custom-select" id="district" aria-label=".form-select-sm">
-                                        <option value="@Model.UserItemViewModel.DistrictId">County / District</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4 form-group" aria-label=".form-select-sm">
-                                    <label>Ward</label>
-                                    <select asp-for=UserItemViewModel.WardId class="custom-select" id="ward" aria-label=".form-select-sm">
-                                        <option value="@Model.UserItemViewModel.WardId" selected>Ward / Commune</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-12 form-group">
-                                    <label class="control-label" style="color:firebrick">
-                                        Notice! Your address is not available in the registration system, please update later
-                                    </label>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="col-md-12 form-group">
-                                    <label>Available Address</label>
-                                    <input asp-for="UserItemViewModel.Address" type="text" class="form-control"
-                                   value="@Model.UserItemViewModel.Address">
-                                    <span asp-validation-for="@Model.UserItemViewModel.Address" class="text-danger"></span>
-                                </div>
-                            }
-
+                            <div class="col-md-12 form-group">
+                                <label>Available Address</label>
+                                <input asp-for="UserItemViewModel.Address" type="text" class="form-control"
+                                value="@Model.UserItemViewModel.Address">
+                                <span asp-validation-for="@Model.UserItemViewModel.Address" class="text-danger"></span>
+                            </div>                            
                             <div class="cupon_area col-md-12 form-group">
                                 <div class="check_title">
                                     <h2>Have a coupon? <a href="#">Click here to enter your code</a></h2>

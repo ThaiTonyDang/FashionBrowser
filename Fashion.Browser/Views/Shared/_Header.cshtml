@@ -6,7 +6,17 @@
 @{
     var count = 0;
     var token = "";
-    var user = new UserItemViewModel();
+    var email = "";
+    var avatarImage = "";
+    var image = "";
+    var fullName = "";
+    var user = default(UserItemViewModel);
+
+    if (User.FindFirst("token") != null)
+    {
+        token = User.FindFirst("token").Value;
+        user = await userService.GetUserAsync(token);
+    }
 
     var cartViemodel = await cartservice.GetCartViewModel(token);
     if (cartViemodel.ListCartItem != null)
@@ -14,14 +24,17 @@
         count = cartViemodel.ListCartItem.Count;
     }
 
-    if (User.FindFirst("token") != null)
+    if(user != null)
     {
-        token = User.FindFirst("token").Value;
-        user = await userService.GetUserAsync(token);
+        email = user.Email;
+        avatarImage = user.ImageUrl;        
+        fullName = user.FirstName + " " + user.LastName;
     }
-    var email = user.Email;
-    var avatar = user.ImageUrl;
-    var fullName = user.FirstName + " " + user.LastName;
+
+    if (User.FindFirst("avatar") !=null)
+    {
+        image = User.FindFirst("avatar").Value;
+    }
 }
 
 <div class="container-fluid">
@@ -37,7 +50,7 @@
         <div class="col-lg-6 text-center text-lg-right">
             <div class="d-inline-flex align-items-center">
                 <div class="btn-group">
-                    @if (User.FindFirst("token") == null)
+                    @if (user == null)
                     {
                         <button type="button" class="btn btn-sm btn-light dropdown-toggle"
                                 data-toggle="dropdown">
@@ -52,32 +65,32 @@
                     else
                     {
                         <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" style="text-decoration:none">
-                            @if (!string.IsNullOrEmpty(avatar))
+                            @if (!string.IsNullOrEmpty(image))
                             {
                                 <span class="user-icon">
-                                    <img style="height:50px; width:50px; border-radius:50%" src="@avatar" alt="">
+                                    <img style="height:50px; width:50px; border-radius:50%" src="@avatarImage" alt="">
                                 </span>
                             }
                             else
                             {
                                 <span class="user-icon">
-                                    <img style="height:50px; width:50px; border-radius:50%" src="/img/myseft.jpg" alt="">
+                                    <img style="height:50px; width:50px; border-radius:50%" src="/img/images_default.png" alt="">
                                 </span>
                             }
                             <span class="user-name" style="font-weight:600">@fullName</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list" style="border-radius:9px; z-index:11">
 
-                            @if (!string.IsNullOrEmpty(avatar))
+                            @if (!string.IsNullOrEmpty(image))
                             {
                                 <span class="user-icon">
-                                    <img style="height:50px; width:50px; border-radius:50%" src="@avatar" alt="">
+                                    <img style="height:50px; width:50px; border-radius:50%" src="@avatarImage" alt="">
                                 </span>
                             }
                             else
                             {
                                 <span class="user-icon">
-                                    <img style="height:50px; width:50px; border-radius:50%" src="/img/myseft.jpg" alt="">
+                                    <img style="height:50px; width:50px; border-radius:50%" src="/img/images_default.png" alt="">
                                 </span>
                             }
                             <span class="user-name" style="font-weight:600">@fullName</span>
@@ -86,7 +99,7 @@
                             <a class="dropdown-item" href="~/users/profile">
                                 <i class="bi bi-gear" style="font-size:20px; font-style:normal"> User Settings</i>
                             </a>
-                            <a class="dropdown-item">
+                            <a class="dropdown-item" href="">
                                 <i class="bi bi-gear" style="font-size:20px; font-style:normal"> Order History</i>
                             </a>
 

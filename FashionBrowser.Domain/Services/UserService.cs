@@ -65,7 +65,7 @@ namespace FashionBrowser.Domain.Services
             return Tuple.Create(default(ClaimsPrincipal), false, message);
         }
 
-        public async Task<Tuple<bool, string>> RegisterUserAsync(UserItemViewModel registerUser)
+        public async Task<Tuple<bool, string>> RegisterUserAsync(RegisterItemViewModel registerUser)
 		{
             try
             {
@@ -175,16 +175,20 @@ namespace FashionBrowser.Domain.Services
 
         public async Task<UserItemViewModel> GetUserAsync(string token)
         {
-            var urlApi = _urlService.GetBaseUrl() + "/api/users/user";
+            var urlApi = _urlService.GetBaseUrl() + "/api/users/single-user";
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                        JwtBearerDefaults.AuthenticationScheme, token);
             var response = await _httpClient.GetAsync(urlApi);
             var responseList = JsonConvert.DeserializeObject<ResponseAPI<UserItemViewModel>>
                                   (await response.Content.ReadAsStringAsync());
-            if (response.StatusCode == (HttpStatusCode)404) return new UserItemViewModel();
-            var user = responseList.Data;
-            user.ImageUrl = _urlService.GetFileApiUrl(user.AvatarImage);
-            return user;
+            if (response.IsSuccessStatusCode)
+            {
+                var user = responseList.Data;
+                user.ImageUrl = _urlService.GetFileApiUrl(user.AvatarImage);
+                return user;
+            }
+
+            return null;
         }
 
         public async Task<Tuple<bool, string>> ChangePassword(PasswordItemViewModel passwordItemViewModel, string token)
