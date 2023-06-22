@@ -59,11 +59,7 @@ namespace Fashion.Browser.Controllers
             }
 
             var address = checkout.UserItemViewModel.Address;
-            if (string.IsNullOrEmpty(address))
-            {
-                address = await GetAddress(checkout);
-            }    
-           
+
             var cartItems = await GetCartList();          
             checkout.CartViewModel.ListCartItem = cartItems;
             checkout.OrderItem = BuidOrder(address);
@@ -110,35 +106,6 @@ namespace Fashion.Browser.Controllers
                 return RedirectToAction("Index", "Home");
             }    
             return View(checkout);
-        }
-
-        private async Task<string> GetAddress(CheckoutItemViewModel checkout)
-        {
-            var cities = await _mapServices.GetCities();
-            var cityId = checkout.UserItemViewModel.CityId;
-            var districtId = checkout.UserItemViewModel.DistrictId;
-            var wardId = checkout.UserItemViewModel.WardId;
-
-            var city = cities.Where(c => c.Id == cityId).FirstOrDefault();
-            var district = new District();
-            var ward = new Ward();
-
-            if (districtId != null)
-            {
-                district = city.Districts.Where(d => d.Id == districtId).FirstOrDefault();
-            }
-
-            if (wardId != null)
-            {
-                ward = district.Wards.Where(w => w.Id == wardId).FirstOrDefault();
-            }
-            
-            checkout.UserItemViewModel.CityName = city.Name;
-            checkout.UserItemViewModel.DistrictName = district.Name;
-            checkout.UserItemViewModel.WardName = ward.Name;
-
-            var address = checkout.UserItemViewModel.GetAddress();
-            return address;
         }
 
 		private async Task<List<CartItemViewModel>> GetCartList()

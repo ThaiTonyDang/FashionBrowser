@@ -1,5 +1,5 @@
 ﻿@using FashionBrowser.Domain.ViewModels;
-@model UserItemViewModel;
+@model RegisterItemViewModel;
 
 @{
     ViewData["Title"] = "Register";
@@ -59,10 +59,36 @@
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
-                                <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="PhoneNumber"
+                                <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="Phone Number"
                                        onfocus="this.placeholder = ''" onblur="this.placeholder = 'PhoneNumber'">
                                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                             </div>
+                            <div class="col-md-12 form-group">
+                                <input asp-for=NumberDepartment type="text"
+                                       class="form-control" placeholder="Number Department" placeholder="Number Department">
+                                <span asp-validation-for=NumberDepartment class="text-danger"></span>
+                            </div>
+                            <div style="display:flex">
+                                <div class="col-md-4 form-group">
+                                    <select asp-for=CityId class="custom-select city-provice" id="city"
+                                            aria-label=".form-select-sm">
+                                        <option value="@Model.CityId">City / Province</option>
+                                    </select>
+                                    <span asp-validation-for=CityId class="text-danger"></span>
+                                </div>
+                               
+                                <div class="col-md-4 form-group">
+                                    <select asp-for=DistrictId class="custom-select" id="district" aria-label=".form-select-sm">
+                                        <option value="@Model.DistrictId">County / District</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 form-group" aria-label=".form-select-sm">
+                                    <select asp-for=WardId class="custom-select" id="ward" aria-label=".form-select-sm">
+                                        <option value="@Model.WardId" selected>Ward / Commune</option>
+                                    </select>
+                                </div>
+                            </div>
+                                              
                             <div class="col-md-12 form-group">
                                 <input asp-for="Password" type="password" class="form-control password" placeholder="Password"
                                        onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
@@ -72,12 +98,6 @@
                                 <input asp-for="ConfirmPassword" type="password" class="form-control confirmPassword" placeholder="Confirm Password"
                                        onfocus="this.placeholder = ''" onblur="this.placeholder = 'Confirm Password'">
                                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-12 form-group">
-                                <div class="creat_account">
-                                    <input type="checkbox" id="f-option2" name="selector">
-                                    <label for="f-option2">Keep me logged in</label>
-                                </div>
                             </div>
                             <div class="col-md-12 form-group">
                                 <button type="submit" value="submit" class="button button-register w-100">Register</button>
