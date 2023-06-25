@@ -23,6 +23,7 @@ namespace FashionBrowser.Domain.ViewModels
         public List<ProductItemViewModel> ListProduct { get; set; }
         public bool IsSuccess { get; set; }
         public string[] ErrorDetail { get; set; }
+        public string CateName { get; set; }
 
         public ProductViewModel()
         {

@@ -1,4 +1,5 @@
 ﻿using FashionBrowser.Domain.Services;
+using FashionBrowser.Domain.ViewModels;
 using FashionBrowser.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,7 @@ namespace Fashion.Browser.Controllers
         public async Task<IActionResult> Index()
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
+            var token = "";   
             var productViewModel = await _productServices.GetProductViewModelAsync();
             var categoryViewModel = await _categoryServices.GetCategoryViewModelAsync();
             var listCategory = categoryViewModel.ListCategory;
@@ -51,6 +53,7 @@ namespace Fashion.Browser.Controllers
         [Route("{productId}")]
         public async Task<IActionResult> Detail(string productId)
         {
+            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
             var result = productId.IsGuidParseFromString();
             if (result)
             {
@@ -60,5 +63,29 @@ namespace Fashion.Browser.Controllers
             }    
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpGet]
+        [Route("products/{categoryName}")]
+        public async Task<IActionResult> ProductsCategory(string categoryName)
+        {
+            var categoryCode = GetCategoryCode(categoryName);
+            var productViewModel = await _categoryServices.GetProductsItemAsync(categoryCode);
+
+            return View(productViewModel);         
+        }
+
+        private int GetCategoryCode(string categoryName)
+        {
+            switch (categoryName)
+            {
+                case CATEGORY.MEN_FASHION:
+                    return (int)CATEGORY_CODE.MEN;
+                case CATEGORY.WOMEN_FASHION:
+                    return (int)CATEGORY_CODE.WOMEN;
+                default:
+                    return (int)CATEGORY_CODE.KID;
+            }
+        }
+
     }
 }

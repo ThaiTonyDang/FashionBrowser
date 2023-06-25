@@ -1,6 +1,7 @@
 ﻿@using FashionBrowser.Domain.Services;
 @using System.Security.Claims;
 @using FashionBrowser.Domain.ViewModels;
+@using FashionBrowser.Utilities;
 @inject ICartServices cartservice
 @inject IUserService userService
 @{
@@ -35,6 +36,12 @@
     {
         image = User.FindFirst("avatar").Value;
     }
+}
+
+@{
+    var menFashion = $"/products/{CATEGORY.MEN_FASHION}";
+    var womenFashion = $"/products/{CATEGORY.WOMEN_FASHION}";
+    var kidFashion = $"/products/{CATEGORY.KID_FASHION}";
 }
 
 <div class="container-fluid">
@@ -202,7 +209,9 @@
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto py-0">
                         <a href="/" class="nav-item nav-link active">Home</a>
-                        <a href="~/shoppingcart" class="nav-item nav-link">Shopping Cart</a>
+                        <a href= @menFashion class="nav-item nav-link">Men</a>
+                        <a href= @womenFashion class="nav-item nav-link">Women</a>
+                        <a href= @kidFashion class="nav-item nav-link">Kid</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pages <i class="fa fa-angle-down mt-1"></i></a>
                             <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">

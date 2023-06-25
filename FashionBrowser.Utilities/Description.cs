@@ -6,11 +6,6 @@ using System.Threading.Tasks;
 
 namespace FashionBrowser.Utilities
 {
-	public struct CartKeyName
-	{
-		public const string Cart_Key = "Cart";
-    }
-
 	public struct Mode
 	{
 		public const string MODE = "MODE";
@@ -38,5 +33,12 @@ namespace FashionBrowser.Utilities
     public struct SHIPPING_FEE
     {
         public const decimal SHIPPING = 1;
+    }
+
+    public struct CATEGORY
+    {
+        public const string MEN_FASHION = "MEN_FASHION";
+        public const string WOMEN_FASHION = "WOMEN_FASHION";
+        public const string KID_FASHION = "KID_FASHION"; 
     }
 }
