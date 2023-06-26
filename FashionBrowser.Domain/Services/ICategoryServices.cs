@@ -11,5 +11,6 @@ namespace FashionBrowser.Domain.Services
     {
         public Task<CategoryViewModel> GetCategoryViewModelAsync();
         public Task<List<CategoryItemViewModel>> GetListCategoryItemAsync();
+        public Task<ProductViewModel> GetProductsItemAsync(int categoryCode);
     }
 }
