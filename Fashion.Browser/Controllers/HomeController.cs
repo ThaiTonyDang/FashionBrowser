@@ -1,11 +1,8 @@
 ﻿using FashionBrowser.Domain.Services;
 using FashionBrowser.Domain.ViewModels;
 using FashionBrowser.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,7 +22,6 @@ namespace Fashion.Browser.Controllers
         public async Task<IActionResult> Index()
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
-            var token = "";   
             var productViewModel = await _productServices.GetProductViewModelAsync();
             var categoryViewModel = await _categoryServices.GetCategoryViewModelAsync();
             var listCategory = categoryViewModel.ListCategory;
@@ -38,8 +34,6 @@ namespace Fashion.Browser.Controllers
                         productItemViewModel.CategoryName = "FEMALE FASHION";
                         break;
                     }
-                    var category = listCategory.Where(c => c.Id == productItemViewModel.CategoryId).FirstOrDefault();
-                    productItemViewModel.CategoryName = category.Name;
                 }
             }
 
@@ -50,7 +44,7 @@ namespace Fashion.Browser.Controllers
             return View(productViewModel);
         }
 
-        [Route("{productId}")]
+        [Route("product-detail/{productId}")]
         public async Task<IActionResult> Detail(string productId)
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
@@ -68,24 +62,32 @@ namespace Fashion.Browser.Controllers
         [Route("products/{categoryName}")]
         public async Task<IActionResult> ProductsCategory(string categoryName)
         {
-            var categoryCode = GetCategoryCode(categoryName);
-            var productViewModel = await _categoryServices.GetProductsItemAsync(categoryCode);
+            var productViewModel = new ProductViewModel();
+            var categoryViewModel = await _categoryServices.GetCategoryViewModelAsync();
+            var categories = categoryViewModel.ListCategory;
 
+            var products = await _categoryServices.GetAllProductsByCategoryName(categories, categoryName);
+            var category = await _categoryServices.GetCategoryByName(categories, categoryName);
+
+            productViewModel.CategoryItem = category;
+            productViewModel.ListProductCategory = products;
+            
             return View(productViewModel);         
         }
 
-        private int GetCategoryCode(string categoryName)
+        [HttpGet]           
+        [Route("categories")]
+        public async Task<IActionResult> ProductsCategoryChildren([FromQuery] string childSlug)
         {
-            switch (categoryName)
-            {
-                case CATEGORY.MEN_FASHION:
-                    return (int)CATEGORY_CODE.MEN;
-                case CATEGORY.WOMEN_FASHION:
-                    return (int)CATEGORY_CODE.WOMEN;
-                default:
-                    return (int)CATEGORY_CODE.KID;
-            }
-        }
+            var productViewModel = new ProductViewModel();
+            var categoryViewModel = await _categoryServices.GetCategoryViewModelAsync();
+            var categories = categoryViewModel.ListCategory;
 
+            var result = _categoryServices.GetProductCategoryChildren(categories, childSlug);
+            productViewModel.ListProductCategory = result.Item1;
+            productViewModel.CategoryItem = result.Item2;
+
+            return View(productViewModel);
+        }
     }
 }

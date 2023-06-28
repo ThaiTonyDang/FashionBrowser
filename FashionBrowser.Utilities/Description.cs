@@ -37,8 +37,8 @@ namespace FashionBrowser.Utilities
 
     public struct CATEGORY
     {
-        public const string MEN_FASHION = "MEN_FASHION";
-        public const string WOMEN_FASHION = "WOMEN_FASHION";
-        public const string KID_FASHION = "KID_FASHION"; 
+        public const string MEN_FASHION = "MEN";
+        public const string WOMEN_FASHION = "WOMEN";
+        public const string KID_FASHION = "KID"; 
     }
 }

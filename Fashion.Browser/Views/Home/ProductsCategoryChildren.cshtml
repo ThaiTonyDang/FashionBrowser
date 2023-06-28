@@ -3,53 +3,53 @@
 @model ProductViewModel
 
 @{
-    ViewData["Title"] = "Product Category";
+    ViewData["Title"] = "Child Category";
     Layout = "_Layout";
 }
 
 <partial name="_Alert" />
 <link href="@Url.Content("~/css/home.css")" rel="stylesheet" />
-<div class="container-fluid pt-5">
-     <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
-         <span class="bg-secondary pr-3">@Model.CategoryItem.Name FASHION</span></h2>
-    <div class="row px-xl-5 pb-3">
-        @if(Model.CategoryItem.CategoryChildrens != null)
-    {
-        @foreach (var category in Model.CategoryItem.CategoryChildrens)
-        {
-            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
-                <a class="text-decoration-none"
-                href="@Url.ActionLink("ProductsCategoryChildren", "Home", new {childSlug = category.Slug})"
-                id="@category.Id">
-                    <div class="cat-item d-flex align-items-center mb-4">
-                        <div class="overflow-hidden" style="width: 100px; height: 100px;">
-                            <img class="img-fluid" src="@category.ImageUrl" alt="">
-                        </div>
-                        <div class="flex-fill pl-3">
-                            <h6>@category.Name</h6>
-                            <small class="text-body" style="font-size:18px">@category.ProductDtos.Count Products</small>
-                        </div>
-                    </div>
-                </a>
-            </div>
-                
-        }
-    }
-      
-    </div>
-</div>
 
+<div class="container-fluid pt-5">
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">@Model.CategoryItem.Name FASHION</span></h2>
+        <div class="row px-xl-5 pb-3">
+        @if(Model.CategoryItem.CategoryChildrens != null)
+        {
+            @foreach (var category in Model.CategoryItem.CategoryChildrens)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                    <a class="text-decoration-none" href="@Url.ActionLink("ProductsCategoryChildren", "Home", new {childSlug = category.Slug})" id="@category.Id">
+                        <div class="cat-item d-flex align-items-center mb-4">
+                            <div class="overflow-hidden" style="width: 100px; height: 100px;">
+                                <img class="img-fluid" src="@category.ImageUrl" alt="">
+                            </div>
+                            <div class="flex-fill pl-3">
+                                <h6>@category.Name</h6>
+                                <small class="text-body" style="font-size:18px">@category.ProductDtos.Count Products</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+            }
+        }
+      
+        </div>
+ </div>
 <form asp-action= method="post"> 
     <div class="container-fluid pt-5 pb-3">
         <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
-            <span class="bg-secondary pr-3">@Model.CateName</span></h2>
-        <div class="row px-xl-5" style="font-family:Oswald,sans-serif;">
-        
+            <span class="bg-secondary pr-3">@Model.CateName</span>
+            
+        </h2>
+        <div class="row px-xl-5" style="font-family:Oswald,sans-serif;">    
             @foreach(var product in Model.ListProductCategory)
             {
+               
                 <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                 <div class="product-item bg-light mb-4">
                      <input type="hidden" id="product__id-@product.Id" value="@product.Id" />
+
                     <div class="product-img position-relative overflow-hidden">
                         @if (product.QuantityInStock > 0)
                         {
@@ -99,7 +99,7 @@
                     </div>
                 </div>
             </div>
-            }              
+            }          
         </div>
     </div>
 </form>

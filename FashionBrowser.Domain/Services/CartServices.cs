@@ -107,7 +107,6 @@ namespace FashionBrowser.Domain.Services
                     _isSuccess = responseList.IsSuccess;
                     _errorDetail = responseList.ErrorsDetail;
                     var carts = responseList.Data;
-
                     foreach (var cartItem in carts)
                     {
                         cartItem.Product.ImageUrl = _urlService.GetFileApiUrl(cartItem.Product.MainImageName);
