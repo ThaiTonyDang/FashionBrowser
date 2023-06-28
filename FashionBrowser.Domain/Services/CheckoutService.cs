@@ -6,7 +6,6 @@ namespace FashionBrowser.Domain.Services
     public class CheckoutService : ICheckoutService
     {
         private readonly IOrderService _orderService;
-        private double _discount;
         public CheckoutService(IOrderService orderService)
         {
             _orderService = orderService;

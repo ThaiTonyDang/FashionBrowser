@@ -1,4 +1,10 @@
-﻿<div style="position:relative">
+﻿@using FashionBrowser.Utilities;
+@{
+    var menFashion = $"/products/{CATEGORY.MEN_FASHION}";
+    var womenFashion = $"/products/{CATEGORY.WOMEN_FASHION}";
+    var kidFashion = $"/products/{CATEGORY.KID_FASHION}";
+}
+<div style="position:relative">
     <div class="container-fluid mb-3">
         <div class="row px-xl-5">
             <div class="col-lg-8">
@@ -6,8 +12,8 @@
                     <ol class="carousel-indicators">
                         <li data-target="#header-carousel" data-slide-to="0" class=""></li>
                         <li data-target="#header-carousel" data-slide-to="1" class=""></li>
-                        <li data-target="#header-carousel" data-slide-to="2" class=""></li>
-                        <li data-target="#header-carousel" data-slide-to="3" class="active"></li>
+                        <li data-target="#header-carousel" data-slide-to="2" class="active"></li>
+
                     </ol>
                     <div class="carousel-inner">
                         <div class="carousel-item position-relative" style="height: 430px;">
@@ -15,8 +21,10 @@
                             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                                 <div class="p-3" style="max-width: 700px;">
                                     <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Men Fashion</h1>
-                                    <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam</p>
-                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Shop Now</a>
+                                    <p class="mx-md-5 px-5 animate__animated animate__bounceIn">
+                                        Thời trang nam S: đem lại cảm giác thoải mái từ bên trong, tự tin ở bên ngoài với các dòng sản phẩm basic, thể thao, toát lên vẻ nam tính và lịch lãm
+                                    </p>
+                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="@menFashion">Shop Now</a>
                                 </div>
                             </div>
                         </div>
@@ -25,31 +33,27 @@
                             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                                 <div class="p-3" style="max-width: 700px;">
                                     <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Women Fashion</h1>
-                                    <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam</p>
-                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Shop Now</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item position-relative" style="height: 430px;">
-                            <img class="position-absolute w-100 h-100" src="~/img/kid_fashion.jpg" style="object-fit: cover;">
-                            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                                <div class="p-3" style="max-width: 700px;">
-                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Kid Fashion</h1>
-                                    <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam</p>
-                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Shop Now</a>
+                                    <p class="mx-md-5 px-5 animate__animated animate__bounceIn">
+                                        Đồng hành và thấu hiểu những băn khoăn trong hành trình định hình vẻ đẹp và xây dựng phong cách riêng của chị em phụ nữ, S: cho ra đời những sản phẩm mang tính tiện lợi cao,
+                                        tối ưu được hầu hết các khuyết điểm trên cơ thể, để các chị cảm thấy tự tin, thoải mái nhất khi khoác lên người
+                                        </p>
+                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="@womenFashion">Shop Now</a>
                                 </div>
                             </div>
                         </div>
                         <div class="carousel-item position-relative active" style="height: 430px;">
-                            <img class="position-absolute w-100 h-100" src="~/img/premiumgiftwebp.jpg" style="object-fit: cover;">
+                            <img class="position-absolute w-100 h-100" src="~/img/kid_fashion.jpg" style="object-fit: cover;">
                             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                                 <div class="p-3" style="max-width: 700px;">
-                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Premium Gifs</h1>
-                                    <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam</p>
-                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Shop Now</a>
+                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Kid Fashion</h1>
+                                    <p class="mx-md-5 px-5 animate__animated animate__bounceIn">
+                                        Rabity là thương hiệu thời trang trẻ em hàng đầu Việt Nam với hơn 60 show room trên toàn quốc, mang đến cho bé những bộ quần áo thoải mái cho bé "tự do khám phá những điều mới lạ"
+                                    </p>
+                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="@kidFashion">Shop Now</a>
                                 </div>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>

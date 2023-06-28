@@ -4,6 +4,8 @@
 @using FashionBrowser.Utilities;
 @inject ICartServices cartservice
 @inject IUserService userService
+@inject ICategoryServices categoryservice
+
 @{
     var count = 0;
     var token = "";
@@ -30,11 +32,7 @@
         email = user.Email;
         avatarImage = user.ImageUrl;        
         fullName = user.FirstName + " " + user.LastName;
-    }
-
-    if (User.FindFirst("avatar") !=null)
-    {
-        image = User.FindFirst("avatar").Value;
+        image = user.AvatarImage;
     }
 }
 
@@ -42,6 +40,11 @@
     var menFashion = $"/products/{CATEGORY.MEN_FASHION}";
     var womenFashion = $"/products/{CATEGORY.WOMEN_FASHION}";
     var kidFashion = $"/products/{CATEGORY.KID_FASHION}";
+
+    var categories = await categoryservice.GetCategoryListItemAsync();
+    var categoryMen = await categoryservice.GetCategoryByName(categories, CATEGORY.MEN_FASHION);
+    var categoryWomen = await categoryservice.GetCategoryByName(categories, CATEGORY.WOMEN_FASHION);
+    var categoryKid = await categoryservice.GetCategoryByName(categories, CATEGORY.KID_FASHION);
 }
 
 <div class="container-fluid">
@@ -107,25 +110,15 @@
                                 <i class="bi bi-gear" style="font-size:20px; font-style:normal"> User Settings</i>
                             </a>
                             <a class="dropdown-item" href="">
-                                <i class="bi bi-gear" style="font-size:20px; font-style:normal"> Order History</i>
+                                <i class="bi bi-clock-history" style="font-size:20px;font-style:normal"> Order History</i>
                             </a>
 
 
                             <a href="" class="dropdown-item" style="cursor:pointer" onclick="logoutConfirm(event)">
-                                <i class="fa fa-sign-out fa-logout" aria-hidden="true"
-                                   style="font-size:20px; font-style:normal"> Log Out</i>
+                                <i class="fas fa-sign-out-alt green-color" style="font-size:20px; font-style:normal"> Log Out</i>
                             </a>
                         </div>
                     }
-                </div>
-
-                <div class="btn-group mx-2">
-                    <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">USD</button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <button class="dropdown-item" type="button">EUR</button>
-                        <button class="dropdown-item" type="button">GBP</button>
-                        <button class="dropdown-item" type="button">CAD</button>
-                    </div>
                 </div>
             </div>
             <div class="d-inline-flex align-items-center d-block d-lg-none">
@@ -142,7 +135,7 @@
     </div>
     <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex">
         <div class="col-lg-4">
-            <a href="" class="text-decoration-none">
+            <a href="/" class="text-decoration-none">
                 <img src="/img/logo_shaichamshop.png" role="presentation" style="width :70px">
                 <span class="h1 text-uppercase text-primary bg-dark px-2">S:</span>
                 <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1">Shop</span>
@@ -177,22 +170,33 @@
             <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 999;">
                 <div class="navbar-nav w-100">
                     <div class="nav-item dropdown dropright">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Dresses <i class="fa fa-angle-right float-right mt-1"></i></a>
+                        <a href="@menFashion" class="nav-link dropdown-toggle" data-toggle="dropdown">Men<i class="fa fa-angle-right float-right mt-1"></i></a>
                         <div class="dropdown-menu position-absolute rounded-0 border-0 m-0">
-                            <a href="" class="dropdown-item">Men's Dresses</a>
-                            <a href="" class="dropdown-item">Women's Dresses</a>
-                            <a href="" class="dropdown-item">Baby's Dresses</a>
+                            
+                            @foreach (var category in categoryMen.CategoryChildrens)
+                            {
+                                <a href="@Url.ActionLink("ProductsCategoryChildren", "Home", new {childSlug = category.Slug})" class="dropdown-item">Men's @category.Name</a>
+                            }
                         </div>
                     </div>
-                    <a href="" class="nav-item nav-link">Shirts</a>
-                    <a href="" class="nav-item nav-link">Jeans</a>
-                    <a href="" class="nav-item nav-link">Swimwear</a>
-                    <a href="" class="nav-item nav-link">Sleepwear</a>
-                    <a href="" class="nav-item nav-link">Sportswear</a>
-                    <a href="" class="nav-item nav-link">Jumpsuits</a>
-                    <a href="" class="nav-item nav-link">Blazers</a>
-                    <a href="" class="nav-item nav-link">Jackets</a>
-                    <a href="" class="nav-item nav-link">Shoes</a>
+                    <div class="nav-item dropdown dropright">
+                        <a href="@womenFashion" class="nav-link dropdown-toggle" data-toggle="dropdown">Women<i class="fa fa-angle-right float-right mt-1"></i></a>
+                        <div class="dropdown-menu position-absolute rounded-0 border-0 m-0">
+                            @foreach (var category in categoryWomen.CategoryChildrens)
+                            {
+                                <a href="@Url.ActionLink("ProductsCategoryChildren", "Home", new {childSlug = category.Slug})" class="dropdown-item">Women's @category.Name</a>
+                            }
+                        </div>
+                    </div>
+                    <div class="nav-item dropdown dropright">
+                        <a href="@kidFashion" class="nav-link dropdown-toggle" data-toggle="dropdown">Kid<i class="fa fa-angle-right float-right mt-1"></i></a>
+                        <div class="dropdown-menu position-absolute rounded-0 border-0 m-0">
+                            @foreach (var category in categoryKid.CategoryChildrens)
+                            {
+                                <a href="@Url.ActionLink("ProductsCategoryChildren", "Home", new {childSlug = category.Slug})">Kid's @category.Name</a>
+                            }
+                        </div>
+                    </div>
                 </div>
             </nav>
         </div>

@@ -1,5 +1,6 @@
 ﻿using FashionBrowser.Domain.Model;
 using FashionBrowser.Domain.ViewModels;
+using FashionBrowser.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Newtonsoft.Json;
 using System.Net;
@@ -23,14 +24,14 @@ namespace FashionBrowser.Domain.Services
         public async Task<CategoryViewModel> GetCategoryViewModelAsync()
         {
             var categoryViewModel = new CategoryViewModel();
-            categoryViewModel.ListCategory = await GetListCategoryItemAsync();
+            categoryViewModel.ListCategory = await GetCategoryListItemAsync();
             categoryViewModel.IsSuccess = _isSuccess;
             categoryViewModel.ErrorDetail = _errorDetail;
 
             return categoryViewModel;
         }
 
-        public async Task<List<CategoryItemViewModel>> GetListCategoryItemAsync()
+        public async Task<List<CategoryItemViewModel>> GetCategoryListItemAsync()
         {
             try
             {
@@ -46,6 +47,14 @@ namespace FashionBrowser.Domain.Services
                 foreach (var category in categories)
                 {
                     category.ImageUrl = _urlService.GetFileApiUrl(category.ImageName);
+                    foreach (var child in category.CategoryChildrens)
+                    {
+                        child.ImageUrl = _urlService.GetFileApiUrl(child.ImageName);
+                        foreach (var product in child.ProductDtos)
+                        {
+                            product.ImageUrl = _urlService.GetFileApiUrl(product.MainImageName);
+                        }
+                    }
                 }
 
                 return categories;
@@ -56,36 +65,48 @@ namespace FashionBrowser.Domain.Services
                 return null;
             }
         }
-
-        public async Task<ProductViewModel> GetProductsItemAsync(int categoryCode)
+ 
+        public Task<CategoryItemViewModel> GetCategoryByName(List<CategoryItemViewModel> categoryItemViews, string categoryName)
         {
-            var apiUrl = _urlService.GetBaseUrl() + "/api/categories/products/";
+            var category = categoryItemViews.Where(c => c.Name.Equals(categoryName)).FirstOrDefault();
+            return Task.FromResult(category);
+        }
 
-            var response = await _httpClient.GetAsync(apiUrl + categoryCode);
-            var responseList = JsonConvert.DeserializeObject<ResponseAPI<List<ProductItemViewModel>>>
-                                 (await response.Content.ReadAsStringAsync());
-
-            _isSuccess = responseList.IsSuccess;
-            _errorDetail = responseList.ErrorsDetail;
-            var products = responseList.Data;
-            var productView = new ProductViewModel();
-            productView.IsSuccess = _isSuccess;
-            var categories = await GetListCategoryItemAsync();
-
-            if(products.Count > 0)
+        public Tuple<List<ProductItemViewModel>, CategoryItemViewModel> GetProductCategoryChildren(List<CategoryItemViewModel> categoryItemViews, string childSlug)
+        {
+            foreach (var category in categoryItemViews)
             {
-                productView.CateName = categories.Where(c => c.Id == products[0].CategoryId).FirstOrDefault().Name;
-                if (_isSuccess)
+                foreach (var child in category.CategoryChildrens)
                 {
-                    foreach (var product in products)
+                    if (child.Slug.Equals(childSlug))
                     {
-                        product.ImageUrl = _urlService.GetFileApiUrl(product.MainImageName);
+                        return Tuple.Create(child.ProductDtos.ToList(), category);
                     }
-                    productView.ListProduct = products;
                 }
-            }    
-           
-            return productView;
+            }
+
+            return Tuple.Create(new List<ProductItemViewModel>(), default(CategoryItemViewModel));
+
+        }
+
+        public async Task<List<ProductItemViewModel>> GetAllProductsByCategoryName(List<CategoryItemViewModel> categories, string categoryName)
+        {
+            var category = categories.Where(c => c.Name.ToLower().Equals(categoryName.ToLower())).FirstOrDefault();
+            if (category == null)
+            {
+                return await Task.Run(() => default(List<ProductItemViewModel>));
+            }
+
+            var products = new List<ProductItemViewModel>();
+            if (category != null || category.CategoryChildrens != null)
+            {
+                foreach (var item in category.CategoryChildrens)
+                {
+                    products.AddRange(item.ProductDtos);
+                }
+            }
+
+            return await Task.Run(() => products);
         }
     }
 }
