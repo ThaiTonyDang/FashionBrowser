@@ -12,5 +12,7 @@ namespace FashionBrowser.Domain.Services
 		public Task<ProductViewModel> GetProductViewModelAsync();
 		public Task<List<ProductItemViewModel>> GetListProductAsync();
 		public Task<Tuple<ProductItemViewModel, string>> GetProductByIdAsync(string id);
-	}
+        public Task<List<ProductItemViewModel>> GetPagingProductListAsync(int currentPage);
+        public Task<ProductViewModel> GetPagingProductViewModel(int currentPage);
+    }
 }

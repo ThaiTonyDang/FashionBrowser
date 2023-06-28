@@ -19,24 +19,11 @@ namespace Fashion.Browser.Controllers
             _categoryServices = categoryServices;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int currentPage = 1)
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
-            var productViewModel = await _productServices.GetProductViewModelAsync();
-            var categoryViewModel = await _categoryServices.GetCategoryViewModelAsync();
-            var listCategory = categoryViewModel.ListCategory;
-            if (productViewModel.IsSuccess)
-            {
-                foreach (var productItemViewModel in productViewModel.ListProduct)
-                {
-                    if (listCategory == null)
-                    {
-                        productItemViewModel.CategoryName = "FEMALE FASHION";
-                        break;
-                    }
-                }
-            }
-
+            var productViewModel = await _productServices.GetPagingProductViewModel(currentPage);
+           
             if (User.FindFirst("token") == null)
             {
                 TempData[Mode.LABEL_CONFIRM_CHECK] = "Welcome to S: Shop! Please Login Now To Shopping ";

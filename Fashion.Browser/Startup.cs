@@ -42,9 +42,9 @@ namespace Fashion.Browser
 			var tokenConfig = Configuration.GetSection("Token");
             services.Configure<TokenConfig>(tokenConfig);
             services.Configure<APIConfig>(Configuration.GetSection("Api"));
+            services.Configure<PageConfig>(Configuration.GetSection("Page"));
 
-
-			var expiredTime = tokenConfig.Get<TokenConfig>().Expired;
+            var expiredTime = tokenConfig.Get<TokenConfig>().Expired;
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 			.AddCookie(options => {
 				options.LoginPath = "/users/login";
@@ -87,7 +87,7 @@ namespace Fashion.Browser
 			app.UseSession();
 			app.UseEndpoints(endpoints =>
 			{
-				endpoints.MapControllerRoute(
+                endpoints.MapControllerRoute(
 					name: "default",
 					pattern: "{controller=Home}/{action=Index}/{id?}");
 			});
