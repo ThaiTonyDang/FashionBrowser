@@ -47,32 +47,22 @@ namespace Fashion.Browser.Controllers
 
         [HttpGet]
         [Route("products/{categoryName}")]
-        public async Task<IActionResult> ProductsCategory(string categoryName)
-        {
-            var productViewModel = new ProductViewModel();
-            var categoryViewModel = await _categoryServices.GetCategoryViewModelAsync();
-            var categories = categoryViewModel.ListCategory;
+        public async Task<IActionResult> ProductsCategory(string categoryName, int currentPage = 1)
+        {                       
+            var category = await _categoryServices.GetCategoryByName(categoryName);
 
-            var products = await _categoryServices.GetAllProductsByCategoryName(categories, categoryName);
-            var category = await _categoryServices.GetCategoryByName(categories, categoryName);
-
-            productViewModel.CategoryItem = category;
-            productViewModel.ListProductCategory = products;
-            
+            var productViewModel = await _categoryServices.GetPagingProductViewByNameAsync(categoryName, currentPage);
+            productViewModel.CategoryItem = category;       
             return View(productViewModel);         
         }
 
         [HttpGet]           
         [Route("categories")]
-        public async Task<IActionResult> ProductsCategoryChildren([FromQuery] string childSlug)
+        public async Task<IActionResult> ProductsCategoryChildren([FromQuery] string childSlug, int currentPage = 1)
         {
-            var productViewModel = new ProductViewModel();
-            var categoryViewModel = await _categoryServices.GetCategoryViewModelAsync();
-            var categories = categoryViewModel.ListCategory;
-
-            var result = _categoryServices.GetProductCategoryChildren(categories, childSlug);
-            productViewModel.ListProductCategory = result.Item1;
-            productViewModel.CategoryItem = result.Item2;
+            var category = await _categoryServices.GetCategoryChildrenBySlug(childSlug);
+            var productViewModel = await _categoryServices.GetPagingProductViewBySlugAsync(childSlug, currentPage);
+            productViewModel.CategoryItem = category;
 
             return View(productViewModel);
         }
