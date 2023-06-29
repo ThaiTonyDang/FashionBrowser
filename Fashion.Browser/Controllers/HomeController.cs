@@ -19,24 +19,11 @@ namespace Fashion.Browser.Controllers
             _categoryServices = categoryServices;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int currentPage = 1)
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
-            var productViewModel = await _productServices.GetProductViewModelAsync();
-            var categoryViewModel = await _categoryServices.GetCategoryViewModelAsync();
-            var listCategory = categoryViewModel.ListCategory;
-            if (productViewModel.IsSuccess)
-            {
-                foreach (var productItemViewModel in productViewModel.ListProduct)
-                {
-                    if (listCategory == null)
-                    {
-                        productItemViewModel.CategoryName = "FEMALE FASHION";
-                        break;
-                    }
-                }
-            }
-
+            var productViewModel = await _productServices.GetPagingProductViewModel(currentPage);
+           
             if (User.FindFirst("token") == null)
             {
                 TempData[Mode.LABEL_CONFIRM_CHECK] = "Welcome to S: Shop! Please Login Now To Shopping ";
@@ -60,32 +47,22 @@ namespace Fashion.Browser.Controllers
 
         [HttpGet]
         [Route("products/{categoryName}")]
-        public async Task<IActionResult> ProductsCategory(string categoryName)
-        {
-            var productViewModel = new ProductViewModel();
-            var categoryViewModel = await _categoryServices.GetCategoryViewModelAsync();
-            var categories = categoryViewModel.ListCategory;
+        public async Task<IActionResult> ProductsCategory(string categoryName, int currentPage = 1)
+        {                       
+            var category = await _categoryServices.GetCategoryByName(categoryName);
 
-            var products = await _categoryServices.GetAllProductsByCategoryName(categories, categoryName);
-            var category = await _categoryServices.GetCategoryByName(categories, categoryName);
-
-            productViewModel.CategoryItem = category;
-            productViewModel.ListProductCategory = products;
-            
+            var productViewModel = await _categoryServices.GetPagingProductViewByNameAsync(categoryName, currentPage);
+            productViewModel.CategoryItem = category;       
             return View(productViewModel);         
         }
 
         [HttpGet]           
         [Route("categories")]
-        public async Task<IActionResult> ProductsCategoryChildren([FromQuery] string childSlug)
+        public async Task<IActionResult> ProductsCategoryChildren([FromQuery] string childSlug, int currentPage = 1)
         {
-            var productViewModel = new ProductViewModel();
-            var categoryViewModel = await _categoryServices.GetCategoryViewModelAsync();
-            var categories = categoryViewModel.ListCategory;
-
-            var result = _categoryServices.GetProductCategoryChildren(categories, childSlug);
-            productViewModel.ListProductCategory = result.Item1;
-            productViewModel.CategoryItem = result.Item2;
+            var category = await _categoryServices.GetCategoryChildrenBySlug(childSlug);
+            var productViewModel = await _categoryServices.GetPagingProductViewBySlugAsync(childSlug, currentPage);
+            productViewModel.CategoryItem = category;
 
             return View(productViewModel);
         }

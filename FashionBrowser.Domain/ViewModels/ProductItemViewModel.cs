@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using FashionBrowser.Domain.Dto;
+using System.Globalization;
 
 namespace FashionBrowser.Domain.ViewModels
 {
@@ -23,6 +24,7 @@ namespace FashionBrowser.Domain.ViewModels
         public List<ProductItemViewModel> ListProduct { get; set; }
         public List<ProductItemViewModel> ListProductCategory { get; set; }
         public CategoryItemViewModel CategoryItem { get; set; }
+        public Paging Paging { get; set; }
         public bool IsSuccess { get; set; }
         public string[] ErrorDetail { get; set; }
         public string CateName { get; set; }

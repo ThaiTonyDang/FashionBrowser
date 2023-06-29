@@ -41,10 +41,9 @@
     var womenFashion = $"/products/{CATEGORY.WOMEN_FASHION}";
     var kidFashion = $"/products/{CATEGORY.KID_FASHION}";
 
-    var categories = await categoryservice.GetCategoryListItemAsync();
-    var categoryMen = await categoryservice.GetCategoryByName(categories, CATEGORY.MEN_FASHION);
-    var categoryWomen = await categoryservice.GetCategoryByName(categories, CATEGORY.WOMEN_FASHION);
-    var categoryKid = await categoryservice.GetCategoryByName(categories, CATEGORY.KID_FASHION);
+    var categoryMen = await categoryservice.GetCategoryByName(CATEGORY.MEN_FASHION);
+    var categoryWomen = await categoryservice.GetCategoryByName(CATEGORY.WOMEN_FASHION);
+    var categoryKid = await categoryservice.GetCategoryByName(CATEGORY.KID_FASHION);
 }
 
 <div class="container-fluid">
@@ -193,7 +192,7 @@
                         <div class="dropdown-menu position-absolute rounded-0 border-0 m-0">
                             @foreach (var category in categoryKid.CategoryChildrens)
                             {
-                                <a href="@Url.ActionLink("ProductsCategoryChildren", "Home", new {childSlug = category.Slug})">Kid's @category.Name</a>
+                                <a href="@Url.ActionLink("ProductsCategoryChildren", "Home", new {childSlug = category.Slug})" class="dropdown-item">Kid's @category.Name</a>
                             }
                         </div>
                     </div>

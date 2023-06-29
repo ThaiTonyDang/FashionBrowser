@@ -13,7 +13,7 @@
      <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
          <span class="bg-secondary pr-3">@Model.CategoryItem.Name FASHION</span></h2>
     <div class="row px-xl-5 pb-3">
-        @if(Model.CategoryItem.CategoryChildrens != null)
+    @if(Model.CategoryItem.CategoryChildrens != null)
     {
         @foreach (var category in Model.CategoryItem.CategoryChildrens)
         {
@@ -34,17 +34,57 @@
             </div>
                 
         }
-    }
-      
+    }    
     </div>
 </div>
 
 <form asp-action= method="post"> 
     <div class="container-fluid pt-5 pb-3">
-        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
-            <span class="bg-secondary pr-3">@Model.CateName</span></h2>
-        <div class="row px-xl-5" style="font-family:Oswald,sans-serif;">
-        
+        <div style="margin-left:2.5%">         
+            <nav aria-label="Page navigation example" style="color:rgba(0, 35, 71, 0.98)">
+            <ul class="pagination">
+                  @if (Model.Paging.CurrentPage > 1)
+                  {
+                     <li class="page-item">
+                     <a class="page-link"
+                          href="@Url.Action("ProductsCategory", "Home", new {currentpage = Model.Paging.CurrentPage - 1})"
+                          aria-label="Previous">
+                         <span aria-hidden="true">&laquo;</span>
+                         <span class="sr-only">Previous</span>
+                     </a>
+                     </li>     
+                  }
+                  @for (int i = 1; i <= Model.Paging.TotalPages; i++)
+                  {
+                     <li class="page-item">                       
+                         @if (i != Model.Paging.CurrentPage)
+                         {
+                            <a href="@Url.Action("ProductsCategory", "Home", new {currentpage = @i})" class="page-link paging">
+                                @i
+                            </a>
+                         }
+                         else
+                         {
+                            <a class="page-link">
+                                <span>@i</span>
+                            </a>
+                         }
+                     </li>   
+                  }     
+                   @if (Model.Paging.CurrentPage < Model.Paging.TotalPages)
+                    {
+                      <li class="page-item">
+                         <a class="page-link" href="@Url.Action("ProductsCategory", "Home", new {currentpage = Model.Paging.CurrentPage + 1})"
+                         aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                      </li>
+                   }               
+               </ul>
+        </nav>  
+        </div>
+        <div class="row px-xl-5" style="font-family:Oswald,sans-serif;">      
             @foreach(var product in Model.ListProductCategory)
             {
                 <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
@@ -101,10 +141,54 @@
             </div>
             }              
         </div>
+        <div style="margin-right:2.5%">         
+        <nav aria-label="Page navigation example" style="color:rgba(0, 35, 71, 0.98)">
+            <ul class="pagination" style="float:right">
+                  @if (Model.Paging.CurrentPage > 1)
+                  {
+                     <li class="page-item">
+                     <a class="page-link"
+                          href="@Url.Action("ProductsCategory", "Home", new {currentpage = Model.Paging.CurrentPage - 1})"
+                          aria-label="Previous">
+                         <span aria-hidden="true">&laquo;</span>
+                         <span class="sr-only">Previous</span>
+                     </a>
+                     </li>     
+                  }
+                  @for (int i = 1; i <= Model.Paging.TotalPages; i++)
+                  {
+                     <li class="page-item">                       
+                         @if (i != Model.Paging.CurrentPage)
+                         {
+                            <a href="@Url.Action("ProductsCategory", "Home", new {currentpage = @i})" class="page-link paging">
+                                @i
+                            </a>
+                         }
+                         else
+                         {
+                            <a class="page-link">
+                                <span>@i</span>
+                            </a>
+                         }
+                     </li>   
+                  }     
+                   @if (Model.Paging.CurrentPage < Model.Paging.TotalPages)
+                    {
+                      <li class="page-item">
+                         <a class="page-link" href="@Url.Action("ProductsCategory", "Home", new {currentpage = Model.Paging.CurrentPage + 1})"
+                         aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                      </li>
+                   }               
+               </ul>
+        </nav>  
+        </div>
     </div>
 </form>
 
-                            <div class="container-fluid py-5">
+    <div class="container-fluid py-5">
     <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">You May Also Like</span></h2>
     <div class="row px-xl-5">
         <div class="col">
