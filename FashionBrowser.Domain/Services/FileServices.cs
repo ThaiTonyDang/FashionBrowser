@@ -1,4 +1,5 @@
-﻿using FashionBrowser.Domain.Model;
+﻿using FashionBrowser.Domain.Dto;
+using FashionBrowser.Domain.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -13,10 +14,10 @@ using System.Threading.Tasks;
 namespace FashionBrowser.Domain.Services
 {
     
-    public class FileService : IFileService
+    public class FileServices : IFileServices
     {
-        private readonly IUrlService _urlService;
-        public FileService(IUrlService urlService)
+        private readonly IUrlServices _urlService;
+        public FileServices(IUrlServices urlService)
         {
             _urlService = urlService;
         }

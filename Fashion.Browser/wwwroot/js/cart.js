@@ -164,10 +164,10 @@ function getDataCartFromStorage() {
 
 function getPriceFormat(price) {
     return new Intl.NumberFormat(
-        'en-US',
+        'it-IT',
         {
             style: 'currency',
-            currency: 'USD' 
+            currency: 'VND' 
         }
     ).format(price);
 }

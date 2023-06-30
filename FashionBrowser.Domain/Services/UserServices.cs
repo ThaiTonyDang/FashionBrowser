@@ -1,5 +1,6 @@
 ﻿
 using FashionBrowser.Domain.Config;
+using FashionBrowser.Domain.Dto;
 using FashionBrowser.Domain.Model;
 using FashionBrowser.Domain.ViewModels;
 using Microsoft.AspNetCore.Authentication;
@@ -20,15 +21,15 @@ using System.Text;
 
 namespace FashionBrowser.Domain.Services
 {
-    public class UserService : IUserService
+    public class UserServices : IUserServices
 	{
-        private readonly IUrlService _urlService;
+        private readonly IUrlServices _urlService;
         private readonly HttpClient _httpClient;
-        private readonly IFileService _fileService;
+        private readonly IFileServices _fileService;
         private readonly TokenConfig _tokenConfig;
         public bool _isSuccess;
 
-        public UserService(IUrlService urlService, IFileService fileService,  HttpClient httpClient, IOptions<TokenConfig> options)
+        public UserServices(IUrlServices urlService, IFileServices fileService,  HttpClient httpClient, IOptions<TokenConfig> options)
         {
             _urlService = urlService;
             _httpClient = httpClient;

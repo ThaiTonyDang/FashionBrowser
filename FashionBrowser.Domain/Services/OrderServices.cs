@@ -14,11 +14,11 @@ using System.Threading.Tasks;
 
 namespace FashionBrowser.Domain.Services
 {
-    public class OrderService : IOrderService
+    public class OrderServices : IOrderServices
     {
-        private readonly IUrlService _urlService;
+        private readonly IUrlServices _urlService;
         private readonly HttpClient _httpClient;
-        public OrderService(IUrlService urlService, HttpClient httpClient)
+        public OrderServices(IUrlServices urlService, HttpClient httpClient)
         {
             _urlService = urlService;
             _httpClient = httpClient;
@@ -43,6 +43,18 @@ namespace FashionBrowser.Domain.Services
             {
                 return false;
             }
+        }
+
+        public async Task<bool> UpdatePaidStatus(OrderDto order, string token)
+        {
+            var apiUrl = _urlService.GetBaseUrl() + "/api/orders/paid-status-update";
+            _httpClient.DefaultRequestHeaders.Authorization
+            = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, token);
+            var response = await _httpClient.PutAsJsonAsync(apiUrl , order);
+            var responseList = JsonConvert.DeserializeObject<ResponseAPI<bool>>
+                                    (await response.Content.ReadAsStringAsync());
+            var isSuccess = responseList.IsSuccess;
+            return isSuccess;
         }
     }
 }

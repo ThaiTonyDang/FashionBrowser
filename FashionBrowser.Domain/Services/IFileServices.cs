@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FashionBrowser.Domain.Services
 {
-    public interface IFileService
+    public interface IFileServices
     {
         public Task<List<string>> GetResponeUploadFileAsync(IFormFile file, HttpClient httpClient, string token);
     }

@@ -12,7 +12,7 @@
     <div class="container h-100">
         <div class="blog-banner">
             <div class="text-center">
-                <h1>Order Confirmation</h1>
+                <h1>Xác Nhận Hóa Đơn</h1>
             </div>
         </div>
     </div>
@@ -21,17 +21,17 @@
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
         <a href="~/Home/Index" class="link" style="color:#001489; font-weight:600">
-            Home
+            Trang Chủ
         </a>
     </li>
     <li class="breadcrumb-item">
         <a href="~/shoppingcart/" style="color:#001489; font-weight:600">
-            Shopping Cart
+            Giỏ Hàng
         </a>
     </li>
     <li class="breadcrumb-item">
         <a href="~/Checkout/Index" style="color:#001489; font-weight:600">
-            Checkout
+            Xác Nhận Hóa Đơn
         </a>
     </li>
     <li class="breadcrumb-item">Order Information</li>
@@ -61,21 +61,22 @@
                             var discountPay = decimal.Parse((1 - (1.1) / 100).ToString());
                             var subTotal = @Model.CartViewModel.Total * discountPay;
                             var total = (subTotal + shipping).GetPriceFormat();
+                            
                             Model.OrderItem.TotalPrice = subTotal + shipping;
                         }
                         <input asp-for="@Model.OrderItem.TotalPrice" type="hidden" />
                         <table class="order-rable">
                             <tbody style="color:black">
                                 <tr>
-                                    <td>Order number</td>
+                                    <td>Order Id</td>
                                     <td>: @Model.OrderItem.Id.ToString().Substring(0, 8).ToUpper()</td>
                                 </tr>
                                 <tr>
-                                    <td>Date Order</td>
+                                    <td>Ngày Order</td>
                                     <td>: @Model.OrderItem.OrderDate.ToString("dddd, dd MMMM yyyy")</td>
                                 </tr>
                                 <tr>
-                                    <td>Time Order</td>
+                                    <td>Giờ Order</td>
                                     <td>: @Model.OrderItem.OrderDate.ToLongTimeString()</td>
                                 </tr>
                                 <tr>
@@ -83,22 +84,22 @@
                                     <td style="font-weight:600">: @Model.CartViewModel.Total.GetPriceFormat()</td>
                                 </tr>
                                 <tr>
-                                    <td>Discount</td>
+                                    <td>Chiết Khấu</td>
                                     <td>: @discount</td>
                                 </tr>
                                 <tr>
-                                    <td>Shipping Fee</td>
-                                    <td>: @SHIPPING_FEE.SHIPPING</td>
+                                    <td>Phí Ship</td>
+                                    <td>: @SHIPPING_FEE.SHIPPING.GetPriceFormat()</td>
                                 </tr>
                                 <tr>
                                     @if (Model.IsCardCreditPay)
                                     {
-                                        <td>Payment method</td>
-                                        <td style="font-size: 18px; font-weight:600; color:#001489">: Credit Card</td>
+                                        <td>Phương Thức Thanh Toán</td>
+                                        <td style="font-size: 18px; font-weight:600; color:#001489">: Credit Card VNPAY</td>
                                     }
                                     else
                                     {
-                                        <td>Payment method</td>
+                                        <td>Phương Thức Thanh Toán</td>
                                         <td style="font-size: 18px; font-weight:600; color:#cd1817">: COD</td>
                                     }
 
@@ -113,11 +114,11 @@
                         <table class="order-rable">
                             <tbody style="color:black">
                                 <tr>
-                                    <td>Name Customer</td>
+                                    <td>Tên Khách Hàng</td>
                                     <td>:  @Model.UserItemViewModel.Name</td>
                                 </tr>
                                 <tr>
-                                    <td>Address</td>                                 
+                                    <td>Địa Chỉ</td>                                 
                                     <td style="font-size:15px">:  @Model.UserItemViewModel.Address</td>                                   
                                 </tr>
                                 <tr>
@@ -133,7 +134,7 @@
                                     <td>:  International express shipping</td>
                                 </tr>
                                 <tr>                                   
-                                    <td>Paid Status :</td>
+                                    <td>Tình Trạng Thanh Toán :</td>
                                     <td>
                                         <i class="bi bi-hourglass-split" style="font-weight:500; font-size:20px;
                                         color: indianred">
@@ -244,26 +245,26 @@
                         </tbody>
                     </table>
                 </div>
-                @if (!Model.IsCardCreditPay)
+
+                @if(Model.IsCardCreditPay)
                 {
                     <div class="text-center col-md-3 " style="display:flex; float:right">
-                        <button type="submit"
+                        <button formaction="@Url.ActionLink("CreatePaymentUrl", "Checkout")"
                                 class="button button-paypal">
-                            Order Now
+                            Thanh Toán Ngay
                         </button>
                     </div>
                 }
                 else
                 {
-                    <div class="text-center col-md-3 " style="display:flex; float:right;">
-                        <button formaction="@Url.Action("CardCredit", "Checkout")"
-                                formmethod="post"
+                    <div class="text-center col-md-3 " style="display:flex; float:right">
+                        <button type="submit"
                                 class="button button-paypal">
-                            Pay by Card Now
+                            Đặt Hàng Ngay
                         </button>
                     </div>
                 }
-
+                      
             </div>
         </div>
     </form>

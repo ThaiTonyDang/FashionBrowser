@@ -4,10 +4,10 @@ using Microsoft.Extensions.Options;
 
 namespace FashionBrowser.Domain.Services
 {
-    public class UrlService : IUrlService
+    public class UrlServices : IUrlServices
     {
         private readonly APIConfig _hostAPIConfig;
-        public UrlService(IOptions<APIConfig> options)
+        public UrlServices(IOptions<APIConfig> options)
         {
             _hostAPIConfig = options.Value;
         }

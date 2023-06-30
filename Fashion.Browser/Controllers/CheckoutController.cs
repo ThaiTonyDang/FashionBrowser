@@ -1,13 +1,17 @@
-﻿using FashionBrowser.Domain.Model;
+﻿using Fashion.Browser.VpayServices;
+using FashionBrowser.Domain.Dto;
+using FashionBrowser.Domain.Model;
 using FashionBrowser.Domain.Services;
 using FashionBrowser.Domain.ViewModels;
 using FashionBrowser.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -16,14 +20,18 @@ namespace Fashion.Browser.Controllers
     [Authorize]
     public class CheckoutController : Controller
     {
-        private readonly ICheckoutService _checkoutService;
+        private readonly ICheckoutServices _checkoutService;
         private readonly ICartServices _cartServices;
-        private readonly IMapServices _mapServices;
-        public CheckoutController(ICheckoutService checkoutService, ICartServices cartServices, IMapServices mapServices)
+        private readonly IVnpayServices _vnpayServices;
+        private readonly IUrlServices _urlServices;
+
+        public CheckoutController(ICheckoutServices checkoutService,
+            ICartServices cartServices, IVnpayServices vnpayServices, IUrlServices urlServices)
         {
             _checkoutService = checkoutService;
             _cartServices = cartServices;
-            _mapServices = mapServices;
+            _vnpayServices = vnpayServices;
+            _urlServices = urlServices;
         }
 
         [HttpGet]
@@ -43,50 +51,52 @@ namespace Fashion.Browser.Controllers
             };
 
             if (cartItems == null) cartItems = new List<CartItemViewModel>();
+            return View(checkout); // index thông tin 
+        }
+             
+        public async Task<IActionResult> ConfirmOrder(CheckoutItemViewModel checkout)
+        {          
+            var address = checkout.UserItemViewModel.Address;
+            var cartItems = await GetCartList();   
+          
+            checkout.CartViewModel.ListCartItem = cartItems;
+
+            checkout.OrderItem = BuidOrder(address);
+            if (!checkout.IsCardCreditPay)
+            {
+                checkout.OrderItem.IsPaid = false;
+                checkout.OrderItem.IsPaidDisplay = "Customer Pays After Receiving Goods";
+                checkout.OrderItem.Status = "COD";                       
+            }
+
+            checkout.OrderItem.IsPaidDisplay = "Paid Via VNPAY Gateway";
             return View(checkout);
         }
 
-        [HttpPost]               
-        public async Task<IActionResult> ConfirmOrder(CheckoutItemViewModel checkout)
+        [HttpPost]
+        public async Task<IActionResult> CreatePaymentUrl(CheckoutItemViewModel checkout)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            TempData[Mode.MODE] = Mode.USING_MODAL_CONFIRM;
-       
-            if(!userId.IsGuidParseFromString())
-            {
-                TempData[Mode.LABEL_CONFIRM_FAIL] = "Cannot Create Order! User Id Invalid";
-                return RedirectToAction("index", "home");
-            }
+            var token = User.FindFirst("token").Value;
+            var cartItems = await GetCartList();
 
-            var address = checkout.UserItemViewModel.Address;
-
-            var cartItems = await GetCartList();          
             checkout.CartViewModel.ListCartItem = cartItems;
-            checkout.OrderItem = BuidOrder(address);
-
-            return View(checkout);   
+            var isSuccess = await _checkoutService.CreateCheckoutAsync(checkout, token);
+   
+            if (isSuccess)
+            {
+                var url = await _vnpayServices.CreatePaymentUrl(checkout, HttpContext);
+                return Redirect(url);
+            }
+            
+            return RedirectToAction(" ConfirmOrder", "Checkout");
         }
 
         public async Task<IActionResult> CreateOrder(CheckoutItemViewModel checkout)
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
-            
             var token = User.FindFirst("token").Value;
-            if (checkout.OrderItem == null)
-            {
-                TempData[Mode.LABEL_CONFIRM_CHECK] = "No Orders Yet! Please Check Your Email";
-                return View();
-            }
             var cartItems = await GetCartList();
             checkout.CartViewModel.ListCartItem = cartItems;
-            checkout.OrderItem.IsPaidDispay = "Customer Pays After Receiving Goods";
-
-            if (checkout.IsCardCreditPay)
-            {
-                checkout.OrderItem.IsPaidDispay = "Customer Paid Via Credit Card";
-                checkout.OrderItem.IsPaid = true;
-            }
-
             var isSuccess = await _checkoutService.CreateCheckoutAsync(checkout, token);
             var isSuccessRemove = await RemoveItemCart(token);
             if (isSuccess && isSuccessRemove)
@@ -94,18 +104,45 @@ namespace Fashion.Browser.Controllers
                 TempData[Mode.LABEL_CONFIRM_SUCCESS] = "Payment success !";
                 return View(checkout);
             }
-
-            TempData[Mode.LABEL_CONFIRM_FAIL] = "Payment success Fail !";
-            return RedirectToAction("Index", "Checkout");
+            return await Task.Run(() => View(checkout));
         }
 
-        public IActionResult CardCredit(CheckoutItemViewModel checkout)
+        [Route("orders/order-information")]
+        public async Task<IActionResult> VnpayCreateOrder()
         {
-            if (!checkout.IsCardCreditPay)
+            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
+            var token = User.FindFirst("token").Value;
+            var response = await _vnpayServices.PaymentExecute(Request.Query);
+            if (!response.Success)
             {
-                return RedirectToAction("Index", "Home");
-            }    
-            return View(checkout);
+                TempData[Mode.LABEL_CONFIRM_FAIL] = "Payment Fail ! Try Again";
+                return RedirectToAction("Index", "Checkout");
+            }
+            string[] data = response.OrderDescription.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
+            var checkout = GetDataFromResponseVnpay(data);
+
+            var cartItems = await GetCartList();
+            checkout.CartViewModel.ListCartItem = cartItems;
+            foreach (var cart in checkout.CartViewModel.ListCartItem)
+            {
+                cart.Product.ImageUrl = _urlServices.GetFileApiUrl(cart.Product.MainImageName);
+            }
+
+            if (checkout.OrderItem == null)
+            {
+                TempData[Mode.LABEL_CONFIRM_CHECK] = "No Orders Yet! Please Check Your Email";
+                return View();
+            }
+
+            TempData[Mode.LABEL_CONFIRM_SUCCESS] = "Payment success !";
+            var orderDto = new OrderDto
+            {
+                Id = checkout.OrderItem.Id,
+            };
+
+            var update = _checkoutService.UpdatePaidStatus(orderDto, token);
+            var isSuccessRemove = await RemoveItemCart(token);
+            return View(checkout);       
         }
 
 		private async Task<List<CartItemViewModel>> GetCartList()
@@ -129,6 +166,27 @@ namespace Fashion.Browser.Controllers
         {
             var result = await _cartServices.DeleteAllCartByUser(token);
             return result;
+        }
+
+        private CheckoutItemViewModel GetDataFromResponseVnpay(string[] data)
+        {
+            var checkout = new CheckoutItemViewModel();
+            if (!data[0].IsGuidParseFromString()) { data[0] = Guid.NewGuid().ToString(); }
+            if (!data[3].IsParseDateTime()) { data[3] = DateTime.Now.ToString(); }
+            if (!data[6].IsGuidParseFromString()) { data[6] = Guid.NewGuid().ToString(); }
+            checkout.OrderItem = new OrderItemViewModel();
+            checkout.UserItemViewModel = new UserItemViewModel();
+            checkout.OrderItem.Id = new Guid(data[0]);
+            checkout.UserItemViewModel.FirstName = data[1];
+            checkout.UserItemViewModel.LastName = data[2];
+            checkout.OrderItem.OrderDate = DateTime.Parse(data[3]);
+            checkout.OrderItem.ShipAddress = data[4];
+            checkout.OrderItem.TotalPrice = decimal.Parse(data[5]);
+            checkout.OrderItem.UserId = new Guid(data[6]);
+            checkout.OrderItem.IsPaidDisplay = "Customer Paid Via Credit Card";
+            checkout.OrderItem.IsPaid = true;
+
+            return checkout;
         }
     }
 }

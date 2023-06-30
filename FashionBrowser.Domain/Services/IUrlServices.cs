@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FashionBrowser.Domain.Services
 {
-    public interface IUrlService
+    public interface IUrlServices
     {
         public string GetBaseUrl();
         public string GetFileApiUrl(string fileName);

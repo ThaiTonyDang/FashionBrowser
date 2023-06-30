@@ -17,9 +17,9 @@ namespace Fashion.Browser.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly IUserService _userService;
+        private readonly IUserServices _userService;
         private readonly IMapServices _mapServices;
-        public UsersController(IUserService userService, IMapServices mapServices)
+        public UsersController(IUserServices userService, IMapServices mapServices)
         {
             _userService = userService;
             _mapServices = mapServices;

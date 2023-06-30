@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace FashionBrowser.Domain.Services
 {
-    public interface IOrderService
+    public interface IOrderServices
     {
         public Task<bool> CreateOrder(OrderDto orderDto, string token);
+        public Task<bool> UpdatePaidStatus(OrderDto order, string token);
     }
 }

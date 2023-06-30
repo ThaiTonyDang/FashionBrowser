@@ -13,13 +13,13 @@ namespace FashionBrowser.Domain.Services
 {
     public class CategoryServices : ICategoryServices
     {
-        private readonly IUrlService _urlService;
+        private readonly IUrlServices _urlService;
         private readonly HttpClient _httpClient;
         private readonly PageConfig _pageConfig;
         public bool _isSuccess;
         public string[] _errorDetail;
 
-        public CategoryServices(IUrlService urlService, HttpClient httpClient, IOptions<PageConfig> options)
+        public CategoryServices(IUrlServices urlService, HttpClient httpClient, IOptions<PageConfig> options)
         {
             _urlService = urlService;
             _httpClient = httpClient;
