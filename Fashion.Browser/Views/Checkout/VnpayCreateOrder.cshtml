@@ -13,7 +13,7 @@
         fullName = firstNameClaim.Value + " " + lastNameClaim.Value;
     }
 }
-
+<partial name="_Alert" />
 <link href="~/css/tracking.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">
 <div class="container mt-5 mb-5">
@@ -58,9 +58,8 @@
                                         </td>
                                         <td>
                                             <div class="py-2">
-                                                <span class="d-block text-muted" style="font-weight:700">Payment Method</span>   
-                                                <span><img src="https://cdn-icons-png.flaticon.com/512/3796/3796120.png" width="30" height="30" />
-                                                </span>                                             
+                                                <span class="d-block text-muted" style="font-weight:700">Payment Method</span>
+                                                 <span><img src="https://img.icons8.com/color/48/000000/mastercard.png" width="20" /> </span>                                           
                                             </div>
                                         </td>
                                         <td>
@@ -68,16 +67,18 @@
 
                                                 <span class="d-block text-muted" style="font-weight:700">Payment Status</span>
                                                 <span>@Model.OrderItem.IsPaidDisplay</span>
-                                                <i class="bi bi-hourglass-split" style="font-weight:600; font-size:20px;
-                                                color: indianred">
-                                                </i>                                              
+                                                @if (Model.OrderItem.IsPaid)
+                                                {
+                                                    <i class="bi bi-check-circle-fill"
+                                                    style="font-weight:600; font-size:20px; color:green"></i>
+                                                }
                                             </div>
                                         </td>
 
                                         <td>
                                             <div class="py-2">
                                                 <span class="d-block text-muted" style="font-weight:700">Shiping Address</span>
-                                                <span>@Model.UserItemViewModel.Address</span>
+                                                <span>@Model.OrderItem.ShipAddress</span>
 
                                             </div>
                                         </td>
@@ -135,11 +136,9 @@
                                             </td>
                                             <td width="60%">
                                                 <span class="font-weight-bold">@cart.Product.Name</span>
-                                                <div class="product-qty">
-                                                    <span class="d-block">@cart.Quantity</span>
-                                                    <span>Color:Dark</span>
-
-                                                </div>
+                                            </td>
+                                            <td width="60%">
+                                                <span class="font-weight-bold">@cart.Quantity</span>
                                             </td>
                                             <td width="20%">
                                                 <div class="text-right">
@@ -159,10 +158,8 @@
                                         <tr>
                                             <td>
                                                 <div class="text-left">
-
                                                     <span class="text-muted">Total Product Price</span>
-
-                                                </div>
+                                               </div>
                                             </td>
                                             <td>
                                                 <div class="text-right">
@@ -180,24 +177,28 @@
                                             </td>
                                             <td>
                                                 <div class="text-right">
-                                                    <span class="text-success">@Model.Discount %</span>
+                                                    <span class="text-success">1.1 %</span>
                                                 </div>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="text-left">
+                                        @if (!Model.OrderItem.IsPaid)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="text-left">
 
-                                                    <span class="text-muted">Shipping Fee</span>
+                                                        <span class="text-muted">Shipping Fee</span>
 
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="text-right">
-                                                    <span>@SHIPPING_FEE.SHIPPING.GetPriceFormat()</span>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                    </div>
+                                                </td>
+                                                <td>
+
+                                                    <div class="text-right">
+                                                        <span>@SHIPPING_FEE.SHIPPING.GetPriceFormat()</span>
+                                                    </div>     
+                                                </td>
+                                            </tr>
+                                        }
                                         <tr class="border-top border-bottom">
                                             <td>
                                                 <div class="text-left">

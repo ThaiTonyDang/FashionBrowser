@@ -19,14 +19,14 @@ namespace FashionBrowser.Domain.Services
 {
     public class ProductServices : IProductServices
     {
-        private readonly IUrlService _urlService;
+        private readonly IUrlServices _urlService;
         private readonly HttpClient _httpClient;
         private readonly PageConfig _pageConfig;
         public bool _isSuccess;
         public string _message;
         public string[] _errorDetail;
 
-        public ProductServices(IUrlService urlService, HttpClient httpClient, IOptions<PageConfig> pageOptions)
+        public ProductServices(IUrlServices urlService, HttpClient httpClient, IOptions<PageConfig> pageOptions)
         {
             _urlService = urlService;
             _httpClient = httpClient;

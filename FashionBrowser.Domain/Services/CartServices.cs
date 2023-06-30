@@ -1,13 +1,10 @@
-﻿using FashionBrowser.Domain.Model;
+﻿using FashionBrowser.Domain.Dto;
+using FashionBrowser.Domain.Model;
 using FashionBrowser.Domain.ViewModels;
 using FashionBrowser.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
@@ -15,12 +12,12 @@ namespace FashionBrowser.Domain.Services
 {
 	public class CartServices : ICartServices
 	{
-        private readonly IUrlService _urlService;
+        private readonly IUrlServices _urlService;
         private readonly HttpClient _httpClient;
         public bool _isSuccess;
         public string[] _errorDetail;
         public string _message;
-        public CartServices(IUrlService urlService, HttpClient httpClient)
+        public CartServices(IUrlServices urlService, HttpClient httpClient)
         {
 			_urlService = urlService;
 			_httpClient = httpClient;

@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FashionBrowser.Domain.Model
+namespace FashionBrowser.Domain.Dto
 {
     public class ResponseAPI<T>
     {

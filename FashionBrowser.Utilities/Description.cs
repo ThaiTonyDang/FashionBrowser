@@ -32,7 +32,7 @@ namespace FashionBrowser.Utilities
 
     public struct SHIPPING_FEE
     {
-        public const decimal SHIPPING = 1;
+        public const decimal SHIPPING = 10000;
     }
 
     public struct CATEGORY

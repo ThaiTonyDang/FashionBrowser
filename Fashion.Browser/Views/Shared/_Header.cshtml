@@ -3,7 +3,7 @@
 @using FashionBrowser.Domain.ViewModels;
 @using FashionBrowser.Utilities;
 @inject ICartServices cartservice
-@inject IUserService userService
+@inject IUserServices userService
 @inject ICategoryServices categoryservice
 
 @{
@@ -86,7 +86,7 @@
                                     <img style="height:50px; width:50px; border-radius:50%" src="/img/images_default.png" alt="">
                                 </span>
                             }
-                            <span class="user-name" style="font-weight:600">@fullName</span>
+                            <span class="user-name" style="font-weight:600; color:rgba(0, 35, 71, 0.98)">@fullName</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list" style="border-radius:9px; z-index:11">
 

@@ -1,3 +1,4 @@
+using Fashion.Browser.VpayServices;
 using FashionBrowser.Domain.Config;
 using FashionBrowser.Domain.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -29,12 +30,13 @@ namespace Fashion.Browser
 			services.AddScoped<IProductServices, ProductServices>();
 			services.AddScoped<ICategoryServices, CategoryServices>();
 			services.AddScoped<ICartServices, CartServices>();
-			services.AddScoped<IUrlService, UrlService>();
-			services.AddScoped<IOrderService, OrderService>();
-			services.AddScoped<ICheckoutService, CheckoutService>();
-			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<IUrlServices, UrlServices>();
+			services.AddScoped<IOrderServices, OrderServices>();
+			services.AddScoped<ICheckoutServices, CheckoutServices>();
+			services.AddScoped<IUserServices, UserServices>();
 			services.AddScoped<IMapServices, MapServices>();
-			services.AddScoped<IFileService, FileService>();
+			services.AddScoped<IFileServices, FileServices>();
+			services.AddScoped<IVnpayServices, VnpayServices>();
 
             services.AddHttpContextAccessor();
             services.AddHttpClient();
@@ -43,6 +45,8 @@ namespace Fashion.Browser
             services.Configure<TokenConfig>(tokenConfig);
             services.Configure<APIConfig>(Configuration.GetSection("Api"));
             services.Configure<PageConfig>(Configuration.GetSection("Page"));
+            services.Configure<VnpayConfig>(Configuration.GetSection("Vnpay"));
+            services.Configure<OrderCallbackConfig>(Configuration.GetSection("OrderCallback"));
 
             var expiredTime = tokenConfig.Get<TokenConfig>().Expired;
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

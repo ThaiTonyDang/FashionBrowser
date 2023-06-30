@@ -1,12 +1,16 @@
 ﻿using FashionBrowser.Domain.Dto;
 using FashionBrowser.Domain.ViewModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Newtonsoft.Json;
+using System.Net.Http.Headers;
+using System.Net.Http;
 
 namespace FashionBrowser.Domain.Services
 {
-    public class CheckoutService : ICheckoutService
+    public class CheckoutServices : ICheckoutServices
     {
-        private readonly IOrderService _orderService;
-        public CheckoutService(IOrderService orderService)
+        private readonly IOrderServices _orderService;
+        public CheckoutServices(IOrderServices orderService)
         {
             _orderService = orderService;
         }
@@ -33,6 +37,12 @@ namespace FashionBrowser.Domain.Services
             if (iSuccessOrder)
                return true;                  
             return false;
+        }
+
+        public async Task<bool> UpdatePaidStatus(OrderDto order, string token)
+        {
+            var isSuccess = await _orderService.UpdatePaidStatus(order, token);
+            return isSuccess;
         }
 
         private Task<List<OrderDetailDto>> GetOrderDetails(List<CartItemViewModel> cartItems, Guid OrderId, double discount)

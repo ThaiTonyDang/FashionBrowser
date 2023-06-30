@@ -4,7 +4,7 @@ using System.Security.Claims;
 
 namespace FashionBrowser.Domain.Services
 {
-    public interface IUserService
+    public interface IUserServices
 	{
 		public Task<Tuple<bool, string>> RegisterUserAsync(RegisterItemViewModel registerUser);
 		public Task<Tuple<ClaimsPrincipal, bool, string>> LoginAsync(LoginItemViewModel loginUser);
