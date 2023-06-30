@@ -119,22 +119,7 @@ namespace Fashion.Browser.Controllers
                 return RedirectToAction("Index", "Checkout");
             }
             string[] data = response.OrderDescription.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
-
-            if (!data[0].IsGuidParseFromString()) { data[0] = Guid.NewGuid().ToString(); }
-            if (!data[3].IsParseDateTime()) { data[3] = DateTime.Now.ToString(); }
-            if (!data[6].IsGuidParseFromString()) { data[6] = Guid.NewGuid().ToString(); }
-            var checkout = new CheckoutItemViewModel();
-            checkout.OrderItem = new OrderItemViewModel();
-            checkout.UserItemViewModel = new UserItemViewModel();
-            checkout.OrderItem.Id = new Guid(data[0]);
-            checkout.UserItemViewModel.FirstName = data[1];
-            checkout.UserItemViewModel.LastName = data[2];
-            checkout.OrderItem.OrderDate = DateTime.Parse(data[3]);
-            checkout.OrderItem.ShipAddress = data[4];
-            checkout.OrderItem.TotalPrice = decimal.Parse(data[5]);
-            checkout.OrderItem.UserId = new Guid(data[6]);
-            checkout.OrderItem.IsPaidDisplay = "Customer Paid Via Credit Card";
-            checkout.OrderItem.IsPaid = true;
+            var checkout = GetDataFromResponseVnpay(data);
 
             var cartItems = await GetCartList();
             checkout.CartViewModel.ListCartItem = cartItems;
@@ -181,6 +166,27 @@ namespace Fashion.Browser.Controllers
         {
             var result = await _cartServices.DeleteAllCartByUser(token);
             return result;
+        }
+
+        private CheckoutItemViewModel GetDataFromResponseVnpay(string[] data)
+        {
+            var checkout = new CheckoutItemViewModel();
+            if (!data[0].IsGuidParseFromString()) { data[0] = Guid.NewGuid().ToString(); }
+            if (!data[3].IsParseDateTime()) { data[3] = DateTime.Now.ToString(); }
+            if (!data[6].IsGuidParseFromString()) { data[6] = Guid.NewGuid().ToString(); }
+            checkout.OrderItem = new OrderItemViewModel();
+            checkout.UserItemViewModel = new UserItemViewModel();
+            checkout.OrderItem.Id = new Guid(data[0]);
+            checkout.UserItemViewModel.FirstName = data[1];
+            checkout.UserItemViewModel.LastName = data[2];
+            checkout.OrderItem.OrderDate = DateTime.Parse(data[3]);
+            checkout.OrderItem.ShipAddress = data[4];
+            checkout.OrderItem.TotalPrice = decimal.Parse(data[5]);
+            checkout.OrderItem.UserId = new Guid(data[6]);
+            checkout.OrderItem.IsPaidDisplay = "Customer Paid Via Credit Card";
+            checkout.OrderItem.IsPaid = true;
+
+            return checkout;
         }
     }
 }
