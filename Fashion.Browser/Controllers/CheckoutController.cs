@@ -64,7 +64,7 @@ namespace Fashion.Browser.Controllers
             checkout.CartViewModel.ListCartItem = cartItems;
             checkout.OrderItem = BuidOrder(address);
 
-            return View(checkout);   
+            return View(checkout);
         }
 
         public async Task<IActionResult> CreateOrder(CheckoutItemViewModel checkout)
@@ -96,6 +96,7 @@ namespace Fashion.Browser.Controllers
             }
 
             TempData[Mode.LABEL_CONFIRM_FAIL] = "Payment success Fail !";
+
             return RedirectToAction("Index", "Checkout");
         }
 

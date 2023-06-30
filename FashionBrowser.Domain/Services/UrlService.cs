@@ -6,8 +6,8 @@ namespace FashionBrowser.Domain.Services
 {
     public class UrlService : IUrlService
     {
-        private readonly APIConfig _hostAPIConfig;
-        public UrlService(IOptions<APIConfig> options)
+        private readonly ApiConfig _hostAPIConfig;
+        public UrlService(IOptions<ApiConfig> options)
         {
             _hostAPIConfig = options.Value;
         }

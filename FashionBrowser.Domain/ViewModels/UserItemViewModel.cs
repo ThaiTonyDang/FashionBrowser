@@ -14,6 +14,7 @@ namespace FashionBrowser.Domain.ViewModels
 		public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime Birthday { get; set; }
+
         [Required(ErrorMessage = "UPLOAD IMAGE IS REQUIRED ")]
         public IFormFile File { get; set; }
 		public string Address { get; set; }

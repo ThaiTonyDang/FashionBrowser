@@ -6,15 +6,15 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json.Linq;
 using System.Security.Claims;
 using System.Linq;
 using FashionBrowser.Domain.Model;
-using System;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json.Linq;
 
 namespace Fashion.Browser.Controllers
 {
+    [Route("[controller]")]
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
@@ -25,53 +25,52 @@ namespace Fashion.Browser.Controllers
             _mapServices = mapServices;
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("login")]
         public async Task<IActionResult> Login()
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
-            var claim = User.FindFirst("token");
-            if (claim == null)
+
+            var isAuthentication = User.Identity.IsAuthenticated;
+            if (!isAuthentication)
             {
                 TempData[Mode.LABEL_CONFIRM_CHECK] = "Login To Shop Now !";
             }
-            var loginUser = new LoginItemViewModel();
-            return await Task.Run(() => View(loginUser));
+
+            return await Task.FromResult(View(new LoginItemViewModel()));
         }
 
+        [AllowAnonymous]
         [HttpPost]
-        [Route("users/login")]
+        [Route("login")]
         public async Task<IActionResult> Login(LoginItemViewModel loginItemView, [FromQuery] string returnUrl)
         {
-            var message = "";
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
 
             if (loginItemView == null)
             {
                 TempData[Mode.LABEL_CONFIRM_FAIL] = "User information cannot be blank ";
-                return RedirectToAction("login", "users"); ;
+                return RedirectToAction("login"); ;
             }
 
+            
             var result = await _userService.LoginAsync(loginItemView);
-            var claimsPrincipal = result.Item1;
-            var isSuccess = result.Item2;
-            var content = result.Item3;
-
-            if (isSuccess)
+            if (result.IsSuccess)
             {
-                var token = content;
-                var claims = _userService.GetClaims(claimsPrincipal, token);
+                var resultData = result.ToSuccessDataResult<string>();
+                var token = resultData.Data;
+                var claims = _userService.GetClaims(token);
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties()
                 {
                     AllowRefresh = true,
                     IsPersistent = true,
-                    RedirectUri = "/Authentication/Login"
                 });
-
 
                 if (!string.IsNullOrEmpty(returnUrl))
                 {
-                    TempData[Mode.LABEL_CONFIRM_SUCCESS] = message;
                     return Redirect(returnUrl);
                 }
 
@@ -79,43 +78,42 @@ namespace Fashion.Browser.Controllers
                 return RedirectToAction("index", "home");
             }
 
-            TempData[Mode.LABEL_CONFIRM_FAIL] = content;
+            TempData[Mode.LABEL_CONFIRM_FAIL] = result.Message;
             return RedirectToAction("login", "users");
 
         }
 
+        [AllowAnonymous]
         [HttpGet]
-        [Route("users/register")]
+        [Route("register")]
         public async Task<IActionResult> Register()
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;            
             TempData[Mode.LABEL_CONFIRM_CHECK] = "Register To Shop Now !";
-            var registerUser = new RegisterItemViewModel();
-            return await Task.Run(() => View(registerUser));
+            return await Task.FromResult(View(new RegisterItemViewModel()));
         }
 
+        [AllowAnonymous]
         [HttpPost]
-        [Route("users/register")]
+        [Route("register")]
         public async Task<IActionResult> Register(RegisterItemViewModel registerUser)
         {
-            var message = "";
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
-          
-            if(ModelState.IsValid)
-            {
-                if (registerUser == null)
-                {
-                    TempData[Mode.LABEL_CONFIRM_FAIL] = "User information cannot be blank ";
-                    return RedirectToAction("register", "users"); ;
-                }
 
+            if (registerUser == null)
+            {
+                TempData[Mode.LABEL_CONFIRM_FAIL] = "User information cannot be blank ";
+                return RedirectToAction("register"); ;
+            }
+
+            var message = string.Empty;
+            if (ModelState.IsValid)
+            {
                 await GetAddress(registerUser);
 
                 var result = await _userService.RegisterUserAsync(registerUser);
-                var isSuccess = result.Item1;
-                message = result.Item2;
-
-                if (isSuccess)
+                message = result.Message;
+                if (result.IsSuccess)
                 {
                     TempData[Mode.LABEL_CONFIRM_SUCCESS] = message;
                     return RedirectToAction("login", "users");
@@ -126,6 +124,7 @@ namespace Fashion.Browser.Controllers
             return View();
         }
 
+        [Authorize]
         [HttpPost]
         [Route("logout")]
         public async Task<IActionResult> Logout()
@@ -136,17 +135,17 @@ namespace Fashion.Browser.Controllers
 
         [Authorize]
         [HttpGet]
-        [Route("users/profile")]
+        [Route("profile")]
         public async Task<IActionResult> Profile()
         {
-            var token = User.FindFirst("token").Value;
-            var user = await _userService.GetUserAsync(token);             
+            var token = User.FindFirstValue(JwtClaimType.TOKEN);
+            var user = await _userService.GetUserProfileAsync(token);             
             return await Task.Run(() => View(user));
         }
 
         [Authorize]
         [HttpPost]
-        [Route("users/profile")]
+        [Route("profile")]
         public async Task<IActionResult> Profile(UserItemViewModel userItemViewModel)
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
@@ -173,7 +172,7 @@ namespace Fashion.Browser.Controllers
 
         [Authorize]
         [HttpPost]
-        [Route("users/avatar-update")]
+        [Route("profile/avatar")]
         public async Task<IActionResult> Avatar(UserItemViewModel userItemViewModel)
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
@@ -198,7 +197,7 @@ namespace Fashion.Browser.Controllers
 
         [Authorize]
         [HttpPost]
-        [Route("users/change-password")]
+        [Route("profile/change-password")]
         public async Task<IActionResult> ChangePassword(UserItemViewModel userItemViewModel)
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;

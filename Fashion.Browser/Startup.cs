@@ -1,5 +1,6 @@
 using FashionBrowser.Domain.Config;
 using FashionBrowser.Domain.Services;
+using FashionBrowser.Domain.Services.HttpClients;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,13 +36,14 @@ namespace Fashion.Browser
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<IMapServices, MapServices>();
 			services.AddScoped<IFileService, FileService>();
+			services.AddScoped<IHttpClientService, HttpClientService>();
 
             services.AddHttpContextAccessor();
             services.AddHttpClient();
 
 			var tokenConfig = Configuration.GetSection("Token");
             services.Configure<TokenConfig>(tokenConfig);
-            services.Configure<APIConfig>(Configuration.GetSection("Api"));
+            services.Configure<ApiConfig>(Configuration.GetSection("Api"));
             services.Configure<PageConfig>(Configuration.GetSection("Page"));
 
             var expiredTime = tokenConfig.Get<TokenConfig>().Expired;

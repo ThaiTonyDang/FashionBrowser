@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FashionBrowser.Domain.Config
 {
-    public class APIConfig
+    public class ApiConfig
     {      
         public string Url { get; set; }
     }

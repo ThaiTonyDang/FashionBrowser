@@ -18,7 +18,7 @@
     if (User.FindFirst("token") != null)
     {
         token = User.FindFirst("token").Value;
-        user = await userService.GetUserAsync(token);
+        user = await userService.GetUserProfileAsync(token);
     }
 
     var cartViemodel = await cartservice.GetCartViewModel(token);
@@ -172,28 +172,28 @@
                         <a href="@menFashion" class="nav-link dropdown-toggle" data-toggle="dropdown">Men<i class="fa fa-angle-right float-right mt-1"></i></a>
                         <div class="dropdown-menu position-absolute rounded-0 border-0 m-0">
                             
-                            @foreach (var category in categoryMen.CategoryChildrens)
+                            @*@foreach (var category in categoryMen.CategoryChildrens)
                             {
                                 <a href="@Url.ActionLink("ProductsCategoryChildren", "Home", new {childSlug = category.Slug})" class="dropdown-item">Men's @category.Name</a>
-                            }
+                            }*@
                         </div>
                     </div>
                     <div class="nav-item dropdown dropright">
                         <a href="@womenFashion" class="nav-link dropdown-toggle" data-toggle="dropdown">Women<i class="fa fa-angle-right float-right mt-1"></i></a>
                         <div class="dropdown-menu position-absolute rounded-0 border-0 m-0">
-                            @foreach (var category in categoryWomen.CategoryChildrens)
+                            @*@foreach (var category in categoryWomen.CategoryChildrens)
                             {
                                 <a href="@Url.ActionLink("ProductsCategoryChildren", "Home", new {childSlug = category.Slug})" class="dropdown-item">Women's @category.Name</a>
-                            }
+                            }*@
                         </div>
                     </div>
                     <div class="nav-item dropdown dropright">
                         <a href="@kidFashion" class="nav-link dropdown-toggle" data-toggle="dropdown">Kid<i class="fa fa-angle-right float-right mt-1"></i></a>
                         <div class="dropdown-menu position-absolute rounded-0 border-0 m-0">
-                            @foreach (var category in categoryKid.CategoryChildrens)
+                            @*@foreach (var category in categoryKid.CategoryChildrens)
                             {
                                 <a href="@Url.ActionLink("ProductsCategoryChildren", "Home", new {childSlug = category.Slug})" class="dropdown-item">Kid's @category.Name</a>
-                            }
+                            }*@
                         </div>
                     </div>
                 </div>
