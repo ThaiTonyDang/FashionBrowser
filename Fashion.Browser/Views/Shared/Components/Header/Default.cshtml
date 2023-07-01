@@ -52,20 +52,6 @@
                             <span class="user-name" style="font-weight:600">@Model.FullName</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list" style="border-radius:9px; z-index:11">
-
-                            @if (!string.IsNullOrEmpty(Model.Avatar))
-                            {
-                                <span class="user-icon">
-                                    <img style="height:50px; width:50px; border-radius:50%" src="@Model.Avatar" alt="">
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="user-icon">
-                                    <img style="height:50px; width:50px; border-radius:50%" src="/img/images_default.png" alt="">
-                                </span>
-                            }
-                            <span class="user-name" style="font-weight:600">@Model.FullName</span>
                             <span style="font-size:15px; padding-left:20px">@Model.Email</span>
                             <hr>
                             <a class="dropdown-item" href="~/users/profile">
