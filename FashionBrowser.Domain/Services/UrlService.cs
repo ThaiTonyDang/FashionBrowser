@@ -7,8 +7,10 @@ namespace FashionBrowser.Domain.Services
     public class UrlService : IUrlService
     {
         private readonly ApiConfig _hostAPIConfig;
+        private readonly string _apiUrl;
         public UrlService(IOptions<ApiConfig> options)
         {
+            _apiUrl = options.Value.Url;
             _hostAPIConfig = options.Value;
         }
         public string GetBaseUrl()
@@ -18,7 +20,7 @@ namespace FashionBrowser.Domain.Services
 
         public string GetFileApiUrl(string fileName)
         {
-            var fileUrl = GetBaseUrl() + $"/{HTTP.SLUG}/" + fileName;
+            var fileUrl = $"{_apiUrl}/{HTTP.SLUG}/" + fileName;
             return fileUrl;
         }
     }

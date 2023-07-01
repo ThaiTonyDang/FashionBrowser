@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using System;
+using System.Text.Json;
 
 namespace Fashion.Browser
 {
@@ -26,8 +27,10 @@ namespace Fashion.Browser
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddControllersWithViews();
-			services.AddScoped<IProductServices, ProductServices>();
+			services.AddControllersWithViews()
+				.AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
+
+            services.AddScoped<IProductServices, ProductServices>();
 			services.AddScoped<ICategoryServices, CategoryServices>();
 			services.AddScoped<ICartServices, CartServices>();
 			services.AddScoped<IUrlService, UrlService>();

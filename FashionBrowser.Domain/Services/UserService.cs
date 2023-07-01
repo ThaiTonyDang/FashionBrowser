@@ -2,8 +2,11 @@
 using FashionBrowser.Domain.Config;
 using FashionBrowser.Domain.Dto;
 using FashionBrowser.Domain.Model;
+using FashionBrowser.Domain.Model.Files;
+using FashionBrowser.Domain.Model.Users;
 using FashionBrowser.Domain.Services.HttpClients;
 using FashionBrowser.Domain.ViewModels;
+using FashionBrowser.Domain.ViewModels.Users;
 using FashionBrowser.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
@@ -11,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
@@ -20,109 +24,74 @@ namespace FashionBrowser.Domain.Services
 {
     public class UserService : IUserService
 	{
+        private readonly IUrlService _urlService;
         private readonly IFileService _fileService;
         private readonly TokenConfig _tokenConfig;
-        private const string _apiPathUrl = "users";
+        private const string _apiResource = "users";
         private readonly IHttpClientService _httpClientService;
 
-        public UserService(IFileService fileService, IOptions<TokenConfig> options, IHttpClientService httpClientService)
+        public UserService(IOptions<TokenConfig> options, IHttpClientService httpClientService, IUrlService urlService, IFileService fileService)
         {
-            _fileService = fileService;
+            _urlService = urlService;
             _tokenConfig = options.Value;
             _httpClientService = httpClientService;
+            _fileService = fileService;
         }
 
         public async Task<ResultDto> RegisterUserAsync(RegisterItemViewModel registerUser)
 		{
-            var apiUrl = $"{_apiPathUrl}/register";
+            var apiUrl = $"{_apiResource}/register";
             var response = await _httpClientService.PostAsync(registerUser, apiUrl);
             return response;
         }
 
-        public async Task<Tuple<bool, string>> UpdateUserAsync(UserItemViewModel userItemViewModel, string token)
+        public async Task<ResultDto> GetUserProfileAsync(string token)
         {
-            
-            //var urlApi = _urlService.GetBaseUrl() + "/api/users/update";
-            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-            //                    JwtBearerDefaults.AuthenticationScheme, token);
-            //var response = await _httpClient.PutAsJsonAsync(urlApi, userItemViewModel);
-            
-            //var isSuccess = response.IsSuccessStatusCode;
-            //if(isSuccess)
-            //{
-            //    return Tuple.Create(isSuccess, "Update Information Success !");
-            //}
-            return Tuple.Create(false, "Update Information Fail !");
-        }
-
-        public async Task<Tuple<bool, string>> UpdateUserAvatarAsync(UserItemViewModel userItemViewModel, string token)
-        {
-            //var file = userItemViewModel.File;
-            //var fileName = "";
-            //if (file != null)
-            //{
-            //    var dataList = await _fileService.GetResponeUploadFileAsync(file, _httpClient, token);
-            //    if (dataList != null)
-            //    {
-            //        fileName = dataList[0];
-            //    }
-            //}
-            //if (!string.IsNullOrEmpty(userItemViewModel.AvatarImage) && file == null)
-            //{
-            //    fileName = userItemViewModel.AvatarImage;
-            //}
-            //userItemViewModel.AvatarImage = fileName;
-            //var urlApi = _urlService.GetBaseUrl() + "/api/users/avatar-update";
-            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-            //            JwtBearerDefaults.AuthenticationScheme, token);
-            //var response = await _httpClient.PutAsJsonAsync(urlApi, userItemViewModel);
-            //var isSuccess = response.IsSuccessStatusCode;
-            //if (isSuccess)
-            //{
-            //    return Tuple.Create(isSuccess, "Change Avatar Success !");
-            //}
-            return Tuple.Create(false, "Change Avatar Fail !");
-        }
-
-        public async Task<UserItemViewModel> GetUserProfileAsync(string token)
-        {
-            var apiUrl = $"{_apiPathUrl}/profile";
-            var response = await _httpClientService.PostAsync(registerUser, apiUrl);
-
-            var urlApi = _urlService.GetBaseUrl() + "/api/users/single-user";
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                       JwtBearerDefaults.AuthenticationScheme, token);
-            var response = await _httpClient.GetAsync(urlApi);
-            var responseList = JsonConvert.DeserializeObject<ResponseAPI<UserItemViewModel>>
-                                  (await response.Content.ReadAsStringAsync());
-            if (response.IsSuccessStatusCode)
+            var apiUrl = $"{_apiResource}/profile";
+            var response = await _httpClientService.GetDataAsync<UserProfile>(apiUrl, token);
+            if (response.IsSuccess)
             {
-                var user = responseList.Data;
-                user.ImageUrl = _urlService.GetFileApiUrl(user.AvatarImage);
-                return user;
+                var user = response.ToSuccessDataResult<UserProfile>().Data;
+                user.AvatarImage = _urlService.GetFileApiUrl(user.AvatarImage);
+                return new SuccessDataResult<UserProfile>(response.Message, user);
             }
 
-            return null;
+            return response;
         }
 
-        public async Task<Tuple<bool, string>> ChangePassword(PasswordItemViewModel passwordItemViewModel, string token)
+        public async Task<ResultDto> UpdateUserProfileAsync(UserViewModel userItemViewModel, string token)
         {
-            //var urlApi = _urlService.GetBaseUrl() + "/api/users/reset-password";
-            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-            //          JwtBearerDefaults.AuthenticationScheme, token);
-            //var response = await _httpClient.PostAsJsonAsync(urlApi, passwordItemViewModel);
-            //var responseList = JsonConvert.DeserializeObject<ResponseAPI<string>>
-            //                     (await response.Content.ReadAsStringAsync());
-            //var isSuccess = responseList.IsSuccess;
-            //var statusCode = responseList.StatusCode;
-            //var message = responseList.Message;
-            return Tuple.Create(false, "Change Avatar Fail !");
+            var apiUrl = $"{_apiResource}/profile";
+            var response = await _httpClientService.PatchAsync(userItemViewModel, apiUrl, token);
+            return response;
         }
 
-        public async Task<ResultDto> LoginAsync(LoginItemViewModel loginUser)
+        public async Task<ResultDto> UpdateUserAvatarAsync(MultipartFormDataContent file, string token)
         {
-            var apiUrl = $"{_apiPathUrl}/login";
-            var response = await _httpClientService.PostDataAsync<LoginItemViewModel, string>(loginUser, apiUrl);
+            var fileResponse = await _fileService.UploadFileAsync(file, token);
+            if (fileResponse.IsSuccess)
+            {
+                var fileUpload = fileResponse.ToSuccessDataResult<FileUpload>().Data;
+                var avatar = fileUpload.FileName;
+                var apiUrl = $"{_apiResource}/profile/avatar";
+                var response = await _httpClientService.PatchAsync(avatar, apiUrl, token);
+                return response;
+            }
+
+            return fileResponse;
+        }
+
+        public async Task<ResultDto> ChangePassword(UserPasswordViewModel userPasswordViewModel, string token)
+        {
+            var apiUrl = $"{_apiResource}/profile/change-password";
+            var response = await _httpClientService.PatchAsync(userPasswordViewModel, apiUrl, token);
+            return response;
+        }
+
+        public async Task<ResultDto> LoginAsync(UserLoginViewModel loginUser)
+        {
+            var apiUrl = $"{_apiResource}/login";
+            var response = await _httpClientService.PostDataAsync<UserLoginViewModel, string>(loginUser, apiUrl);
             if (response.IsSuccess)
             {
                 var result = response.ToSuccessDataResult<string>();
@@ -141,7 +110,7 @@ namespace FashionBrowser.Domain.Services
         {
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
             var claims = jwt.Claims.ToList();
-            claims.Add(new Claim(JwtClaimType.TOKEN, token));
+            claims.Add(new Claim(JwtClaimType.Token, token));
             return claims;
         }
 

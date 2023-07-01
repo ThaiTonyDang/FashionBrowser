@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FashionBrowser.Domain.ViewModels
 {
@@ -26,7 +21,7 @@ namespace FashionBrowser.Domain.ViewModels
 
         public string Address { get => GetAddress(); }
 
-        [Required(ErrorMessage = "CITY IS REQUIRED")]
+        [Required(ErrorMessage = "City")]
         public string CityId { get; set; }
         public string DistrictId { get; set; }
         public string WardId { get; set; }

@@ -11,6 +11,12 @@ using System.Linq;
 using FashionBrowser.Domain.Model;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json.Linq;
+using FashionBrowser.Domain.Model.Users;
+using System.IdentityModel.Tokens.Jwt;
+using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using FashionBrowser.Domain.ViewModels.Users;
 
 namespace Fashion.Browser.Controllers
 {
@@ -38,13 +44,13 @@ namespace Fashion.Browser.Controllers
                 TempData[Mode.LABEL_CONFIRM_CHECK] = "Login To Shop Now !";
             }
 
-            return await Task.FromResult(View(new LoginItemViewModel()));
+            return await Task.FromResult(View(new UserLoginViewModel()));
         }
 
         [AllowAnonymous]
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login(LoginItemViewModel loginItemView, [FromQuery] string returnUrl)
+        public async Task<IActionResult> Login(UserLoginViewModel loginItemView, [FromQuery] string returnUrl)
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
 
@@ -138,86 +144,125 @@ namespace Fashion.Browser.Controllers
         [Route("profile")]
         public async Task<IActionResult> Profile()
         {
-            var token = User.FindFirstValue(JwtClaimType.TOKEN);
-            var user = await _userService.GetUserProfileAsync(token);             
-            return await Task.Run(() => View(user));
+            var token = User.FindFirstValue(JwtClaimType.Token);
+            var response = await _userService.GetUserProfileAsync(token);
+            if(response.IsSuccess)
+            {
+                var user = response.ToSuccessDataResult<UserProfile>().Data;
+                var userProfileViewModel = new UserViewModel()
+                {
+                    Address = user.Address,
+                    DateOfBirth = user.DateOfBirth,
+                    Email = User.FindFirstValue(JwtRegisteredClaimNames.Email),
+                    PhoneNumber = user.PhoneNumber,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    ImageUrl = user.AvatarImage,
+                };
+
+                return await Task.FromResult(View(userProfileViewModel));
+            }
+
+
+            return await Task.FromResult(View(new UserViewModel()));
         }
 
         [Authorize]
         [HttpPost]
         [Route("profile")]
-        public async Task<IActionResult> Profile(UserItemViewModel userItemViewModel)
+        public async Task<IActionResult> Profile(UserViewModel userItemViewModel)
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
-            var email = User.FindFirstValue(ClaimTypes.Email);
-            var token = User.FindFirst("token").Value;
+
             if (userItemViewModel == null)
             {
-                return View(new UserItemViewModel());
+                return RedirectToAction("profile");
             }
 
-            userItemViewModel.Email = email;
-            var result = await _userService.UpdateUserAsync(userItemViewModel, token);
-            var isSuccess = result.Item1;
-            var message = result.Item2;
-            if (!isSuccess)
+            var token = User.FindFirstValue(JwtClaimType.Token);
+            var response = await _userService.UpdateUserProfileAsync(userItemViewModel, token);
+            var message = response.Message;
+            if (!response.IsSuccess)
             {
                 TempData[Mode.LABEL_CONFIRM_FAIL] = message;
-                return View(new UserItemViewModel());
+                return View(new UserViewModel());
             }
 
             TempData[Mode.LABEL_CONFIRM_SUCCESS] = message;
-            return RedirectToAction("Profile", "Users");
+            return RedirectToAction("profile");
         }
 
         [Authorize]
         [HttpPost]
-        [Route("profile/avatar")]
-        public async Task<IActionResult> Avatar(UserItemViewModel userItemViewModel)
+        [Route("avatar")]
+        public async Task<IActionResult> ChangeAvatar(IFormFile file)
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
-            var token = User.FindFirst("token").Value;
-            if (userItemViewModel == null)
+            var token = User.FindFirstValue(JwtClaimType.Token);
+
+            if(file == null || file.Length <= 0)
             {
-                return RedirectToAction("Profile", "Users");
+                TempData[Mode.LABEL_CONFIRM_FAIL] = "File upload can not be empty";
+                return RedirectToAction("profile");
             }
 
-            var result = await _userService.UpdateUserAvatarAsync(userItemViewModel, token);
-            var isSuccess = result.Item1;
-            var message = result.Item2;
-            if (!isSuccess)
+            var content = new MultipartFormDataContent
+            {
+                {
+                    new StreamContent(file.OpenReadStream())
+                    {
+                        Headers =
+                    {
+                        ContentLength = file.Length,
+                        ContentType = new MediaTypeHeaderValue(file.ContentType)
+                }
+                    },
+                    "File",
+                    file.FileName
+                }
+            };
+
+            var result = await _userService.UpdateUserAvatarAsync(content, token);
+            var message = result.Message;
+            if (!result.IsSuccess)
             {
                 TempData[Mode.LABEL_CONFIRM_FAIL] = message;
-                return RedirectToAction("Profile", "Users");
+                return RedirectToAction("profile");
             }
 
             TempData[Mode.LABEL_CONFIRM_SUCCESS] = message;
-            return RedirectToAction("Profile", "Users");
+            return RedirectToAction("profile");
         }
 
         [Authorize]
         [HttpPost]
-        [Route("profile/change-password")]
-        public async Task<IActionResult> ChangePassword(UserItemViewModel userItemViewModel)
+        [Route("changePassword")]
+        public async Task<IActionResult> ChangePassword(UserPasswordViewModel userPasswordViewModel)
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
-            var token = User.FindFirst("token").Value;
-            if (userItemViewModel == null)
+            if (userPasswordViewModel == null)
             {
-                return RedirectToAction("Profile", "Users");
+                TempData[Mode.LABEL_CONFIRM_FAIL] = "Password is empty";
+                return RedirectToAction("profile");
             }
-            var paswordItem = userItemViewModel.PasswordItemViewModel;
-            var result = await _userService.ChangePassword(paswordItem, token);
-            var isSuccess = result.Item1;
-            var message = result.Item2;
-            if (!isSuccess)
+
+            if (!userPasswordViewModel.ValidationPassword())
+            {
+                TempData[Mode.LABEL_CONFIRM_FAIL] = "Password does not match";
+                return RedirectToAction("profile");
+            }
+
+            var token = User.FindFirstValue(JwtClaimType.Token);
+            var response = await _userService.ChangePassword(userPasswordViewModel, token);
+            var message = response.Message;
+            if (!response.IsSuccess)
             {
                 TempData[Mode.LABEL_CONFIRM_FAIL] = message;
-                return RedirectToAction("Profile", "Users");
+                return RedirectToAction("profile");
             }
 
             TempData[Mode.LABEL_CONFIRM_SUCCESS] = message;
-            return RedirectToAction("Profile", "Users");
+            return RedirectToAction("profile");
         }
 
         private async Task GetAddress(RegisterItemViewModel registerUser)

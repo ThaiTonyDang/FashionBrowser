@@ -1,13 +1,12 @@
-﻿using FashionBrowser.Domain.Model;
-using FashionBrowser.Domain.Services;
+﻿using FashionBrowser.Domain.Services;
 using FashionBrowser.Domain.ViewModels;
+using FashionBrowser.Domain.ViewModels.Users;
 using FashionBrowser.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.WebSockets;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -33,7 +32,7 @@ namespace Fashion.Browser.Controllers
             var cartItems = await GetCartList();
 
             checkout.CartViewModel.ListCartItem = cartItems;
-            checkout.UserItemViewModel = new UserItemViewModel
+            checkout.UserItemViewModel = new UserViewModel
             {
                 FirstName = User.Claims.FirstOrDefault(x => x.Type == "firstName")?.Value,
                 LastName = User.Claims.FirstOrDefault(x => x.Type == "lastName")?.Value,

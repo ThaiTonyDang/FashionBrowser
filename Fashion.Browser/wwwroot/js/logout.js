@@ -11,7 +11,7 @@
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '/logout/',
+                url: '/users/logout',
                 type: 'POST',
                 contentType: 'application/json; charset=utf-8',
                 success: function (response) {
@@ -27,6 +27,7 @@
                     })
                 },
                 error: function (response, status, error) {
+                    console.log(error);
                     Swal.fire({
                         icon: 'error',
                         title: error,

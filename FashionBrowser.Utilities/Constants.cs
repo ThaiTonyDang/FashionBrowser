@@ -44,6 +44,6 @@ namespace FashionBrowser.Utilities
 
 	public struct JwtClaimType
 	{
-		public const string TOKEN = "token";
+		public const string Token = "token";
 	}
 }

@@ -1,8 +1,9 @@
 ﻿@using FashionBrowser.Domain.ViewModels;
 @using FashionBrowser.Utilities;
+@using FashionBrowser.Domain.ViewModels.Users;
 <link href="~/css/profile.css" rel="stylesheet" />
 
-@model UserItemViewModel;
+@model UserViewModel;
 
 <partial name="_Alert" />
 <div class="container light-style flex-grow-1 container-p-y">
@@ -50,7 +51,7 @@
                                 </div>
                             </div>
                             <div class="text-right" >
-                                <button formaction="@Url.ActionLink("Avatar", "Users")"
+                                <button formaction="@Url.ActionLink("avatar", "users")"
                                     formmethod="post"
                                     class="btn btn-primary button-save" style="color:white;">
                                     Save changes
@@ -69,12 +70,8 @@
                                     <input asp-for=FirstName type="text" class="form-control mb-1">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">E-mail</label>
-                                    <input asp-for=Email type="text" class="form-control mb-1" disabled>
-                                </div>
-                                <div class="form-group">
                                     <label class="form-label">Birthday</label>
-                                    <input asp-for=Birthday type="date" class="form-control">
+                                    <input asp-for=DateOfBirth type="date" class="form-control">
                                 </div>
                                 <hr>
                                 <h6 class="mb-4">Contacts</h6>
@@ -87,7 +84,7 @@
                                     <input asp-for=Address type="text" class="form-control">
                                 </div>
                                 <div class="text-right mt-3">
-                                    <button formaction="@Url.ActionLink("Profile", "Users")"
+                                    <button formaction="@Url.ActionLink("profile", "users")"
                                             formmethod="post"
                                         class="btn btn-primary button-save" style="color:white;">
                                         Save changes
@@ -102,23 +99,23 @@
 
                                 <div class="form-group">
                                     <label class="form-label">Current password</label>
-                                    <input asp-for="PasswordItemViewModel.CurrentPassword" type="password" class="form-control">
-                                    <span asp-validation-for="@Model.PasswordItemViewModel.CurrentPassword"></span>
+                                    <input asp-for="UserPasswordViewModel.CurrentPassword" name="CurrentPassword" type="password" class="form-control" autocomplete="off">
+                                    <span asp-validation-for="@Model.UserPasswordViewModel.CurrentPassword"></span>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label">New password</label>
-                                    <input asp-for="PasswordItemViewModel.NewPassword" type="password" class="form-control">
-                                    <span asp-validation-for="@Model.PasswordItemViewModel.NewPassword" class="text-danger"></span>
+                                    <input asp-for="UserPasswordViewModel.NewPassword" name="NewPassword" type="password" class="form-control" autocomplete="off">
+                                    <span asp-validation-for="@Model.UserPasswordViewModel.NewPassword" class="text-danger"></span>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label">Repeat new password</label>
-                                    <input asp-for="PasswordItemViewModel.ConfirmPassword" type="password" class="form-control">
-                                    <span asp-validation-for="@Model.PasswordItemViewModel.ConfirmPassword" class="text-danger"></span>
+                                    <input asp-for="UserPasswordViewModel.ConfirmPassword" name="ConfirmPassword" type="password" class="form-control" autocomplete="off">
+                                    <span asp-validation-for="@Model.UserPasswordViewModel.ConfirmPassword" class="text-danger"></span>
                                 </div>
                                 <div class="text-right mt-3">
-                                    <button formaction="@Url.ActionLink("ChangePassword", "Users")"
+                                    <button formaction="@Url.ActionLink("changePassword", "users")"
                                         formmethod="post"
                                         class="btn btn-primary button-save" style="color:white;">
                                         Save changes
