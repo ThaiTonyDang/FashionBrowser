@@ -42,6 +42,7 @@ namespace FashionBrowser.Domain.ViewModels
         , DataType(DataType.Password), Display(Name = "Confirm Password")]
         [Compare("Password", ErrorMessage = "Confirm password does not match")]
         public string ConfirmPassword { get; set; }
+        public List<string> Roles { get; set; }
 
         public string GetAddress()
         {

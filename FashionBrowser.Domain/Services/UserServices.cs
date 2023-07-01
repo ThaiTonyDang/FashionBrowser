@@ -70,6 +70,7 @@ namespace FashionBrowser.Domain.Services
 		{
             try
             {
+                registerUser.Roles = new List<string>() {"User"};
                 var apiUrl = _urlService.GetBaseUrl() + "/api/users/register";
                 var response = await _httpClient.PostAsJsonAsync(apiUrl, registerUser);
 
