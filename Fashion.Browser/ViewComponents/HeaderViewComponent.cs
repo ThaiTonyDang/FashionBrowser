@@ -46,8 +46,8 @@ namespace Fashion.Browser.ViewComponents
                 var cart = await cartTask;
 
                 viewModel.FullName = $"{user.FirstName} {user.LastName}";
-                viewModel.Avatar = user.AvatarImage;
-                viewModel.Email = UserClaimsPrincipal.FindFirstValue(JwtRegisteredClaimNames.Email);
+                viewModel.Avatar = user.ImageUrl;
+                viewModel.Email = UserClaimsPrincipal.FindFirstValue(ClaimTypes.Email);
                 viewModel.CartItemCount = cart.ListCartItem.Count;
 
             }

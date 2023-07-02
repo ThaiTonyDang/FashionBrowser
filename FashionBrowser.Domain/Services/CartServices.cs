@@ -99,7 +99,7 @@ namespace FashionBrowser.Domain.Services
                 var response = await _httpClient.GetAsync(apiUrl);
                 var responseList = JsonConvert.DeserializeObject<ResponseAPI<List<CartItemViewModel>>>
                                    (await response.Content.ReadAsStringAsync());
-                if(responseList != null)
+                if(responseList != null && response.IsSuccessStatusCode)
                 {
                     _isSuccess = responseList.IsSuccess;
                     _errorDetail = responseList.ErrorsDetail;
