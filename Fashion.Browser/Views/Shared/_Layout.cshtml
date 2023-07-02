@@ -17,8 +17,8 @@
     <link href="~/css/my-style.css" rel="stylesheet" />
     <link href="~/css/style.css" rel="stylesheet" />
 </head>
-<body> 
-    @await Html.PartialAsync("_Header")
+<body>
+    @await Component.InvokeAsync("Header")
      @RenderBody()
     @await Html.PartialAsync("_Footer")
    @* <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -31,10 +31,9 @@
     <script src="~/owlcarousel/owl.carousel.min.js"></script>
     <script src="~/js/main.js"></script>
     <script src="~/js/cart.js"></script>
-    <script src="~/js/city.js"></script>
     <script src="~/js/modal.js"></script>
     <script src="~/js/logout.js"></script>
-
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
