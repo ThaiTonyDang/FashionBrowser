@@ -64,8 +64,7 @@ namespace Fashion.Browser.Controllers
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties()
                 {
                     AllowRefresh = true,
-                    IsPersistent = true,
-                    RedirectUri = "/Authentication/Login"
+                    IsPersistent = loginItemView.KeepLoggedIn
                 });
 
 

@@ -52,7 +52,7 @@ namespace Fashion.Browser
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 			.AddCookie(options => {
 				options.LoginPath = "/users/login";
-				options.ExpireTimeSpan = TimeSpan.FromMinutes(expiredTime);
+				options.ExpireTimeSpan = TimeSpan.FromMinutes(expiredTime);			
 			});
 
             services.AddDistributedMemoryCache();

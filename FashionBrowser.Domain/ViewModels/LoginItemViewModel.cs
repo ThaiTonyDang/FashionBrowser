@@ -15,6 +15,6 @@ namespace FashionBrowser.Domain.ViewModels
         [Required, DataType(DataType.Password), Display(Name = "Password")]
         public string Password { get; set; }
 
-        public bool RememberLogin { get; set; }
+        public bool KeepLoggedIn { get; set; }
     }
 }
