@@ -21,8 +21,6 @@
     @await Component.InvokeAsync("Header")
      @RenderBody()
     @await Html.PartialAsync("_Footer")
-   @* <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
@@ -33,7 +31,6 @@
     <script src="~/js/cart.js"></script>
     <script src="~/js/modal.js"></script>
     <script src="~/js/logout.js"></script>
-    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

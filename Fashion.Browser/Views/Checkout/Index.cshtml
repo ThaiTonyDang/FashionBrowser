@@ -1,70 +1,54 @@
 ﻿@using FashionBrowser.Domain.ViewModels;
 @using FashionBrowser.Utilities;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model CheckoutItemViewModel;
+
 @{
-    ViewData["Title"] = "Checkout";
-    Layout = "_Layout";
-}>
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
 <link href="~/css/checkout.css" rel="stylesheet" />
 <link href="~/css/my-style.css" rel="stylesheet" />
-<ol class="breadcrumb">
-    <li class="breadcrumb-item">
-        <a href="~/Home/Index" class="link" style="color:#001489; font-weight:600">
-            Trang Chủ
-        </a>
-    </li>
-    <li class="breadcrumb-item">
-        <a href="~/shoppingcart/" style="color:#001489; font-weight:600">
-            Giỏ Hàng
-        </a>
-    </li>
-    <li class="breadcrumb-item">Xác Nhận Hóa Đơn</li>
-</ol>
+
 <form asp-action="ConfirmOrder" method="post" enctype="multipart/form-data">
-     @if (Model.CartViewModel.ListCartItem != null && Model.CartViewModel.ListCartItem.Count > 0)
+    @if (Model.CartViewModel.ListCartItem != null && Model.CartViewModel.ListCartItem.Count > 0)
     {
         <div class="container-fluid">
             <div class="row px-xl-5">
                 <div class="col-lg-6">
-                    <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">THÔNG TIN CỦA BẠN</span></h5>
                     <div class="bg-light p-30 mb-5">
+                        <h5 class="section-title position-relative text-uppercase mb-3">Your Information</h5>
                         <div class="row">
                             <div class="col-md-12 form-group">
-                                <label>TÊN</label>
+                                <label>First Name</label>
                                 <input asp-for=UserItemViewModel.FirstName class="form-control" placeholder="Tên"
-                                value="@Model.UserItemViewModel.FirstName">
+                                   value="@Model.UserItemViewModel.FirstName">
                                 <span asp-validation-for=@Model.UserItemViewModel.FirstName class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
-                                <label>HỌ</label>
+                                <label>Last Name</label>
                                 <input asp-for=UserItemViewModel.LastName class="form-control"
                                    value="@Model.UserItemViewModel.LastName">
                                 <span asp-validation-for=@Model.UserItemViewModel.LastName class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
-                                <label>E-MAIL</label>
+                                <label>E-Mail</label>
                                 <input asp-for=UserItemViewModel.Email class="form-control" type="email"
-                                 value="@Model.UserItemViewModel.Email">
+                                   value="@Model.UserItemViewModel.Email">
                                 <span asp-validation-for="@Model.UserItemViewModel.Email" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
-                                <label>SỐ ĐIỆN THOẠI</label>
+                                <label>Phone Number</label>
                                 <input asp-for="UserItemViewModel.PhoneNumber" type="tel" class="form-control"
-                                 value="@Model.UserItemViewModel.PhoneNumber">
+                                   value="@Model.UserItemViewModel.PhoneNumber">
                                 <span asp-validation-for="@Model.UserItemViewModel.PhoneNumber" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
-                                <label>ĐỊA CHỈ</label>
+                                <label>Address</label>
                                 <input asp-for="UserItemViewModel.Address" type="text" class="form-control"
-                                value="@Model.UserItemViewModel.Address">
+                                   value="@Model.UserItemViewModel.Address">
                                 <span asp-validation-for="@Model.UserItemViewModel.Address" class="text-danger"></span>
-                            </div>                            
-                            <div class="cupon_area col-md-12 form-group">
-                                <div class="check_title">
-                                    <h2>Bạn có coupon chưa? <a href="#">Click vào đây để nhập mã</a></h2>
-                                </div>
-                                <input asp-for=@Model.Discount type="text" placeholder="Enter coupon code" value=1.1>
-                                <a class="button button-coupon" href="#">Xác Nhận Coupon</a>
                             </div>
                         </div>
                     </div>
@@ -72,34 +56,40 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="order_box">
-                        <h2>ĐƠN HÀNG CỦA BẠN</h2>
+                        <h2>Your Order</h2>
                         <ul class="list">
                             <li><a href="#"><h4>Product <span> Total</span></h4></a></li>
-                            @{                        
-                                var discountPay = decimal.Parse((1 - (1.1) / 100).ToString());
+                            @{
                                 var totalAmound = @Model.CartViewModel.Total;
-                                var subTotal = totalAmound * discountPay;
+                                var subTotal = totalAmound + SHIPPING_FEE.SHIPPING;
                             }
                             @foreach (var cartItem in Model.CartViewModel.ListCartItem)
                             {
 
                                 <li style="font-size:15px">
-                                    <a href="" >
-                                        <img class="card-img" style="width:100px;"
-                                        src="@cartItem.Product.ImageUrl" alt="">
-                                        @cartItem.Product.Name
-                                        <span class="middle" style="width:100px">
-                                            @cartItem.Product.Price.GetPriceFormat() X @cartItem.Quantity
+                                    <a class="order-product-item">
+                                        <img class="card-img" style="width:100px;" src="@cartItem.Product.ImageUrl" alt="">
+                                        <span class="order-product-name">
+                                            @cartItem.Product.Name
                                         </span>
-                                        <span class="last">@cartItem.Price.GetPriceFormat()</span>
+
+                                        <span class="order-price" style="width:100px">
+                                            @cartItem.Product.Price.GetPriceFormat()
+                                        </span>
+                                        <span class="order-unit" style="width:100px">
+                                            X @cartItem.Quantity
+                                        </span>
+                                        <span class="order-total-price">
+                                            @cartItem.Price.GetPriceFormat()
+                                        </span>
                                     </a>
                                 </li>
                             }
                         </ul>
                         <ul class="list list_2">
-                            <li><a href="#">TỔNG TIỀN SẢN PHẨM<span>@totalAmound.GetPriceFormat()</span></a></li>
-                            <li><a href="#">CHIẾT KHẤU<span> 1.1 %</span></a></li>
-                            <li><a href="#">TỔNG TIỀN<span>@subTotal.GetPriceFormat()</span></a></li>
+                            <li><a href="#">Merchandise Subtotal<span>@totalAmound.GetPriceFormat()</span></a></li>
+                            <li><a href="#">Shipping Fee<span>@SHIPPING_FEE.SHIPPING.GetPriceFormat()</span></a></li>
+                            <li><a href="#">Total Payment<span>@subTotal.GetPriceFormat()</span></a></li>
                         </ul>
                         <div class="payment_item">
                             <div class="radion_btn">
@@ -107,25 +97,19 @@
                                 <label for="f-option5">Cash on Delivery</label>
                                 <div class="check"></div>
                             </div>
-                            <p>
-                                COD thanh toán tại thời điểm nhận hàng .  
-                            </p>
                         </div>
                         <div class="payment_item active">
                             <div class="radion_btn">
                                 <input asp-for="@Model.IsCardCreditPay" type="radio" id="f-option6" value="True">
-                                <label for="f-option6">Paypal </label>
+                                <label for="f-option6">Credit Card/Debit Card</label>
                                 <img src="/img/card.jpg" alt="">
                                 <div class="check"></div>
                             </div>
-                            <p>
-                                Chi trả qua cổng thanh toán VNPAY ! Miễn phí Ship
-                            </p>
                         </div>
-                     
+
                         <div class="text-center">
-                            <button type="submit" class="button button-paypal" style="cursor:pointer;">Xác Nhận Hóa Đơn</button>
-                        </div>                                                        
+                            <button type="submit" class="button button-paypal" style="cursor:pointer;">Place Order</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -156,3 +140,4 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+

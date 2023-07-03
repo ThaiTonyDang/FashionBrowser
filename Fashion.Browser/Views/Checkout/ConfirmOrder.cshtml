@@ -8,39 +8,14 @@
 @{
     var discount = $"{Model.Discount}" + "%";
 }
-<section class="blog-banner-area" id="category">
-    <div class="container h-100">
-        <div class="blog-banner">
-            <div class="text-center">
-                <h1>Xác Nhận Hóa Đơn</h1>
-            </div>
-        </div>
-    </div>
-</section>
 
 <ol class="breadcrumb">
-    <li class="breadcrumb-item">
-        <a href="~/Home/Index" class="link" style="color:#001489; font-weight:600">
-            Trang Chủ
-        </a>
-    </li>
-    <li class="breadcrumb-item">
-        <a href="~/shoppingcart/" style="color:#001489; font-weight:600">
-            Giỏ Hàng
-        </a>
-    </li>
-    <li class="breadcrumb-item">
-        <a href="~/Checkout/Index" style="color:#001489; font-weight:600">
-            Xác Nhận Hóa Đơn
-        </a>
-    </li>
-    <li class="breadcrumb-item">Order Information</li>
+    <li class="breadcrumb-item">Order Confirmation</li>
 </ol>
 
 <section class="order_details section-margin--small">
     <form asp-action="CreateOrder" asp-controller="Checkout" method="post" enctype="multipart/form-data">
         <div class="container">
-            @*<p class="text-center billing-alert">Thank you. Your order has been received.</p>*@
             <div class="row mb-5">
                 <div class="col-md-6 col-xl-6 mb-4 mb-xl-0">
                     <div class="confirmation-card">
@@ -58,8 +33,7 @@
                         <input asp-for="@Model.IsCardCreditPay" type="hidden" />
                         @{
                             var shipping = SHIPPING_FEE.SHIPPING;
-                            var discountPay = decimal.Parse((1 - (1.1) / 100).ToString());
-                            var subTotal = @Model.CartViewModel.Total * discountPay;
+                            var subTotal = @Model.CartViewModel.Total;
                             var total = (subTotal + shipping).GetPriceFormat();
                             
                             Model.OrderItem.TotalPrice = subTotal + shipping;
@@ -68,15 +42,11 @@
                         <table class="order-rable">
                             <tbody style="color:black">
                                 <tr>
-                                    <td>Order Id</td>
-                                    <td>: @Model.OrderItem.Id.ToString().Substring(0, 8).ToUpper()</td>
-                                </tr>
-                                <tr>
-                                    <td>Ngày Order</td>
+                                    <td>Order Date</td>
                                     <td>: @Model.OrderItem.OrderDate.ToString("dddd, dd MMMM yyyy")</td>
                                 </tr>
                                 <tr>
-                                    <td>Giờ Order</td>
+                                    <td>Order Time</td>
                                     <td>: @Model.OrderItem.OrderDate.ToLongTimeString()</td>
                                 </tr>
                                 <tr>
@@ -84,11 +54,7 @@
                                     <td style="font-weight:600">: @Model.CartViewModel.Total.GetPriceFormat()</td>
                                 </tr>
                                 <tr>
-                                    <td>Chiết Khấu</td>
-                                    <td>: @discount</td>
-                                </tr>
-                                <tr>
-                                    <td>Phí Ship</td>
+                                    <td>Shipping Fee</td>
                                     <td>: @SHIPPING_FEE.SHIPPING.GetPriceFormat()</td>
                                 </tr>
                                 <tr>
@@ -114,27 +80,23 @@
                         <table class="order-rable">
                             <tbody style="color:black">
                                 <tr>
-                                    <td>Tên Khách Hàng</td>
+                                    <td>FullName</td>
                                     <td>:  @Model.UserItemViewModel.Name</td>
                                 </tr>
                                 <tr>
-                                    <td>Địa Chỉ</td>                                 
+                                    <td>Address</td>                                 
                                     <td style="font-size:15px">:  @Model.UserItemViewModel.Address</td>                                   
                                 </tr>
                                 <tr>
-                                    <td>Phone</td>
+                                    <td>Phone Number</td>
                                     <td>:  @Model.UserItemViewModel.PhoneNumber</td>
                                 </tr>
                                 <tr>
                                     <td>Email</td>
                                     <td>:  @Model.UserItemViewModel.Email</td>
                                 </tr>
-                                <tr>
-                                    <td>Shipping Method</td>
-                                    <td>:  International express shipping</td>
-                                </tr>
                                 <tr>                                   
-                                    <td>Tình Trạng Thanh Toán :</td>
+                                    <td>Payment Status :</td>
                                     <td>
                                         <i class="bi bi-hourglass-split" style="font-weight:500; font-size:20px;
                                         color: indianred">
@@ -251,7 +213,7 @@
                     <div class="text-center col-md-3 " style="display:flex; float:right">
                         <button formaction="@Url.ActionLink("CreatePaymentUrl", "Checkout")"
                                 class="button button-paypal">
-                            Thanh Toán Ngay
+                            Payment Order Now
                         </button>
                     </div>
                 }
@@ -260,7 +222,7 @@
                     <div class="text-center col-md-3 " style="display:flex; float:right">
                         <button type="submit"
                                 class="button button-paypal">
-                            Đặt Hàng Ngay
+                            Place Order Now
                         </button>
                     </div>
                 }

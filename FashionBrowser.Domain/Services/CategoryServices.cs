@@ -126,7 +126,7 @@ namespace FashionBrowser.Domain.Services
                                          .Skip((currentPage - 1) * pageSize)
                                          .Take(pageSize).AsQueryable()
                                          .ToList();
-            return await Task.Run(() => pagingProducts);
+            return await Task.FromResult(pagingProducts);
         }
 
         private async Task<List<ProductItemViewModel>> GetAllProductsBySlugAsync(string childSlug, int currentPage)
@@ -138,7 +138,7 @@ namespace FashionBrowser.Domain.Services
                                          .Skip((currentPage - 1) * pageSize)
                                          .Take(pageSize).AsQueryable()
                                          .ToList();
-            return await Task.Run(() => pagingProducts);
+            return await Task.FromResult(pagingProducts);
         }
 
         private async Task<List<ProductItemViewModel>> GetProductsChildrenBySlug(string childSlug)

@@ -51,7 +51,7 @@ namespace Fashion.Browser.Controllers
             };
 
             if (cartItems == null) cartItems = new List<CartItemViewModel>();
-            return View(checkout); // index thông tin 
+            return View(checkout);
         }
              
         public async Task<IActionResult> ConfirmOrder(CheckoutItemViewModel checkout)
@@ -104,7 +104,7 @@ namespace Fashion.Browser.Controllers
                 TempData[Mode.LABEL_CONFIRM_SUCCESS] = "Payment success !";
                 return View(checkout);
             }
-            return await Task.Run(() => View(checkout));
+            return await Task.FromResult(View(checkout));
         }
 
         [Route("orders/order-information")]

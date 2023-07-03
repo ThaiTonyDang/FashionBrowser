@@ -34,7 +34,7 @@ namespace Fashion.Browser.Controllers
                 TempData[Mode.LABEL_CONFIRM_CHECK] = "Login To Shop Now !";
             }
             var loginUser = new LoginItemViewModel();
-            return await Task.Run(() => View(loginUser));
+            return await Task.FromResult(View(loginUser));
         }
 
         [HttpPost]
@@ -90,7 +90,7 @@ namespace Fashion.Browser.Controllers
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;            
             TempData[Mode.LABEL_CONFIRM_CHECK] = "Register To Shop Now !";
             var registerUser = new RegisterItemViewModel();
-            return await Task.Run(() => View(registerUser));
+            return await Task.FromResult(View(registerUser));
         }
 
         [HttpPost]
@@ -140,7 +140,7 @@ namespace Fashion.Browser.Controllers
         {
             var token = User.FindFirst("token").Value;
             var user = await _userService.GetUserAsync(token);             
-            return await Task.Run(() => View(user));
+            return await Task.FromResult(View(user));
         }
 
         [Authorize]

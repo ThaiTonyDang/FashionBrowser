@@ -19,6 +19,7 @@ namespace Fashion.Browser.Controllers
             _categoryServices = categoryServices;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index(int currentPage = 1)
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;

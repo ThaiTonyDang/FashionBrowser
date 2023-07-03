@@ -46,4 +46,10 @@ namespace FashionBrowser.Utilities
     {
         public const string Token = "token";
     }
+
+    public struct ActiveLink
+    {
+        public const string Active = "Active";
+        public const string HomePage = "Home";
+    }
 }
