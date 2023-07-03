@@ -43,7 +43,7 @@ namespace Fashion.Browser.Controllers
         }
 
         [HttpPost]
-        [Route("cart/addtocart/{productId}")]
+        [Route("cart/addtocart/{productId}/{quantityInput}")]
         public async Task<IActionResult> AddToCart(string productId, int quantityInput = 1)
         {
             var claim = User.FindFirst("token");
