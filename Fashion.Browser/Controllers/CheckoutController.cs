@@ -6,6 +6,7 @@ using FashionBrowser.Domain.ViewModels;
 using FashionBrowser.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace Fashion.Browser.Controllers
         private readonly ICartServices _cartServices;
         private readonly IVnpayServices _vnpayServices;
         private readonly IUrlServices _urlServices;
+        private static CheckoutItemViewModel _staticCheckoutItem;
 
         public CheckoutController(ICheckoutServices checkoutService,
             ICartServices cartServices, IVnpayServices vnpayServices, IUrlServices urlServices)
@@ -35,6 +37,7 @@ namespace Fashion.Browser.Controllers
         }
 
         [HttpGet]
+        [Route("checkout/order-information")]
         public async Task<IActionResult> Index()
         {
             var checkout = new CheckoutItemViewModel();
@@ -49,65 +52,91 @@ namespace Fashion.Browser.Controllers
                 PhoneNumber = User.FindFirstValue(ClaimTypes.MobilePhone), 
                 Address = User.FindFirstValue(ClaimTypes.StreetAddress), 
             };
-
             if (cartItems == null) cartItems = new List<CartItemViewModel>();
             return View(checkout); // index thông tin 
         }
-             
-        public async Task<IActionResult> ConfirmOrder(CheckoutItemViewModel checkout)
-        {          
-            var address = checkout.UserItemViewModel.Address;
-            var cartItems = await GetCartList();   
-          
-            checkout.CartViewModel.ListCartItem = cartItems;
 
-            checkout.OrderItem = BuidOrder(address);
-            if (!checkout.IsCardCreditPay)
+        [Route("checkout/confirm-order/")]
+        public async Task<IActionResult> ConfirmOrder(CheckoutItemViewModel checkout)
+        {
+            TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
+            var cartItems = await GetCartList();
+            if (checkout.CartViewModel == null || cartItems.Count == 0)
             {
-                checkout.OrderItem.IsPaid = false;
-                checkout.OrderItem.IsPaidDisplay = "Customer Pays After Receiving Goods";
-                checkout.OrderItem.Status = "COD";                       
+                TempData[Mode.LABEL_CONFIRM_CHECK] = "There Are Currently No Orders! Shopping Now !";
+                return RedirectToAction("Index", "Home");
             }
 
-            checkout.OrderItem.IsPaidDisplay = "Paid Via VNPAY Gateway";
+            if (checkout.UserItemViewModel != null)
+            {
+                var address = checkout.UserItemViewModel.Address;
+                checkout.CartViewModel.ListCartItem = cartItems;
+
+                checkout.OrderItem = BuidOrder(address);
+                if (!checkout.IsCardCreditPay)
+                {
+                    checkout.OrderItem.IsPaid = false;
+                    checkout.OrderItem.IsPaidDisplay = "Customer Pays After Receiving Goods";
+                    checkout.OrderItem.Status = "COD";
+                }
+
+                checkout.OrderItem.IsPaidDisplay = "Paid Via VNPAY Gateway";
+                checkout.OrderItem.IsPaid = true;
+                _staticCheckoutItem = checkout;
+            }                        
+            checkout = _staticCheckoutItem;
+            if (_staticCheckoutItem == null)
+            {
+                TempData[Mode.LABEL_CONFIRM_CHECK] = "There Are Currently No Orders! Shopping Now !";
+                return RedirectToAction("Index", "Home");
+            }
+      
             return View(checkout);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreatePaymentUrl(CheckoutItemViewModel checkout)
         {
-            var token = User.FindFirst("token").Value;
-            var cartItems = await GetCartList();
-
-            checkout.CartViewModel.ListCartItem = cartItems;
-            var isSuccess = await _checkoutService.CreateCheckoutAsync(checkout, token);
-   
-            if (isSuccess)
-            {
-                var url = await _vnpayServices.CreatePaymentUrl(checkout, HttpContext);
-                return Redirect(url);
-            }
-            
-            return RedirectToAction(" ConfirmOrder", "Checkout");
+            checkout = _staticCheckoutItem;        
+            var url = await _vnpayServices.CreatePaymentUrl(checkout, HttpContext);
+            return Redirect(url);                  
         }
 
+        [Route("checkout/create-order/")]
         public async Task<IActionResult> CreateOrder(CheckoutItemViewModel checkout)
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
             var token = User.FindFirst("token").Value;
             var cartItems = await GetCartList();
             checkout.CartViewModel.ListCartItem = cartItems;
-            var isSuccess = await _checkoutService.CreateCheckoutAsync(checkout, token);
-            var isSuccessRemove = await RemoveItemCart(token);
-            if (isSuccess && isSuccessRemove)
+            if (checkout.CartViewModel == null || cartItems.Count == 0 && _staticCheckoutItem == null)
             {
-                TempData[Mode.LABEL_CONFIRM_SUCCESS] = "Payment success !";
-                return View(checkout);
+                TempData[Mode.LABEL_CONFIRM_CHECK] = "There Are Currently No Orders! Shopping Now !";
+                return RedirectToAction("Index", "Home");
+            }
+
+            if (checkout.UserItemViewModel != null && checkout.OrderItem != null)
+            {
+                var isSuccess = await _checkoutService.CreateCheckoutAsync(checkout, token);
+                var isSuccessRemove = await RemoveItemCart(token);
+                if (isSuccess && isSuccessRemove)
+                {
+                    TempData[Mode.LABEL_CONFIRM_SUCCESS] = "Payment success !";
+                    _staticCheckoutItem = checkout;
+                    return View(checkout);
+                }
+            }
+
+            checkout = _staticCheckoutItem;
+            if (_staticCheckoutItem == null)
+            {
+                TempData[Mode.LABEL_CONFIRM_CHECK] = "There Are Currently No Orders! Shopping Now !";
+                return RedirectToAction("Index", "Home");
             }
             return await Task.Run(() => View(checkout));
         }
 
-        [Route("orders/order-information")]
+        [Route("vnpay/order-information")]
         public async Task<IActionResult> VnpayCreateOrder()
         {
             TempData[Mode.MODE] = Mode.USING_LABEL_CONFIRM;
@@ -118,11 +147,8 @@ namespace Fashion.Browser.Controllers
                 TempData[Mode.LABEL_CONFIRM_FAIL] = "Payment Fail ! Try Again";
                 return RedirectToAction("Index", "Checkout");
             }
-            string[] data = response.OrderDescription.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
-            var checkout = GetDataFromResponseVnpay(data);
+            var checkout = _staticCheckoutItem;
 
-            var cartItems = await GetCartList();
-            checkout.CartViewModel.ListCartItem = cartItems;
             foreach (var cart in checkout.CartViewModel.ListCartItem)
             {
                 cart.Product.ImageUrl = _urlServices.GetFileApiUrl(cart.Product.MainImageName);
@@ -133,15 +159,14 @@ namespace Fashion.Browser.Controllers
                 TempData[Mode.LABEL_CONFIRM_CHECK] = "No Orders Yet! Please Check Your Email";
                 return View();
             }
-
-            TempData[Mode.LABEL_CONFIRM_SUCCESS] = "Payment success !";
-            var orderDto = new OrderDto
-            {
-                Id = checkout.OrderItem.Id,
-            };
-
-            var update = _checkoutService.UpdatePaidStatus(orderDto, token);
+            var isSuccess = await _checkoutService.CreateCheckoutAsync(checkout, token);
             var isSuccessRemove = await RemoveItemCart(token);
+            if (!isSuccess)
+            {
+                TempData[Mode.LABEL_CONFIRM_FAIL] = "Payment Fail ! Try Again";
+                return RedirectToAction("Index", "Checkout");
+            }    
+            
             return View(checkout);       
         }
 
@@ -166,27 +191,6 @@ namespace Fashion.Browser.Controllers
         {
             var result = await _cartServices.DeleteAllCartByUser(token);
             return result;
-        }
-
-        private CheckoutItemViewModel GetDataFromResponseVnpay(string[] data)
-        {
-            var checkout = new CheckoutItemViewModel();
-            if (!data[0].IsGuidParseFromString()) { data[0] = Guid.NewGuid().ToString(); }
-            if (!data[3].IsParseDateTime()) { data[3] = DateTime.Now.ToString(); }
-            if (!data[6].IsGuidParseFromString()) { data[6] = Guid.NewGuid().ToString(); }
-            checkout.OrderItem = new OrderItemViewModel();
-            checkout.UserItemViewModel = new UserItemViewModel();
-            checkout.OrderItem.Id = new Guid(data[0]);
-            checkout.UserItemViewModel.FirstName = data[1];
-            checkout.UserItemViewModel.LastName = data[2];
-            checkout.OrderItem.OrderDate = DateTime.Parse(data[3]);
-            checkout.OrderItem.ShipAddress = data[4];
-            checkout.OrderItem.TotalPrice = decimal.Parse(data[5]);
-            checkout.OrderItem.UserId = new Guid(data[6]);
-            checkout.OrderItem.IsPaidDisplay = "Customer Paid Via Credit Card";
-            checkout.OrderItem.IsPaid = true;
-
-            return checkout;
         }
     }
 }

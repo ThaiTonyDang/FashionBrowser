@@ -137,8 +137,6 @@
                                                 <span class="font-weight-bold">@cart.Product.Name</span>
                                                 <div class="product-qty">
                                                     <span class="d-block">@cart.Quantity</span>
-                                                    <span>Color:Dark</span>
-
                                                 </div>
                                             </td>
                                             <td width="20%">
@@ -192,11 +190,23 @@
 
                                                 </div>
                                             </td>
-                                            <td>
-                                                <div class="text-right">
-                                                    <span>@SHIPPING_FEE.SHIPPING.GetPriceFormat()</span>
-                                                </div>
-                                            </td>
+                                            @if(Model.CartViewModel.Total > 1000000)
+                                            {
+                                                <td>
+                                                    <div class="text-right" style="text-decoration:line-through; color:red">
+                                                        <span>@SHIPPING_FEE.SHIPPING.GetPriceFormat()</span>
+                                                    </div>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span>@SHIPPING_FEE.SHIPPING.GetPriceFormat()</span>
+                                                    </div>
+                                                </td>
+                                            }
+
                                         </tr>
                                         <tr class="border-top border-bottom">
                                             <td>

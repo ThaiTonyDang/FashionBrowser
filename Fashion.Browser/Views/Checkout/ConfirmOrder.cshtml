@@ -7,12 +7,26 @@
 <link href="~/css/checkout.css" rel="stylesheet" />
 @{
     var discount = $"{Model.Discount}" + "%";
+    var shipping = SHIPPING_FEE.SHIPPING;
+    var discountPay = decimal.Parse((1 - (double)10 / 100).ToString());
+    var subTotal = @Model.CartViewModel.Total * discountPay;
+    decimal total = 0;
+    if (Model.CartViewModel.Total > 1000000)
+    {
+        total = subTotal;
+    }
+    else
+    {
+        total = subTotal + shipping;
+    }
+
+    Model.OrderItem.TotalPrice = total;
 }
 <section class="blog-banner-area" id="category">
     <div class="container h-100">
         <div class="blog-banner">
             <div class="text-center">
-                <h1>Xác Nhận Hóa Đơn</h1>
+                <h1>Order Confirmation</h1>
             </div>
         </div>
     </div>
@@ -20,21 +34,21 @@
 
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
-        <a href="~/Home/Index" class="link" style="color:#001489; font-weight:600">
-            Trang Chủ
+        <a href="/" class="link" style="color:#001489; font-weight:600">
+           Home
         </a>
     </li>
     <li class="breadcrumb-item">
-        <a href="~/shoppingcart/" style="color:#001489; font-weight:600">
-            Giỏ Hàng
+        <a href="/shoppingcart/" style="color:#001489; font-weight:600">
+            Cart
         </a>
     </li>
     <li class="breadcrumb-item">
-        <a href="~/Checkout/Index" style="color:#001489; font-weight:600">
-            Xác Nhận Hóa Đơn
+        <a href="/checkout/order-information" style="color:#001489; font-weight:600">
+            Order Information         
         </a>
     </li>
-    <li class="breadcrumb-item">Order Information</li>
+    <li class="breadcrumb-item">Order Confirmation</li>
 </ol>
 
 <section class="order_details section-margin--small">
@@ -56,14 +70,6 @@
                         <input asp-for="@Model.OrderItem.UserId" type="hidden" />
                         <input asp-for="@Model.Discount" type="hidden" />
                         <input asp-for="@Model.IsCardCreditPay" type="hidden" />
-                        @{
-                            var shipping = SHIPPING_FEE.SHIPPING;
-                            var discountPay = decimal.Parse((1 - (1.1) / 100).ToString());
-                            var subTotal = @Model.CartViewModel.Total * discountPay;
-                            var total = (subTotal + shipping).GetPriceFormat();
-                            
-                            Model.OrderItem.TotalPrice = subTotal + shipping;
-                        }
                         <input asp-for="@Model.OrderItem.TotalPrice" type="hidden" />
                         <table class="order-rable">
                             <tbody style="color:black">
@@ -72,11 +78,11 @@
                                     <td>: @Model.OrderItem.Id.ToString().Substring(0, 8).ToUpper()</td>
                                 </tr>
                                 <tr>
-                                    <td>Ngày Order</td>
+                                    <td>Order Date</td>
                                     <td>: @Model.OrderItem.OrderDate.ToString("dddd, dd MMMM yyyy")</td>
                                 </tr>
                                 <tr>
-                                    <td>Giờ Order</td>
+                                    <td>Order Time</td>
                                     <td>: @Model.OrderItem.OrderDate.ToLongTimeString()</td>
                                 </tr>
                                 <tr>
@@ -84,22 +90,32 @@
                                     <td style="font-weight:600">: @Model.CartViewModel.Total.GetPriceFormat()</td>
                                 </tr>
                                 <tr>
-                                    <td>Chiết Khấu</td>
-                                    <td>: @discount</td>
+                                    <td>Discount</td>
+                                    <td style="color: #b52e52; font-weight:500">: @discount OFF</td>
                                 </tr>
                                 <tr>
-                                    <td>Phí Ship</td>
-                                    <td>: @SHIPPING_FEE.SHIPPING.GetPriceFormat()</td>
+                                   
+                                    @if(Model.OrderItem.TotalPrice > 1000000)
+                                    {
+                                        <td style="text-decoration:line-through; text-decoration-color: red">Shipping Fee</td>
+                                        <td style="text-decoration:line-through; text-decoration-color: red">: @SHIPPING_FEE.SHIPPING.GetPriceFormat()</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Shipping Fee</td>
+                                        <td>: @SHIPPING_FEE.SHIPPING.GetPriceFormat()</td>
+                                    }
+                                    
                                 </tr>
                                 <tr>
                                     @if (Model.IsCardCreditPay)
                                     {
-                                        <td>Phương Thức Thanh Toán</td>
-                                        <td style="font-size: 18px; font-weight:600; color:#001489">: Credit Card VNPAY</td>
+                                        <td>Pay Menthod</td>
+                                        <td style="font-size: 18px; font-weight:600; color:#1877f2">: Credit Card VNPAY</td>
                                     }
                                     else
                                     {
-                                        <td>Phương Thức Thanh Toán</td>
+                                        <td>Pay Menthod</td>
                                         <td style="font-size: 18px; font-weight:600; color:#cd1817">: COD</td>
                                     }
 
@@ -114,11 +130,11 @@
                         <table class="order-rable">
                             <tbody style="color:black">
                                 <tr>
-                                    <td>Tên Khách Hàng</td>
+                                    <td>Name :</td>
                                     <td>:  @Model.UserItemViewModel.Name</td>
                                 </tr>
                                 <tr>
-                                    <td>Địa Chỉ</td>                                 
+                                    <td>Address</td>                                 
                                     <td style="font-size:15px">:  @Model.UserItemViewModel.Address</td>                                   
                                 </tr>
                                 <tr>
@@ -134,7 +150,7 @@
                                     <td>:  International express shipping</td>
                                 </tr>
                                 <tr>                                   
-                                    <td>Tình Trạng Thanh Toán :</td>
+                                    <td>Paid Status :</td>
                                     <td>
                                         <i class="bi bi-hourglass-split" style="font-weight:500; font-size:20px;
                                         color: indianred">
@@ -215,20 +231,36 @@
                                 </td>
                                 <td>
                                     <p style="font-weight:600">
-                                        @subTotal.GetPriceFormat();
+                                        @subTotal.GetPriceFormat()
                                     </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td>
-                                    <h4>Shipping</h4>
-                                </td>
-                                <td>
-                                    <h5></h5>
-                                </td>
-                                <td>
-                                    <p>Flat rate: @shipping.GetPriceFormat()</p>
-                                </td>
+                                @if (Model.OrderItem.TotalPrice > 1000000)
+                                {
+                                    <td style="text-decoration: line-through; color:red">
+                                        <h4>Shipping</h4>
+                                    </td>
+                                    <td>
+                                        <h5></h5>
+                                    </td>
+                                    <td style="text-decoration: line-through; color:red">
+                                        <p style="font-size:15px">Flat rate: @shipping.GetPriceFormat()</p>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <h4>Shipping</h4>
+                                    </td>
+                                    <td>
+                                        <h5></h5>
+                                    </td>
+                                    <td>
+                                        <p style="font-size:15px">Flat rate: @shipping.GetPriceFormat()</p>
+                                    </td>
+                                }
+
                             </tr>
                             <tr>
                                 <td>
@@ -239,7 +271,7 @@
                                 </td>
 
                                 <td>
-                                    <h4 style="font-weight:700; font-size:17px">@total</h4>
+                                    <h4 style="font-weight:700; font-size:17px">@total.GetPriceFormat()</h4>
                                 </td>
                             </tr>
                         </tbody>
@@ -251,7 +283,7 @@
                     <div class="text-center col-md-3 " style="display:flex; float:right">
                         <button formaction="@Url.ActionLink("CreatePaymentUrl", "Checkout")"
                                 class="button button-paypal">
-                            Thanh Toán Ngay
+                            Pay Now
                         </button>
                     </div>
                 }
@@ -260,7 +292,7 @@
                     <div class="text-center col-md-3 " style="display:flex; float:right">
                         <button type="submit"
                                 class="button button-paypal">
-                            Đặt Hàng Ngay
+                            Order Now
                         </button>
                     </div>
                 }

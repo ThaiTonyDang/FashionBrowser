@@ -34,7 +34,7 @@ namespace Fashion.Browser.VpayServices
             var tick = DateTime.Now.Ticks.ToString();
             var pay = new VnpayLibrary();
             var urlCallBack = _orderCallbackConfig.ReturnUrl;
-            var price = (((int)model.CartViewModel.Total * 100) * (1 - (1.1)/100)).ToString();
+            var price = (((int)model.OrderItem.TotalPrice * 100)).ToString();
 
             pay.AddOrderData(model);
             pay.AddRequestData("vnp_Version", _vnpayConfig.Version);
@@ -46,10 +46,8 @@ namespace Fashion.Browser.VpayServices
             pay.AddRequestData("vnp_IpAddr", pay.GetIpAddress(context));
             pay.AddRequestData("vnp_Locale", _vnpayConfig.Locale);
             pay.AddRequestData("vnp_OrderInfo",
-            $"{model.OrderItem.Id} \r\n {model.UserItemViewModel.FirstName} \r\n {model.UserItemViewModel.LastName} \r\n " +
-            $" {model.OrderItem.OrderDate.ToString("yyyyMMddHHmmss")} \r\n {model.OrderItem.ShipAddress} \r\n" +
-            $"{(model.CartViewModel.Total) * decimal.Parse((1 - (1.1) / 100).ToString())}" +
-            $" \r\n {model.OrderItem.UserId}");
+            $"{model.UserItemViewModel.Name} \r\n {model.OrderItem.OrderDate.ToString("yyyyMMddHHmmss")} " +
+            $"\r\n {model.OrderItem.ShipAddress} \r\n {model.OrderItem.TotalPrice}");
             pay.AddRequestData("vnp_OrderType", "fashion");
             pay.AddRequestData("vnp_ReturnUrl", urlCallBack);
             pay.AddRequestData("vnp_TxnRef", tick);

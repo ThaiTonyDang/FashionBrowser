@@ -5,8 +5,9 @@
 
 function addToCart(id, e) {
     e.preventDefault();
+    let quantityInput = 1;
     $.ajax({
-        url: '/cart/addtocart/' + id,
+        url: '/cart/addtocart/' + id + '/' + quantityInput,
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
         success: function (response) {
@@ -111,7 +112,7 @@ $(".items-count").on("click", function () {
             }, 0);
 
             $('#total-price').html(getPriceFormat(totalPrice));
-            $('.cart-total-price').html(getPriceFormat(totalPrice + 1));
+            $('.cart-total-price').html(getPriceFormat(totalPrice * 0.9));
         },
         error: function (response, status, error) {
             if (response.status === 404) {
@@ -200,4 +201,41 @@ function getTotalPrice(data) {
     var totalPrice = data.reduce(function (accumulator, current) {
         return accumulator + current.product.price;
     }, 0);
+}
+
+
+function addProductToCart(id, e) {
+    e.preventDefault();
+    let quantityInput = $('.input-text').val();
+    $.ajax({
+        url: '/cart/addtocart/' + id + '/' + quantityInput,
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        success: function (response) {
+            let data = response;
+            saveCartDataToLocalStorage(data);
+            let quantity = data.length;
+            getCartNumber(quantity);
+            Swal.fire({
+                icon: 'success',
+                title: 'SUCCESS..!!',
+                text: 'ADD THIS PRODUCT SUCCESS',
+                footer: '<a href="/shoppingcart/">VISIT CART</a>'
+            })
+        },
+        error: function (response, status, error) {
+            if (response.status === 400) {
+                Swal.fire({
+                    icon: 'error',
+                    title: error,
+                    text: 'OUT OF STOCK',
+                    footer: '<a href="/shoppingcart/">VISIT CART</a>'
+                })
+            }
+
+            if (response.status === 401) {
+                window.location.href = '/users/login';
+            }
+        }
+    });
 }

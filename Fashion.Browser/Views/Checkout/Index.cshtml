@@ -9,16 +9,16 @@
 <link href="~/css/my-style.css" rel="stylesheet" />
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
-        <a href="~/Home/Index" class="link" style="color:#001489; font-weight:600">
-            Trang Chủ
+        <a href="/" class="link" style="color:#001489; font-weight:600">
+            Home
         </a>
     </li>
     <li class="breadcrumb-item">
-        <a href="~/shoppingcart/" style="color:#001489; font-weight:600">
-            Giỏ Hàng
+        <a href="/shoppingcart/" style="color:#001489; font-weight:600">
+            Cart
         </a>
     </li>
-    <li class="breadcrumb-item">Xác Nhận Hóa Đơn</li>
+    <li class="breadcrumb-item">Order Information</li>
 </ol>
 <form asp-action="ConfirmOrder" method="post" enctype="multipart/form-data">
      @if (Model.CartViewModel.ListCartItem != null && Model.CartViewModel.ListCartItem.Count > 0)
@@ -26,17 +26,17 @@
         <div class="container-fluid">
             <div class="row px-xl-5">
                 <div class="col-lg-6">
-                    <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">THÔNG TIN CỦA BẠN</span></h5>
+                    <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">YOUR INFORMATION</span></h5>
                     <div class="bg-light p-30 mb-5">
                         <div class="row">
                             <div class="col-md-12 form-group">
-                                <label>TÊN</label>
+                                <label>FIRST NAME</label>
                                 <input asp-for=UserItemViewModel.FirstName class="form-control" placeholder="Tên"
                                 value="@Model.UserItemViewModel.FirstName">
                                 <span asp-validation-for=@Model.UserItemViewModel.FirstName class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
-                                <label>HỌ</label>
+                                <label>LAST NAME</label>
                                 <input asp-for=UserItemViewModel.LastName class="form-control"
                                    value="@Model.UserItemViewModel.LastName">
                                 <span asp-validation-for=@Model.UserItemViewModel.LastName class="text-danger"></span>
@@ -48,13 +48,13 @@
                                 <span asp-validation-for="@Model.UserItemViewModel.Email" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
-                                <label>SỐ ĐIỆN THOẠI</label>
+                                <label>PHONE NUMBER</label>
                                 <input asp-for="UserItemViewModel.PhoneNumber" type="tel" class="form-control"
                                  value="@Model.UserItemViewModel.PhoneNumber">
                                 <span asp-validation-for="@Model.UserItemViewModel.PhoneNumber" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
-                                <label>ĐỊA CHỈ</label>
+                                <label>ADDRESS</label>
                                 <input asp-for="UserItemViewModel.Address" type="text" class="form-control"
                                 value="@Model.UserItemViewModel.Address">
                                 <span asp-validation-for="@Model.UserItemViewModel.Address" class="text-danger"></span>
@@ -63,7 +63,7 @@
                                 <div class="check_title">
                                     <h2>Bạn có coupon chưa? <a href="#">Click vào đây để nhập mã</a></h2>
                                 </div>
-                                <input asp-for=@Model.Discount type="text" placeholder="Enter coupon code" value=1.1>
+                                <input asp-for=@Model.Discount type="text" placeholder="Enter coupon code" value="10">
                                 <a class="button button-coupon" href="#">Xác Nhận Coupon</a>
                             </div>
                         </div>
@@ -76,7 +76,7 @@
                         <ul class="list">
                             <li><a href="#"><h4>Product <span> Total</span></h4></a></li>
                             @{                        
-                                var discountPay = decimal.Parse((1 - (1.1) / 100).ToString());
+                                var discountPay = decimal.Parse((1 - (double)10 / 100).ToString());
                                 var totalAmound = @Model.CartViewModel.Total;
                                 var subTotal = totalAmound * discountPay;
                             }
@@ -97,18 +97,21 @@
                             }
                         </ul>
                         <ul class="list list_2">
-                            <li><a href="#">TỔNG TIỀN SẢN PHẨM<span>@totalAmound.GetPriceFormat()</span></a></li>
-                            <li><a href="#">CHIẾT KHẤU<span> 1.1 %</span></a></li>
-                            <li><a href="#">TỔNG TIỀN<span>@subTotal.GetPriceFormat()</span></a></li>
+                            <li><a href="#">PRODUCT PRICE<span>@totalAmound.GetPriceFormat()</span></a></li>
+                            <li><a href="#">DISCOUNT<span style="color:red"> 10% OFF</span></a></li>
+                            <li><a href="#">TOTAL<span>@subTotal.GetPriceFormat()</span></a></li>
                         </ul>
+                        <div style="color: brown; font-size: 18px">
+                            <p>Paying orders over 1 million VND get free Ship</p>
+                        </div>
                         <div class="payment_item">
                             <div class="radion_btn">
                                 <input asp-for="@Model.IsCardCreditPay" type="radio" id="f-option5" value="False">
                                 <label for="f-option5">Cash on Delivery</label>
                                 <div class="check"></div>
                             </div>
-                            <p>
-                                COD thanh toán tại thời điểm nhận hàng .  
+                            <p >
+                                COD payment at the time of receipt.
                             </p>
                         </div>
                         <div class="payment_item active">
@@ -119,12 +122,12 @@
                                 <div class="check"></div>
                             </div>
                             <p>
-                                Chi trả qua cổng thanh toán VNPAY ! Miễn phí Ship
+                                Payment via VNPAY payment gateway!
                             </p>
                         </div>
-                     
+              
                         <div class="text-center">
-                            <button type="submit" class="button button-paypal" style="cursor:pointer;">Xác Nhận Hóa Đơn</button>
+                            <button type="submit" class="button button-paypal" style="cursor:pointer;">Invoice Confirmation</button>
                         </div>                                                        
                     </div>
                 </div>
