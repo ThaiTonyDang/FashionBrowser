@@ -53,7 +53,7 @@ namespace Fashion.Browser.Controllers
                 Address = User.FindFirstValue(ClaimTypes.StreetAddress), 
             };
             if (cartItems == null) cartItems = new List<CartItemViewModel>();
-            return View(checkout); // index thông tin 
+            return View(checkout);
         }
 
         [Route("checkout/confirm-order/")]
@@ -133,7 +133,7 @@ namespace Fashion.Browser.Controllers
                 TempData[Mode.LABEL_CONFIRM_CHECK] = "There Are Currently No Orders! Shopping Now !";
                 return RedirectToAction("Index", "Home");
             }
-            return await Task.Run(() => View(checkout));
+            return await Task.FromResult(View(checkout));
         }
 
         [Route("vnpay/order-information")]

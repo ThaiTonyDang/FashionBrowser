@@ -82,11 +82,5 @@
             }
         }
     });
-
-    $(".nav-item").on("click", function (event) {
-        event.preventDefault();
-        $(".nav-item").removeClass("active");
-        $(this).addClass("active");
-    });
 })(jQuery);
 
