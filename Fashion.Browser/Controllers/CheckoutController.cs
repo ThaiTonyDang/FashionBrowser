@@ -165,8 +165,9 @@ namespace Fashion.Browser.Controllers
             {
                 TempData[Mode.LABEL_CONFIRM_FAIL] = "Payment Fail ! Try Again";
                 return RedirectToAction("Index", "Checkout");
-            }    
-            
+            }
+
+            TempData[Mode.LABEL_CONFIRM_SUCCESS] = "Payment success !";
             return View(checkout);       
         }
 

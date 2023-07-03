@@ -18,6 +18,7 @@ namespace FashionBrowser.Domain.ViewModels
         public string MainImageName { get; set; }
         public string CategoryName { get; set; }
         public int QuantityInput { get; set; }
+        public List<SubImageItemViewModel> SubImages { get; set; }
     }
     public class ProductViewModel
     {

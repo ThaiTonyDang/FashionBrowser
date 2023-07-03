@@ -112,7 +112,7 @@ $(".items-count").on("click", function () {
             }, 0);
 
             $('#total-price').html(getPriceFormat(totalPrice));
-            $('.cart-total-price').html(getPriceFormat(totalPrice * 0.9));
+            $('.cart-total-price').html(getPriceFormat(totalPrice + 10000));
         },
         error: function (response, status, error) {
             if (response.status === 404) {
@@ -175,21 +175,21 @@ function getPriceFormat(price) {
 
 function getQuantityAdjustment(operator, productId) {
     var result = $('#sst-' + productId);
-    var sst = result.val();
+    var quantity = result.val();
     switch (operator) {
         case OPERATORS.ADDITION:
-            if (!isNaN(sst)) {
-                sst++;
-                result.val(sst);
+            if (!isNaN(quantity)) {
+                quantity++;
+                result.val(quantity);
             } 
-            return sst;
+            return quantity;
         default:
-            if (!isNaN(sst) && sst!=1) {
-                sst--;
-                result.val(sst);
-                return sst;
+            if (!isNaN(quantity) && quantity!=1) {
+                quantity--;
+                result.val(quantity);
+                return quantity;
             }
-            if (sst <= 1) {
+            if (quantity <= 1) {
                 result.val(1);
                 deleteCart(productId);
                 return 1;       
@@ -239,3 +239,10 @@ function addProductToCart(id, e) {
         }
     });
 }
+
+$('.button-detail').on("click", function (operator) {
+    let operatordetail = $(this).val();
+    var quantity = productDetailQuantity(operatordetail);
+    $('.input-text').val(quantity);
+
+})

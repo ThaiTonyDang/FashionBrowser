@@ -73,6 +73,11 @@ namespace FashionBrowser.Domain.Services
                 message = responseList.Message;
 
                 productDto.ImageUrl = _urlService.GetFileApiUrl(productDto.MainImageName);
+                foreach (var subImage in productDto.SubImages)
+                {
+                    subImage.ImageUrl = _urlService.GetFileApiUrl(subImage.ImageName);
+                }
+
                 return Tuple.Create(productDto, message);
             }
             catch (Exception exception)
