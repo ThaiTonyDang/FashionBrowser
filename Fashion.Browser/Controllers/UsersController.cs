@@ -139,8 +139,8 @@ namespace Fashion.Browser.Controllers
         public async Task<IActionResult> Profile()
         {
             var token = User.FindFirst("token").Value;
-            var user = await _userService.GetUserAsync(token);             
-            return await Task.Run(() => View(user));
+            var user = await _userService.GetUserAsync(token);
+            return await Task.FromResult(View(user));
         }
 
         [Authorize]
