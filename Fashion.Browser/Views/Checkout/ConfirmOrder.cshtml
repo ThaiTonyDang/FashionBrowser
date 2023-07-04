@@ -8,16 +8,7 @@
 @{
     var shipping = SHIPPING_FEE.SHIPPING;
     var subTotal = @Model.CartViewModel.Total;
-    decimal total = 0;
-    if (Model.CartViewModel.Total > 1000000)
-    {
-        total = subTotal;
-    }
-    else
-    {
-        total = subTotal + shipping;
-    }
-
+    var total = subTotal + shipping;
     Model.OrderItem.TotalPrice = total;
 }
 
