@@ -50,18 +50,8 @@
                                     <td style="font-weight:600">: @Model.CartViewModel.Total.GetPriceFormat()</td>
                                 </tr>
                                 <tr>
-                                   
-                                    @if(Model.OrderItem.TotalPrice > 1000000)
-                                    {
-                                        <td style="text-decoration:line-through; text-decoration-color: red">Shipping Fee</td>
-                                        <td style="text-decoration:line-through; text-decoration-color: red">: @SHIPPING_FEE.SHIPPING.GetPriceFormat()</td>
-                                    }
-                                    else
-                                    {
-                                        <td>Shipping Fee</td>
-                                        <td>: @SHIPPING_FEE.SHIPPING.GetPriceFormat()</td>
-                                    }
-                                    
+                                    <td>Shipping Fee</td>
+                                    <td>: @SHIPPING_FEE.SHIPPING.GetPriceFormat()</td>
                                 </tr>
                                 <tr>
                                     @if (Model.IsCardCreditPay)
@@ -100,10 +90,6 @@
                                 <tr>
                                     <td>Email</td>
                                     <td>:  @Model.UserItemViewModel.Email</td>
-                                </tr>
-                                <tr>
-                                    <td>Shipping Method</td>
-                                    <td>:  International express shipping</td>
                                 </tr>
                                 <tr>                                   
                                     <td>Paid Status :</td>
@@ -181,31 +167,15 @@
                                 </td>
                             </tr>
                             <tr>
-                                @if (Model.OrderItem.TotalPrice > 1000000)
-                                {
-                                    <td style="text-decoration: line-through; color:red">
-                                        <h4>Shipping</h4>
-                                    </td>
-                                    <td>
-                                        <h5></h5>
-                                    </td>
-                                    <td style="text-decoration: line-through; color:red">
-                                        <p style="font-size:15px">Flat rate: @shipping.GetPriceFormat()</p>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>
-                                        <h4>Shipping</h4>
-                                    </td>
-                                    <td>
-                                        <h5></h5>
-                                    </td>
-                                    <td>
-                                        <p style="font-size:15px">Flat rate: @shipping.GetPriceFormat()</p>
-                                    </td>
-                                }
-
+                                <td>
+                                    <h4>Shipping</h4>
+                                </td>
+                                <td>
+                                    <h5></h5>
+                                </td>
+                                <td>
+                                    <p style="font-size:15px">: @shipping.GetPriceFormat()</p>
+                                </td>
                             </tr>
                             <tr>
                                 <td>
