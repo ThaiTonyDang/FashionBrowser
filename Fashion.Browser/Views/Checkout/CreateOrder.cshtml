@@ -168,19 +168,7 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="text-left">
-
-                                                    <span class="text-muted">Discount</span>
-
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="text-right">
-                                                    <span class="text-success">@Model.Discount %</span>
-                                                </div>
-                                            </td>
+                                        <tr>                                          
                                         </tr>
                                         <tr>
                                             <td>
@@ -190,23 +178,13 @@
 
                                                 </div>
                                             </td>
-                                            @if(Model.CartViewModel.Total > 1000000)
-                                            {
-                                                <td>
-                                                    <div class="text-right" style="text-decoration:line-through; color:red">
-                                                        <span>@SHIPPING_FEE.SHIPPING.GetPriceFormat()</span>
-                                                    </div>
-                                                </td>
-                                            }
-                                            else
-                                            {
-                                                <td>
-                                                    <div class="text-right">
-                                                        <span>@SHIPPING_FEE.SHIPPING.GetPriceFormat()</span>
-                                                    </div>
-                                                </td>
-                                            }
-
+                                          
+                                            <td>
+                                                <div class="text-right">
+                                                    <span>@SHIPPING_FEE.SHIPPING.GetPriceFormat()</span>
+                                                </div>
+                                            </td>
+                                            
                                         </tr>
                                         <tr class="border-top border-bottom">
                                             <td>
