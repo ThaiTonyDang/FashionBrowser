@@ -51,18 +51,11 @@ namespace Fashion.Browser
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 			.AddCookie(options => {
 				options.LoginPath = "/users/login";
-				options.ExpireTimeSpan = TimeSpan.FromMinutes(expiredTime);			
-			});
+				options.ExpireTimeSpan = TimeSpan.FromMinutes(expiredTime);
+                options.Cookie.Name = "Browser.Authentication";
+            });
 
             services.AddDistributedMemoryCache();
-
-            services.AddSession(cfg => {
-                cfg.Cookie.Name = "Fashion.Browser";
-                cfg.Cookie.IsEssential = true;
-                cfg.Cookie.HttpOnly = true;
-                cfg.Cookie.SameSite = SameSiteMode.Strict;
-                cfg.IdleTimeout = TimeSpan.FromMinutes(expiredTime);
-            });
         }
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
