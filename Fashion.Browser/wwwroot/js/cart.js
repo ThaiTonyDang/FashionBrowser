@@ -112,7 +112,7 @@ $(".items-count").on("click", function () {
             }, 0);
 
             $('#total-price').html(getPriceFormat(totalPrice));
-            $('.cart-total-price').html(getPriceFormat(totalPrice * 0.9));
+            $('.cart-total-price').html(getPriceFormat(totalPrice + 10000));
         },
         error: function (response, status, error) {
             if (response.status === 404) {

@@ -33,3 +33,10 @@ ul {
 a {
     color: #FFD333;
 }
+
+.order-product-item {
+    display: flex !important;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+}

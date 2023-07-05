@@ -4,21 +4,10 @@
 @{
     ViewData["Title"] = "Checkout";
     Layout = "_Layout";
-}>
+}
 <link href="~/css/checkout.css" rel="stylesheet" />
 <link href="~/css/my-style.css" rel="stylesheet" />
 <ol class="breadcrumb">
-    <li class="breadcrumb-item">
-        <a href="/" class="link" style="color:#001489; font-weight:600">
-            Home
-        </a>
-    </li>
-    <li class="breadcrumb-item">
-        <a href="/shoppingcart/" style="color:#001489; font-weight:600">
-            Cart
-        </a>
-    </li>
-    <li class="breadcrumb-item">Order Information</li>
 </ol>
 <form asp-action="ConfirmOrder" method="post" enctype="multipart/form-data">
      @if (Model.CartViewModel.ListCartItem != null && Model.CartViewModel.ListCartItem.Count > 0)
@@ -26,8 +15,8 @@
         <div class="container-fluid">
             <div class="row px-xl-5">
                 <div class="col-lg-6">
-                    <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">YOUR INFORMATION</span></h5>
                     <div class="bg-light p-30 mb-5">
+                        <h5 class="section-title position-relative text-uppercase mb-3">Your Information</h5>
                         <div class="row">
                             <div class="col-md-12 form-group">
                                 <label>FIRST NAME</label>
@@ -58,61 +47,53 @@
                                 <input asp-for="UserItemViewModel.Address" type="text" class="form-control"
                                 value="@Model.UserItemViewModel.Address">
                                 <span asp-validation-for="@Model.UserItemViewModel.Address" class="text-danger"></span>
-                            </div>                            
-                            <div class="cupon_area col-md-12 form-group">
-                                <div class="check_title">
-                                    <h2>Bạn có coupon chưa? <a href="#">Click vào đây để nhập mã</a></h2>
-                                </div>
-                                <input asp-for=@Model.Discount type="text" placeholder="Enter coupon code" value="10">
-                                <a class="button button-coupon" href="#">Xác Nhận Coupon</a>
-                            </div>
+                            </div>     
                         </div>
                     </div>
 
                 </div>
                 <div class="col-lg-6">
                     <div class="order_box">
-                        <h2>ĐƠN HÀNG CỦA BẠN</h2>
+                        <h2>Your Order</h2>
                         <ul class="list">
                             <li><a href="#"><h4>Product <span> Total</span></h4></a></li>
                             @{                        
-                                var discountPay = decimal.Parse((1 - (double)10 / 100).ToString());
-                                var totalAmound = @Model.CartViewModel.Total;
-                                var subTotal = totalAmound * discountPay;
+                                var totalAmound = @Model.CartViewModel.Total ;
+                                var subTotal = totalAmound + SHIPPING_FEE.SHIPPING;
                             }
                             @foreach (var cartItem in Model.CartViewModel.ListCartItem)
                             {
-
                                 <li style="font-size:15px">
-                                    <a href="" >
-                                        <img class="card-img" style="width:100px;"
-                                        src="@cartItem.Product.ImageUrl" alt="">
-                                        @cartItem.Product.Name
-                                        <span class="middle" style="width:100px">
-                                            @cartItem.Product.Price.GetPriceFormat() X @cartItem.Quantity
+                                    <a class="order-product-item">
+                                        <img class="card-img" style="width:100px; margin-right: 5px" src="@cartItem.Product.ImageUrl" alt="">
+                                        <span class="order-product-name order-item">
+                                            @cartItem.Product.Name
                                         </span>
-                                        <span class="last">@cartItem.Price.GetPriceFormat()</span>
+                                        <span class="order-price order-item" style="width:100px">
+                                            @cartItem.Product.Price.GetPriceFormat()
+                                        </span>
+                                        <span class="order-unit order-item" style="width:100px">
+                                            X @cartItem.Quantity
+                                        </span>
+                                        <span class="order-total-price order-item" style="text-align: right">
+                                            @cartItem.Price.GetPriceFormat()
+                                        </span>
                                     </a>
+
                                 </li>
                             }
                         </ul>
                         <ul class="list list_2">
                             <li><a href="#">PRODUCT PRICE<span>@totalAmound.GetPriceFormat()</span></a></li>
-                            <li><a href="#">DISCOUNT<span style="color:red"> 10% OFF</span></a></li>
+                            <li><a href="#">SHIPPING FEE<span style="color:red"> @SHIPPING_FEE.SHIPPING.GetPriceFormat()</span></a></li>
                             <li><a href="#">TOTAL<span>@subTotal.GetPriceFormat()</span></a></li>
                         </ul>
-                        <div style="color: brown; font-size: 18px">
-                            <p>Paying orders over 1 million VND get free Ship</p>
-                        </div>
                         <div class="payment_item">
                             <div class="radion_btn">
                                 <input asp-for="@Model.IsCardCreditPay" type="radio" id="f-option5" value="False">
                                 <label for="f-option5">Cash on Delivery</label>
                                 <div class="check"></div>
                             </div>
-                            <p >
-                                COD payment at the time of receipt.
-                            </p>
                         </div>
                         <div class="payment_item active">
                             <div class="radion_btn">
@@ -121,9 +102,6 @@
                                 <img src="/img/card.jpg" alt="">
                                 <div class="check"></div>
                             </div>
-                            <p>
-                                Payment via VNPAY payment gateway!
-                            </p>
                         </div>
               
                         <div class="text-center">
