@@ -6,7 +6,6 @@
     Layout = "_Layout";
 }
 
-<script src="~/js/city.js"></script>
 <link href="~/usercss/user.css" rel="stylesheet" />
 <partial name="_Alert" />
 <section class="blog-banner-area" id="category">
@@ -46,27 +45,27 @@
                         <form class="row login_form" action="#/" id="register_form">
                             <div class="col-md-12 form-group">
                                 <input asp-for="FirstName" type="text" class="form-control" placeholder="FirstName"
-                                       onfocus="this.placeholder = ''" onblur="this.placeholder = 'FirstName'">
+                                       onfocus="this.placeholder = ''" onblur="this.placeholder = 'FirstName'" autocomplete="off">
                                 <span asp-validation-for="FirstName" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
                                 <input asp-for="LastName" type="text" class="form-control" placeholder="LastName"
-                                       onfocus="this.placeholder = ''" onblur="this.placeholder = 'LastName'">
+                                       onfocus="this.placeholder = ''" onblur="this.placeholder = 'LastName'" autocomplete="off">
                                 <span asp-validation-for="LastName" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
                                 <input asp-for="Email" type="email" class="form-control" placeholder="Email Address"
-                                       onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email Address'">
+                                       onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email Address'" autocomplete="off">
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
                                 <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="Phone Number"
-                                       onfocus="this.placeholder = ''" onblur="this.placeholder = 'PhoneNumber'">
+                                       onfocus="this.placeholder = ''" onblur="this.placeholder = 'PhoneNumber'" autocomplete="off">
                                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
                                 <input asp-for=NumberDepartment type="text"
-                                       class="form-control" placeholder="Number Department" placeholder="Number Department">
+                                       class="form-control" placeholder="Number Department" placeholder="Number Department" autocomplete="off">
                                 <span asp-validation-for=NumberDepartment class="text-danger"></span>
                             </div>
                             <div style="display:flex">
@@ -112,6 +111,7 @@
 </form>
 
 @section Scripts {
+    <script src="@Url.Content("~/js/city.js")"></script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

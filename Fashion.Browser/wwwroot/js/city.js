@@ -2,13 +2,14 @@
 var districts = document.getElementById("district");
 var wards = document.getElementById("ward");
 var Parameter = {
-    url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json", //Đường dẫn đến file chứa dữ liệu hoặc api do backend cung cấp
-    method: "GET", //do backend cung cấp
-    responseType: "application/json", //kiểu Dữ liệu trả về do backend cung cấp
+    url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+    method: "GET",
+    responseType: "application/json", 
 };
-//gọi ajax = axios => nó trả về cho chúng ta là một promise
+
 var promise = axios(Parameter);
-//Xử lý khi request thành công
+
+
 promise.then(function (result) {
     renderCity(result.data);
 });
@@ -18,7 +19,6 @@ function renderCity(data) {
         citis.options[citis.options.length] = new Option(x.Name, x.Id);
     }
 
-    // xứ lý khi thay đổi tỉnh thành thì sẽ hiển thị ra quận huyện thuộc tỉnh thành đó
     citis.onchange = function () {
         district.length = 1;
         ward.length = 1;
@@ -31,7 +31,6 @@ function renderCity(data) {
         }
     };
 
-    // xứ lý khi thay đổi quận huyện thì sẽ hiển thị ra phường xã thuộc quận huyện đó
     district.onchange = function () {
         ward.length = 1;
         const dataCity = data.filter((n) => n.Id === citis.value);
